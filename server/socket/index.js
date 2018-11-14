@@ -20,9 +20,18 @@ module.exports = io => {
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
       // remove this player from our players object
-      delete players[socket.id];
+      delete players[socket.id]
       // emit a message to all players to remove this player
-      io.emit('disconnect', socket.id);
+      io.emit('disconnect', socket.id)
+    })
+
+    // when a player moves, update the player data
+    socket.on('playerMovement', function (movementData) {
+      players[socket.id].x = movementData.x
+      players[socket.id].y = movementData.y
+      players[socket.id].rotation = movementData.rotation
+      // emit a message to all players about the player that moved
+      socket.broadcast.emit('playerMoved', players[socket.id])
     })
   })
 }
