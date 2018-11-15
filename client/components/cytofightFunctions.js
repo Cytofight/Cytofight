@@ -1,37 +1,12 @@
-// var React = require('react-phaser')
-import Phaser from 'phaser'
-import React, {Component} from 'react'
-// un-comment the following line when cytofightFunctions.js is refactored
-// import {preload, create, update} from './cytofightFunctions'
+//file needs to be modified - game functionality doesn't render when imported, possibly due to problems with "this" context
 
-const config = {
-  type: Phaser.AUTO,
-  parent: 'container',
-  width: 800,
-  height: 600,
-  physics: {
-    default: 'arcade',
-    arcade: {
-      debug: false,
-      gravity: {
-        y: 0
-      }
-    }
-  },
-  scene: {
-    preload: preload,
-    create: create,
-    update: update
-  }
-}
-
-function preload() {
+export function preload() {
   this.load.image('ship', 'assets/PNG/playerShip1_red.png')
   this.load.image('otherPlayer', 'assets/PNG/playerShip2_blue.png')
   this.load.image('star', 'assets/PNG/star_gold.png')
 }
 
-function create() {
+export function create() {
   const self = this
   this.socket = io()
   this.otherPlayers = this.physics.add.group()
@@ -110,7 +85,7 @@ function addOtherPlayers(self, playerInfo) {
   self.otherPlayers.add(otherPlayer)
 }
 
-function update() {
+export function update() {
   if (this.ship) {
     if (this.cursors.left.isDown) {
       this.ship.setAngularVelocity(-150)
@@ -160,25 +135,5 @@ function update() {
       y: this.ship.y,
       rotation: this.ship.rotation
     }
-  }
-}
-
-export default class Game extends Component {
-  constructor(props) {
-    super(props)
-    this.game = null
-  }
-
-  componentDidMount() {
-    this.game = new Phaser.Game(config)
-    
-  }
-
-  render() {
-    return (
-      <div id="container">
-        <h3> Prepare for Battle!</h3>
-      </div>
-    )
   }
 }
