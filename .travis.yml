@@ -16,12 +16,12 @@ install:
 before_script:
   - psql -c 'create database "cytofight-test";' -U postgres # remember to change this name if you change it elsewhere (e.g. package.json)
 
-# before_deploy:
-#   - npm run build-client # make the bundle
-#   - rm -rf node_modules # omit from the tarball, since we skip cleanup
-# deploy:
-#   skip_cleanup: true # prevents travis from deleting the build
-#   provider: heroku
-#   app: YOUR-HEROKU-APP-NAME-HERE # see README
-#   api_key:
-#     secure: YOUR-***ENCRYPTED***-API-KEY-HERE # see README
+before_deploy:
+  - npm run build-client # make the bundle
+  - rm -rf node_modules # omit from the tarball, since we skip cleanup
+deploy:
+  skip_cleanup: true # prevents travis from deleting the build
+  provider: heroku
+  app: cyto-fight # see README
+  api_key:
+    secure: 'P5dBAgfHsDlq3if88WK8fGIouej3KQ5WJbUhHRzSuL39oJrsGSkzZ9lTN+zQsrJAEWc7/U7qJmp4X5OIo417GmwYsdEGNlZSIoIWvTQfsBJFv1SMrylEEKGccFpW91Uesb5SNma37yPFJ2A2Q1XKVoMcQpqSz/oVJ6LM2O0TcPAmzGUFuv86B2R22fjD0zqUS0tbDKajkdKQvBRW4eCsgRRk96TNNJ7cLsEdRuBME0KDq2yxVkiN3NxSdXbZ6kU5jNBAVgUxBKvB4p/Qmc6pQjuA+ARVqUWb6PII2nH8bWJGYvI7IlSw6negup5PEKc0/xrvet8cHcHRiDLqA3IbdgGtfkKZEj2pmma8IOUns3P2XHZaatu1BOPViAvnBKQy8PMtTB6gRydSo8I4P0y+c++lQZBnhBvTUr51pdroSvpGp5tqNGpar57yWr++txOdkKfzaZ3yIvltA4/FysO0cghczKNJeEvw8gJtd465IfIkg97L/OE2wRIIqkiPUhlq+JWHc0eBonGX3rUJMCV7+CzLRsM3vvtE6JcPkpRjFhsMFv4rh0vAoQf05j/NrKxxs7VjBjxRrWdajzeqbSjCymPNRk2L655HUgpOAFcH2J1N85Zuy4pInXQAvF72fzKdfTKjHqr2O/lZS/4SDebUvbp/6gDASMMfZBI8a+oazq8='
