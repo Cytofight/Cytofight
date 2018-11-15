@@ -1,7 +1,7 @@
 //file needs to be modified - game functionality doesn't render when imported, possibly due to problems with "this" context
 
 export function preload() {
-  this.load.image('ship', 'assets/PNG/playerShip1_red.png')
+  this.load.image('ship', 'assets/PNG/whitebloodcell.png')
   this.load.image('otherPlayer', 'assets/PNG/playerShip2_blue.png')
   this.load.image('star', 'assets/PNG/star_gold.png')
 }

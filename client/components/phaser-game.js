@@ -26,8 +26,8 @@ const config = {
 }
 
 function preload() {
-  this.load.image('ship', 'assets/PNG/playerShip1_red.png')
-  this.load.image('otherPlayer', 'assets/PNG/playerShip2_blue.png')
+  this.load.image('ship', 'assets/PNG/whitebloodcell.png')
+  this.load.image('otherPlayer', 'assets/PNG/whitebloodcell.png')
   this.load.image('star', 'assets/PNG/star_gold.png')
 }
 
@@ -63,6 +63,12 @@ function create() {
     })
   })
   this.cursors = this.input.keyboard.createCursorKeys()
+
+  //These 'WASD' keys need to be refractored so that the keycode numbers aren't hardcoded in. Phaser.KeyCode property doesn't exist?
+  this.keyLeft = this.input.keyboard.addKey(65);
+  this.keyRight = this.input.keyboard.addKey(68);
+  this.keyUp = this.input.keyboard.addKey(87);
+  this.keyDown = this.input.keyboard.addKey(83);
   
   this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#0000FF' });
   this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF0000' });
@@ -112,21 +118,21 @@ function addOtherPlayers(self, playerInfo) {
 
 function update() {
   if (this.ship) {
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left.isDown || this.keyLeft.isDown) {
       this.ship.setAngularVelocity(-150)
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right.isDown || this.keyRight.isDown) {
       this.ship.setAngularVelocity(150)
     } else {
       this.ship.setAngularVelocity(0)
     }
 
-    if (this.cursors.up.isDown) {
+    if (this.cursors.up.isDown || this.keyUp.isDown) {
       this.physics.velocityFromRotation(
         this.ship.rotation + 1.5,
         100,
         this.ship.body.acceleration
       )
-    } else if (this.cursors.down.isDown) {
+    } else if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.physics.velocityFromRotation(
         this.ship.rotation + 1.5,
         100,
@@ -171,7 +177,7 @@ export default class Game extends Component {
 
   componentDidMount() {
     this.game = new Phaser.Game(config)
-    
+    console.log(document.eve)
   }
 
   render() {
