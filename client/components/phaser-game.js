@@ -25,7 +25,7 @@ const config = {
 
 function preload() {
   this.load.image('ship', 'assets/PNG/playerShip1_red.png')
-  this.load.image('otherPlayer', 'assets/PNG/ufoGreen.png')
+  this.load.image('otherPlayer', 'assets/PNG/playerShip2_blue.png')
 }
 
 function create() {
@@ -87,7 +87,8 @@ function update() {
     } else {
       this.ship.setAcceleration(0)
     }
-    // this.physics.world.wrap(this.ship, 5)
+    this.physics.world.wrap(this.ship, 5)
+    
     // emit player movement
     const x = this.ship.x
     const y = this.ship.y
@@ -151,6 +152,7 @@ export default class Game extends Component {
 
   componentDidMount() {
     this.game = new Phaser.Game(config)
+    
   }
 
   render() {
