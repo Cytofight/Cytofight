@@ -1,7 +1,7 @@
 {
-  "name": "boilermaker",
+  "name": "cytofight",
   "version": "1.0.0",
-  "description": "Some boilerplate code to get you started - get shakin'!",
+  "description": "Cells at war!",
   "engines": {
     "node": ">= 7.0.0"
   },
