@@ -1,3 +1,5 @@
+const debounce = require('lodash.debounce')
+
 export function update() {
     if (this.ship) {
       if (this.cursors.left.isDown || this.keyLeft.isDown) {
@@ -25,11 +27,9 @@ export function update() {
       }
       this.physics.world.wrap(this.ship, 5)
       
+      //This needs to be edited so that your cell has the ability to fire antibodies
       if(this.keyFire.isDown){
-  
-       console.log("Evangalos")
-       setTimeout(fire, 20000)
-  
+      console.log("FIRE!")
       }
   
       // emit player movement
@@ -58,6 +58,6 @@ export function update() {
     }
   }
   
-  function fire () {
+  function func () {
     console.log("FIRE!!!")
   }

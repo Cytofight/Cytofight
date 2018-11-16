@@ -47,17 +47,13 @@ const antiBody = {
 const heroes = [helperTCell, macrophage, killerTCell, bCell, antiBody]
 
 export default class Heroes extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   render() {
     return (
       <div id="characterPage">
         <h1>The Heroes</h1>
         {heroes.map(hero => {
           return (
-            <div id={hero.id} className="hero">
+            <div key={hero.id} className="hero">
               <h3>{hero.name}</h3>
               <img src={hero.img} width="200px" />
               <p>{hero.blurb}</p>
