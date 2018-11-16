@@ -48,6 +48,7 @@
       .image(playerInfo.x, playerInfo.y, 'ship')
       .setOrigin(0.5, 0.5)
       .setDisplaySize(53, 40)
+      self.cameras.main.startFollow(self.ship) //******* */
     if (playerInfo.team === 'blue') {
       self.ship.setTint(0x0000ff)
     } else {
