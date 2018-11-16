@@ -10,7 +10,6 @@ class Heroes extends Component {
   componentDidMount() {
     this.props.populateHeroes()
   }
-
   render() {
     console.log(this.props)
     return (
