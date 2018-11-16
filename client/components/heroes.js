@@ -3,10 +3,6 @@ import {connect} from 'react-redux'
 import {getHeroesThunk} from '../store/characterReducer'
 
 class Heroes extends Component {
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     this.props.populateHeroes()
   }
@@ -18,7 +14,7 @@ class Heroes extends Component {
         {this.props.heroes.length &&
           this.props.heroes.map(hero => {
             return (
-              <div id={hero.id} className="hero">
+              <div key={hero.id} className="hero">
                 <h3>{hero.name}</h3>
                 <img src={hero.img} width="200px" />
                 <p>{hero.blurb}</p>
