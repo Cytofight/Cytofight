@@ -1,6 +1,21 @@
 const debounce = require('lodash.debounce')
 
-export function update() {
+const throttle = (func, milliseconds) => {
+  let time = Date.now() - milliseconds;
+  return function(...args){
+    if(Date.now() - time >= milliseconds){
+      let res = func(...args)
+      time = Date.now()
+      return res
+    }
+  }
+}
+
+function fire () {
+  console.log("FIRE!!!")
+}
+
+export function update(time) {
     if (this.ship) {
       if (this.cursors.left.isDown || this.keyLeft.isDown) {
         this.ship.setAngularVelocity(-150)
@@ -29,7 +44,7 @@ export function update() {
       
       //This needs to be edited so that your cell has the ability to fire antibodies
       if(this.keyFire.isDown){
-      console.log("FIRE!")
+        console.log("Fire!")
       }
   
       // emit player movement
@@ -56,8 +71,4 @@ export function update() {
         rotation: this.ship.rotation
       }
     }
-  }
-  
-  function func () {
-    console.log("FIRE!!!")
   }
