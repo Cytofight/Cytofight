@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-const histamineParticles = 1
+const histamineParticles = 3
 const numberOfMastCells = 3
 const numberOfDormantTCells = 5
 const numberOfEpithelialCells = 5
@@ -9,44 +9,43 @@ const numberOfEpithelialCells = 5
   //   console.log('OW, A PARTICLE COLLISION!')
   // }
   
-  export function NPCCells () {
-    //Create automated mast cells and their histamine secretors
-    //This code creates mast cells that secrete histamines. Histamines activate dormant immune cells to alert them of an active infection. Contact with the histamines being secreted should activate nearby dormant white blood cells: additional code is needed for this functionality speed of cells and their secretion speeds should also be adjusted
-    const dormantTCells = this.physics.add.group({
-      key: 'dormantTCell',
-      repeat: numberOfDormantTCells,
-      setXY: {
-        x: 100,
-        y: 100,
-        stepX: 200
-      }
-    })
-    dormantTCells.children.entries.forEach(cell => {
-      const randomX = Math.floor(Math.random() * 100)
-      const randomY = Math.floor(Math.random() * 250)
-      const randomCellLocationX = Math.floor(Math.random() * 500)
-      const randomCellLocationY = Math.floor(Math.random() * 500)
-      cell.setVelocity(randomX, randomY)
-      cell.setBounce(1, 1)
-      cell.setCollideWorldBounds(true)
-      cell.x = randomCellLocationX
-      cell.y = randomCellLocationY
+export function NPCCells () {
+  //Create automated mast cells and their histamine secretors
+  //This code creates mast cells that secrete histamines. Histamines activate dormant immune cells to alert them of an active infection. Contact with the histamines being secreted should activate nearby dormant white blood cells: additional code is needed for this functionality speed of cells and their secretion speeds should also be adjusted
+  this.dormantTCells = this.physics.add.group({
+    key: 'dormantTCell',
+    repeat: numberOfDormantTCells,
+    setXY: {
+      x: 100,
+      y: 100,
+      stepX: 200
+    }
+  })
+  this.dormantTCells.children.entries.forEach(cell => {
+    const randomX = Math.floor(Math.random() * 100)
+    const randomY = Math.floor(Math.random() * 250)
+    const randomCellLocationX = Math.floor(Math.random() * 500)
+    const randomCellLocationY = Math.floor(Math.random() * 500)
+    cell.setVelocity(randomX, randomY)
+    cell.setBounce(1, 1)
+    cell.setCollideWorldBounds(true)
+    cell.x = randomCellLocationX
+    cell.y = randomCellLocationY
 
-      cell.activated = false
-      cell.activate = function() {
-        this.setVelocity(0, 0) //PLACEHOLDER
-        console.log("I'm a good guy now!")
-        cell.activated = true
-      }
-    })
-    let circle = new Phaser.Geom.Circle(400, 300, 150)
-    // Randomly position the dormantTCells within the circle
-    Phaser.Actions.RandomCircle(dormantTCells.getChildren(), circle)
+    cell.activated = false
+    cell.activate = function() {
+      this.setVelocity(0, 0) //PLACEHOLDER
+      console.log("I'm a good guy now!")
+      cell.activated = true
+    }
+  })
+  let circle = new Phaser.Geom.Circle(400, 300, 150)
+  // Randomly position the dormantTCells within the circle
+  Phaser.Actions.RandomCircle(this.dormantTCells.getChildren(), circle)
     
   const changeCell = {
-    contains(x, y) {
-      // const hit = this.dormantTCell.body.hitTest(x, y)
-      const cellsArr = dormantTCells.children.entries
+    contains: (x, y) => {
+      const cellsArr = this.dormantTCells.children.entries
       let hit
       for (let i = 0; i < cellsArr.length; i++) {
         const currCell = cellsArr[i]
