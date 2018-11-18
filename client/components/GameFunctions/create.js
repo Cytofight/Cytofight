@@ -16,6 +16,9 @@ export function create() {
   this.cameras.main.setBounds(0, 0, 2000, 2000)
   players.call(this)
   keyboardControls.call(this)
-  scoreAndStars.call(this)
-  NPCCells.call(this)
+  // scoreAndStars.call(this)
+  // NPCCells.call(this)
+  this.matter.world.on('collisionStart', (event, bodyA, bodyB) => {
+    this.socket.emit('anyCollision', bodyA, bodyB)
+  })
 }

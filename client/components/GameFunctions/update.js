@@ -29,12 +29,13 @@ export function update(time) {
     const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
+      console.log(this.ship.body)
       this.ship.applyForce({x: -0.005, y: 0})
-    } else if (this.cursors.right.isDown || this.keyRight.isDown) {
+    } if (this.cursors.right.isDown || this.keyRight.isDown) {
       this.ship.applyForce({x: 0.005, y: 0})
-    } else if (this.cursors.up.isDown || this.keyUp.isDown) {
+    } if (this.cursors.up.isDown || this.keyUp.isDown) {
       this.ship.applyForce({x: 0, y: -0.005})
-    } else if (this.cursors.down.isDown || this.keyDown.isDown) {
+    } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
 
@@ -59,27 +60,34 @@ export function update(time) {
     }
 
     // emit player movement
-    const x = this.ship.body.position.x
-    const y = this.ship.body.position.y
-    const r = this.ship.rotation
+    const { angle, angularVelocity, velocity, position } = this.ship.body
+    const { previous } = this.ship
     if (
-      this.ship.oldPosition &&
-      (x !== this.ship.oldPosition.x ||
-        y !== this.ship.oldPosition.y ||
-        r !== this.ship.oldPosition.rotation)
+      previous &&
+      // (x !== this.ship.body.positionPrev.x ||
+      //   y !== this.ship.body.positionPrev.y ||
+      //   r !== this.ship.oldPosition.rotation)
+      (previous.angle !== angle ||
+      previous.angularVelocity !== angularVelocity ||
+      previous.velocity.x !== velocity.x ||
+      previous.velocity.y !== velocity.y ||
+      previous.position.x !== position.x ||
+      previous.position.y !== position.y)
     ) {
       this.socket.emit('playerMovement', {
-        x: this.ship.x,
-        y: this.ship.y,
-        rotation: this.ship.rotation
+        // x: this.ship.x,
+        // y: this.ship.y,
+        // rotation: this.ship.rotation
+        angle, velocity, angularVelocity, position
       })
     }
 
     // save old position data
-    this.ship.oldPosition = {
-      x: this.ship.x,
-      y: this.ship.y,
-      rotation: this.ship.rotation
+    this.ship.previous = {
+      // x: this.ship.x,
+      // y: this.ship.y,
+      // rotation: this.ship.rotation
+      velocity, angularVelocity
     }
   }
 }
