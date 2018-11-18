@@ -82,15 +82,11 @@ async function seed() {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Blausen_0625_Lymphocyte_T_cell_%28crop%29.png/220px-Blausen_0625_Lymphocyte_T_cell_%28crop%29.png'
     //   })
     // ]
-    heroes.map(hero => {
-      Character.create(hero)
-    })
+    heroes.map(hero => Character.create(hero))
   )
 
   await Promise.all(
-    villains.map(villain => {
-      Character.create(villain)
-    })
+    villains.map(villain => Character.create(villain))
   )
   // )
   // const villainDB = await Promise.all(
@@ -114,11 +110,11 @@ async function runSeed() {
     console.error(err)
     process.exitCode = 1
   }
-  // finally {
-  //   console.log('closing db connection')
-  //   await db.close()
-  //   console.log('db connection closed')
-  // }
+  finally {
+    console.log('closing db connection')
+    await db.close()
+    console.log('db connection closed')
+  }
 }
 
 // Execute the `seed` function, IF we ran this module directly (`node seed`).
