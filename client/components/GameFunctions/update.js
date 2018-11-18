@@ -1,4 +1,6 @@
-const debounce = require('lodash.debounce')
+import { NPCCells } from './createFunctions';
+
+// const debounce = require('lodash.debounce')
 
 const throttle = (func, milliseconds) => {
   let time = Date.now() - milliseconds;
@@ -11,11 +13,14 @@ const throttle = (func, milliseconds) => {
   }
 }
 
+const throttledFire = throttle(fire, 200)
+
 function fire () {
-  console.log("FIRE!!!")
+  console.log("FIRE!!! But working now!")
 }
 
 export function update(time) {
+
     if (this.ship) {
       if (this.cursors.left.isDown || this.keyLeft.isDown) {
         this.ship.setAngularVelocity(-150)
@@ -44,7 +49,9 @@ export function update(time) {
       
       //This needs to be edited so that your cell has the ability to fire antibodies
       if(this.keyFire.isDown){
-        console.log("Fire!")
+        // console.log("Fire!")
+        // limit(400, fire)
+        throttledFire()
       }
   
       // emit player movement
