@@ -1,3 +1,5 @@
+import { NPCCells } from './createFunctions';
+
 const debounce = require('lodash.debounce')
 
 const throttle = (func, milliseconds) => {
@@ -16,6 +18,8 @@ function fire () {
 }
 
 export function update(time) {
+  // this.physics.arcade.add.overlap()
+
     if (this.ship) {
       if (this.cursors.left.isDown || this.keyLeft.isDown) {
         this.ship.setAngularVelocity(-150)
