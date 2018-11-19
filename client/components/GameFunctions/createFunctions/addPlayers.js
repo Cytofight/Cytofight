@@ -46,9 +46,11 @@
     //   .image(playerInfo.x, playerInfo.y, 'ship')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
+    playerInfo.x = 500
+    playerInfo.y = 500
     self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
     self.ship.setScale(0.5)
-    self.ship.setCircle(self.ship.width / 2, shipParams)
+    self.ship.setCircle(self.ship.width / 2, {label: 'me', ...shipParams})
     self.cameras.main.startFollow(self.ship) //******* */
     if (playerInfo.team === 'blue') {
       self.ship.setTint(0x0000ff)
