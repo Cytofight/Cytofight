@@ -13,11 +13,12 @@ export function preload() {
 
 export function create() {
   // PUT IN A SETUP FUNC
-  this.cameras.main.setBounds(0, 0, 2000, 2000)
+  this.matter.world.setBounds(0, 0, 1000, 1000)
+  this.cameras.main.setBounds(0, 0, 1000, 1000)
   players.call(this)
   keyboardControls.call(this)
   // scoreAndStars.call(this)
-  // NPCCells.call(this)
+  NPCCells.call(this)
   // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
   //   console.log('collision detected, emitting bodies:', bodyA)
   //   console.log('ship id: ', this.ship.body.id)

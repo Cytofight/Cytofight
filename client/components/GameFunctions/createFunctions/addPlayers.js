@@ -49,7 +49,7 @@
     self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
     self.ship.setScale(0.5)
     self.ship.setCircle(self.ship.width / 2, shipParams)
-    // self.cameras.main.startFollow(self.ship) //******* */
+    self.cameras.main.startFollow(self.ship) //******* */
     if (playerInfo.team === 'blue') {
       self.ship.setTint(0x0000ff)
     } else {
