@@ -4,8 +4,9 @@ import thunkMiddleware from 'redux-thunk'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import user from './user'
 import characters from './characterReducer'
+import chatReducer from './gameChat'
 
-const reducer = combineReducers({user, characters})
+const reducer = combineReducers({user, characters, chatReducer})
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({collapsed: true}))
 )

@@ -1,19 +1,16 @@
 import Phaser from 'phaser'
 
-const histamineParticles = 10
 const numberOfMastCells = 10
 const numberOfDormantTCells = 5
 const numberOfEpithelialCells = 5
 
-export function NPCCells () {
+export function NPCCells() {
   //Create automated mast cells and their histamine secretors
   //This code creates mast cells that secrete histamines. Histamines activate dormant immune cells to alert them of an active infection. Contact with the histamines being secreted should activate nearby dormant white blood cells: additional code is needed for this functionality speed of cells and their secretion speeds should also be adjusted
 
-  const particles = new Array(histamineParticles).fill(this.add.particles('histamines'))
+  const particles = new Array(numberOfMastCells).fill(this.add.particles('histamines'))
   particles.forEach(particle => {
     const randomSpeed = Math.floor(Math.random() * 150)
-    const randomX = Math.floor(Math.random() * 1000)
-    const randomY = Math.floor(Math.random() * 10000)
     const secretors = particle.createEmitter({
       speed: randomSpeed,
       scale: {
@@ -22,8 +19,11 @@ export function NPCCells () {
       },
       blendMode: 'ADD'
     })
-    const mastCells = new Array(numberOfMastCells).fill(this.physics.add.image(randomX, randomY, 'mastCell'))
-    mastCells.forEach(mastCell => {
+
+    const mastCells = this.physics.add.group({
+      key: 'mastCell'
+    })
+    mastCells.children.entries.forEach(mastCell => {
       const randomMastCellSpeedX = Math.floor(Math.random() * 100)
       const randomMastCellSpeedY = Math.floor(Math.random() * 250)
       const randomCellLocationX = Math.floor(Math.random() * 500)
@@ -34,7 +34,6 @@ export function NPCCells () {
       secretors.startFollow(mastCell)
       mastCell.x = randomCellLocationX
       mastCell.y = randomCellLocationY
-      console.log("Cell: ", mastCell)
     })
   })
 

@@ -1,4 +1,4 @@
-const router = require('express').Router()
+const router = require('./GameChat')
 module.exports = router
 
 router.use('/users', require('./users'))

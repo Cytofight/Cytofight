@@ -16,4 +16,6 @@ export function create() {
   keyboardControls.call(this)
   scoreAndStars.call(this)
   NPCCells.call(this)
+
+  console.log(this.physics)
 }
