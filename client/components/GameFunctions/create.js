@@ -18,7 +18,13 @@ export function create() {
   keyboardControls.call(this)
   // scoreAndStars.call(this)
   // NPCCells.call(this)
-  this.matter.world.on('collisionStart', (event, bodyA, bodyB) => {
-    this.socket.emit('anyCollision', bodyA, bodyB)
-  })
+  // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+  //   console.log('collision detected, emitting bodies:', bodyA)
+  //   console.log('ship id: ', this.ship.body.id)
+  //   if (bodyA.id === this.ship.body.id) console.log('THEY MATCH')
+  //   // this.socket.emit('anyCollision', bodyA, bodyB)
+  // })
+  // this.socket.on('collided', (bodyA, bodyB) => {
+  //   console.log('WHOLE DATAS: ', bodyA, bodyB)
+  // })
 }

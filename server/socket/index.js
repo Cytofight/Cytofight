@@ -56,9 +56,11 @@ module.exports = io => {
       socket.broadcast.emit('playerMoved', players[socket.id])
     })
 
-    socket.on('anyCollision', (bodyA, bodyB) => {
-      //receive and emit four-datas of both bodies
-    })
+    // socket.on('anyCollision', (bodyA, bodyB) => {
+    //   // console.log('received anyCollision with', bodyA, bodyB)
+    //   //receive and broadcast four-datas of both bodies
+    //   // socket.broadcast.emit('collided', bodyA, bodyB)
+    // })
 
     socket.on('starCollected', function () {
       if (players[socket.id].team === 'red') {

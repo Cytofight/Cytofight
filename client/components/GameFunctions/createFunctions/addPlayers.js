@@ -26,10 +26,10 @@
     this.socket.on('playerMoved', function ({playerId, angle, position, velocity, angularVelocity}) {
       self.otherPlayers.forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
-          otherPlayer.setAngle(angle)
           otherPlayer.setPosition(position.x, position.y)
           otherPlayer.setVelocity(velocity.x, velocity.y)
           otherPlayer.setAngularVelocity(angularVelocity)
+          otherPlayer.setAngle(angle)
         }
       })
     })
@@ -55,6 +55,7 @@
     } else {
       self.ship.setTint(0xff0000)
     }
+    console.log('ME: ', self.ship)
     // self.ship.setDrag(100)
     // self.ship.setAngularDrag(100)
     // self.ship.setMaxVelocity(200)
