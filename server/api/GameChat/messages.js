@@ -3,7 +3,7 @@ const { Message, Author } = require('../../db/models/GameChat')
 
 module.exports = router
 
-// GET /api/messages
+// GET /api/GameChat/messages
 router.get('/', async (req, res, next) => {
   console.log("Message: ", Message)
   try {
@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// POST /api/messages
+// POST /api/GameChat/messages
 router.post('/', async (req, res, next) => {
 
   // We don't have proper users yet (we'll get there soon, though!).
@@ -37,7 +37,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// PUT /api/messages
+// PUT /api/GameChat/messages
 router.put('/:messageId', async (req, res, next) => {
   try {
     const messageId = req.params.messageId
@@ -49,7 +49,7 @@ router.put('/:messageId', async (req, res, next) => {
   }
 })
 
-// DELETE /api/messages
+// DELETE /api/GameChat/messages
 router.delete('/:messageId', async (req, res, next) => {
   try {
     const id = req.params.messageId

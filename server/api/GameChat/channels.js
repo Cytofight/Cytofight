@@ -3,7 +3,7 @@ const { Channel, Message } = require('../../db/models/GameChat')
 
 module.exports = router
 
-// GET /api/channels
+// GET /api/GameChat/channels
 router.get('/', async (req, res, next) => {
   try {
     const channels = await Channel.findAll()
@@ -13,7 +13,7 @@ router.get('/', async (req, res, next) => {
   }
 })
 
-// GET /api/channels/:channelId/messages
+// GET /api/GameChat/channels/:channelId/messages
 router.get('/:channelId/messages', async (req, res, next) => {
   try {
     const channelId = req.params.channelId
@@ -24,7 +24,7 @@ router.get('/:channelId/messages', async (req, res, next) => {
   }
 })
 
-// POST /api/channels
+// POST /api/GameChat/channels
 router.post('/', async (req, res, next) => {
   try {
     const channel = await Channel.create(req.body)
@@ -34,7 +34,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-// DELETE /api/channels
+// DELETE /api/GameChat/channels
 router.delete('/:channelId', async (req, res, next) => {
   try {
     const id = req.params.channelId
