@@ -34,12 +34,14 @@ export function NPCCells () {
     const randomPositionY = Math.floor(Math.random() * 500)
 
     cell = this.matter.add.image(randomPositionX, randomPositionY, 'dormantTCell')
+    console.log("CELL: ", cell)
     cell.setCircle(cell.width / 2, defaultCellParams)
     cell.setVelocity(randomVelocityX, randomVelocityY)
     cell.activated = false
     cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
       console.log("I'm a good guy now!")
+      
       cell.activated = true
     }
     return cell

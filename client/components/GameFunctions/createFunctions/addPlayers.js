@@ -47,6 +47,7 @@
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
     self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
+    console.log("SELF SHIP ", self.ship)
     self.ship.setScale(0.5)
     self.ship.setCircle(self.ship.width / 2, shipParams)
     self.cameras.main.startFollow(self.ship) //******* */
