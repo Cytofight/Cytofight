@@ -5,6 +5,7 @@ module.exports = router
 
 // GET /api/messages
 router.get('/', async (req, res, next) => {
+  console.log("Message: ", Message)
   try {
     const messages = await Message.findAll()
     res.json(messages)
@@ -22,7 +23,7 @@ router.post('/', async (req, res, next) => {
   try {
     const [author] = await Author.findOrCreate({
       where: {
-        name: req.body.name || 'Cody'
+        name: req.body.name || 'Eric'
       }
     })
     const message = Message.build(req.body)
