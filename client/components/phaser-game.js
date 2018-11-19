@@ -9,9 +9,9 @@ const config = {
   width: 800,
   height: 600,
   physics: {
-    default: 'arcade',
-    arcade: {
-      debug: false,
+    default: 'matter',
+    matter: {
+      // debug: false,
       gravity: {
         y: 0
       }
