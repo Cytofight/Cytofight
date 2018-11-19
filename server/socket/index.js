@@ -13,9 +13,16 @@ module.exports = io => {
     console.log(`A new player has arrived: ${socket.id}`)
     // create a new player and add it to our players object
     players[socket.id] = {
-      rotation: 0,
-      x: Math.floor(Math.random() * 700) + 50,
-      y: Math.floor(Math.random() * 500) + 50,
+      angle: 0,
+      position: {
+        x: Math.floor(Math.random() * 700) + 50,
+        y: Math.floor(Math.random() * 500) + 50,
+      },
+      velocity: {
+        x: 0,
+        y: 0
+      },
+      angularVelocity: 0,
       playerId: socket.id,
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue'
     }
@@ -39,13 +46,21 @@ module.exports = io => {
     })
 
     // when a player moves, update the player data
-    socket.on('playerMovement', function (movementData) {
-      players[socket.id].x = movementData.x
-      players[socket.id].y = movementData.y
-      players[socket.id].rotation = movementData.rotation
+    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity }) {
+      players[socket.id].angle = angle
+      players[socket.id].position = position
+      players[socket.id].velocity = velocity
+      players[socket.id].angularVelocity = angularVelocity
+      // players[socket.id].rotation = movementData.rotation
       // emit a message to all players about the player that moved
       socket.broadcast.emit('playerMoved', players[socket.id])
     })
+
+    // socket.on('anyCollision', (bodyA, bodyB) => {
+    //   // console.log('received anyCollision with', bodyA, bodyB)
+    //   //receive and broadcast four-datas of both bodies
+    //   // socket.broadcast.emit('collided', bodyA, bodyB)
+    // })
 
     socket.on('starCollected', function () {
       if (players[socket.id].team === 'red') {
