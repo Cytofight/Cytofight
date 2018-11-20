@@ -17,7 +17,6 @@ export function limitSpeed(obj, maxSpeed) {
 }
 
 export function throttle(func, milliseconds) {
-  console.log(this)
   let time = Date.now() - milliseconds;
   return function(...args){
     if(Date.now() - time >= milliseconds){
@@ -30,9 +29,9 @@ export function throttle(func, milliseconds) {
 
 export function fire () {
   console.log("FIRE!!! But working now! I swear!")
-  let bullet = this.bullets.get();
-  if(bullet) {
-    bullet.fire(this.ship.body.position.x, this.ship.body.position.y);
+  let antibody = this.antibodies.get();
+  if(antibody) {
+    antibody.fire(this.ship.body.position.x, this.ship.body.position.y);
   }
 }
 // export const throttledFire = throttle(fire, 200)

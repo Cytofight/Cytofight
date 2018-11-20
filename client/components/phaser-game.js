@@ -26,13 +26,14 @@ export class Antibody extends Phaser.GameObjects.Image {
     super(scene);
     console.log('in the constructor')
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody");
+    console.log(this)
     this.speed = Phaser.Math.GetSpeed(400, 1);
     console.log(this, scene.ship)
   }
   
   fire(x, y) {
     this.setPosition(x, y - this.scene.ship.height/2);
-    this.angle = this.scene.ship.body.angle
+    this.rotation = this.scene.ship.body.angle
       this.setActive(true);
       this.setVisible(true);
   }
