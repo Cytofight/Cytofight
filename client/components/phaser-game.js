@@ -1,8 +1,8 @@
 // var React = require('react-phaser')
 import Phaser from 'phaser'
 import React, {Component} from 'react'
-import gamePlay from './GameFunctions/index'
 import startMenu from './GameFunctions/startMenu'
+import gamePlay from './GameFunctions/index'
 
 const config = {
   type: Phaser.AUTO,
