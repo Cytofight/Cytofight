@@ -41,7 +41,7 @@ export function NPCCells () {
     cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
       console.log("I'm a good guy now!")
-      
+      cell.setTint(0x01c0ff)
       cell.activated = true
     }
     return cell

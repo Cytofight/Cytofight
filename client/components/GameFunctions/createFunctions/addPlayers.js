@@ -47,14 +47,13 @@
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
     self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
-    console.log("SELF SHIP ", self.ship)
     self.ship.setScale(0.5)
     self.ship.setCircle(self.ship.width / 2, shipParams)
     self.cameras.main.startFollow(self.ship) //******* */
     if (playerInfo.team === 'blue') {
-      self.ship.setTint(0x0000ff)
+      self.ship.setTint(0xd60000)
     } else {
-      self.ship.setTint(0xff0000)
+      self.ship.setTint(0x01c0ff)
     }
     console.log('ME: ', self.ship)
     // self.ship.setDrag(100)
@@ -71,10 +70,11 @@
     otherPlayer.setScale(0.5);
     otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
     if (playerInfo.team === 'blue') {
-      otherPlayer.setTint(0x0000ff)
+      otherPlayer.setTint(0xd60000)
     } else {
-      otherPlayer.setTint(0xff0000)
+      otherPlayer.setTint(0x01c0ff)
     }
     otherPlayer.playerId = playerInfo.playerId
     self.otherPlayers.push(otherPlayer)
   }
+
