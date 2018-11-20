@@ -17,9 +17,14 @@ export function scoreAndStars() {
 
   this.socket.on('starLocation', function (starLocation) {
     if (self.star) self.star.destroy()
-    self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star')
-    self.physics.add.overlap(self.ship, self.star, function () {
-      this.socket.emit('starCollected')
-    }, null, self)
+    self.star = self.matter.add.image(starLocation.x, starLocation.y, 'star', null, {label: 'star'}).setStatic(true).setSensor(true)
+    // self.physics.add.overlap(self.ship, self.star, function () {
+    //   this.socket.emit('starCollected')
+    // }, null, self)
+    self.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+      if(bodyA.label === 'me' && bodyB.label === 'star') {
+        self.socket.emit('starCollected')
+      }
+    })
   })
 }
