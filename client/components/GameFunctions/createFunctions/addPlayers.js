@@ -1,30 +1,31 @@
   //Initialize the players in the game
   export function players() {
-    const self = this
+    console.log("TOP OF PAGE THIS: ", this)
+    // const self = this
     this.socket = io()
     this.otherPlayers = []
-    this.socket.on('currentPlayers', function (players) {
-      Object.keys(players).forEach(function(id) {
-        if (players[id].playerId === self.socket.id) {
-          addPlayer(self, players[id])
+    this.socket.on('currentPlayers', (players) => {
+      Object.keys(players).forEach((id) => {
+        if (players[id].playerId === this.socket.id) {
+          addPlayer.call(this, this, players[id])
         } else {
-          addOtherPlayers(self, players[id])
+          addOtherPlayers.call(this, this, players[id])
         }
       })
     })
-    this.socket.on('newPlayer', function (playerInfo) {
-      addOtherPlayers(self, playerInfo)
+    this.socket.on('newPlayer', (playerInfo) => {
+      addOtherPlayers.call(this, this, playerInfo)
     })
-    this.socket.on('disconnect', function (playerId) {
-      self.otherPlayers.forEach(function (otherPlayer) {
+    this.socket.on('disconnect', (playerId) => {
+      this.otherPlayers.forEach((otherPlayer) => {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy()
-          self.otherPlayers.filter(() => playerId !== otherPlayer.playerId)
+          this.otherPlayers.filter(() => playerId !== otherPlayer.playerId)
         }
       })
     })
-    this.socket.on('playerMoved', function ({playerId, angle, position, velocity, angularVelocity}) {
-      self.otherPlayers.forEach(function (otherPlayer) {
+    this.socket.on('playerMoved', ({playerId, angle, position, velocity, angularVelocity}) => {
+      this.otherPlayers.forEach((otherPlayer) => {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.setPosition(position.x, position.y)
           otherPlayer.setVelocity(velocity.x, velocity.y)
@@ -33,6 +34,7 @@
         }
       })
     })
+    console.log("THIS IS A THIS: ", this, "THIS IS this: ", this)
   }
 
   const shipParams = {
@@ -48,16 +50,17 @@
     //   .setDisplaySize(53, 40)
     const randomX = Math.floor(Math.random() * 1000)
     const randomY = Math.floor(Math.random() * 1000)
-    self.ship = self.matter.add.image(randomX, randomY, 'ship')
-    self.ship.setScale(0.5)
-    self.ship.setCircle(self.ship.width / 2, {label: 'me', ...shipParams})
-    self.cameras.main.startFollow(self.ship) //******* */
+    this.ship = this.matter.add.image(randomX, randomY, 'ship')
+    this.ship.setScale(0.5)
+    this.ship.setCircle(this.ship.width / 2, {label: 'me', ...shipParams})
+    this.cameras.main.startFollow(this.ship) //******* */
     if (playerInfo.team === 'blue') {
-      self.ship.setTint(0xd60000)
+      this.ship.setTint(0xd60000)
     } else {
-      self.ship.setTint(0x01c0ff)
+      this.ship.setTint(0x01c0ff)
     }
-    console.log('ME: ', self.ship)
+    console.log("ADDPLAYER: ", this)
+    console.log('ME: ', this.ship)
     // self.ship.setDrag(100)
     // self.ship.setAngularDrag(100)
     // self.ship.setMaxVelocity(200)
@@ -69,7 +72,7 @@
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
     const randomXY = Math.floor(Math.random() * 1000)
-    const otherPlayer = self.matter.add.image(randomXY, randomXY, 'ship')
+    const otherPlayer = this.matter.add.image(randomXY, randomXY, 'ship')
     otherPlayer.setScale(0.5);
     otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
     if (playerInfo.team === 'blue') {
@@ -78,5 +81,5 @@
       otherPlayer.setTint(0x01c0ff)
     }
     otherPlayer.playerId = playerInfo.playerId
-    self.otherPlayers.push(otherPlayer)
+    this.otherPlayers.push(otherPlayer)
   }
