@@ -46,7 +46,8 @@
     //   .image(playerInfo.x, playerInfo.y, 'ship')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
-    self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
+    const randomXY = Math.floor(Math.random() * 1000)
+    self.ship = self.matter.add.image(randomXY, randomXY, 'ship')
     self.ship.setScale(0.5)
     self.ship.setCircle(self.ship.width / 2, shipParams)
     self.cameras.main.startFollow(self.ship) //******* */
@@ -66,7 +67,8 @@
     //   .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
-    const otherPlayer = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
+    const randomXY = Math.floor(Math.random() * 1000)
+    const otherPlayer = self.matter.add.image(randomXY, randomXY, 'ship')
     otherPlayer.setScale(0.5);
     otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
     if (playerInfo.team === 'blue') {
@@ -77,4 +79,3 @@
     otherPlayer.playerId = playerInfo.playerId
     self.otherPlayers.push(otherPlayer)
   }
-

@@ -28,8 +28,8 @@ export function NPCCells () {
   //   }
   // })
   this.dormantTCells = new Array(numberOfDormantTCells).fill(null).map(cell => {
-    const randomVelocityX = Math.floor(Math.random() * 8 - 4)
-    const randomVelocityY = Math.floor(Math.random() * 8 - 4)
+    const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
+    const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
     const randomPositionX = Math.floor(Math.random() * 500)
     const randomPositionY = Math.floor(Math.random() * 500)
 
@@ -79,7 +79,7 @@ export function NPCCells () {
 
   const particles = new Array(numberOfMastCells).fill(this.add.particles('histamines'))
   particles.forEach(particle => {
-    const randomParticleSpeed = Math.floor(Math.random() * 150)
+    const randomParticleSpeed = Math.floor(Math.random() * 200) + 100
     const secretors = particle.createEmitter({
       x: 1,
       y: 1,
