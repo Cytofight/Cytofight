@@ -1,4 +1,5 @@
 import { players, keyboardControls, scoreAndStars, NPCCells } from './createFunctions'
+import { Antibody } from '../phaser-game'
 
 export function preload() {
   this.load.image('ship', 'assets/PNG/b_cell.png')
@@ -16,6 +17,12 @@ export function create() {
   this.matter.world.setBounds(0, 0, 1000, 1000)
   this.cameras.main.setBounds(0, 0, 1000, 1000)
   players.call(this)
+  // const test = new Bullet(this)
+  this.antibodies = this.add.group({
+    classType: Antibody,
+    maxSize: 20,
+    runChildUpdate: true
+  });
   keyboardControls.call(this)
   scoreAndStars.call(this)
   NPCCells.call(this)
