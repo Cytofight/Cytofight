@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 export default class startMenu extends Phaser.Scene {
   constructor() {
     super('startMenu')
+    this.team = ''
   }
   preload() {
     this.load.image('ship', 'assets/PNG/b_cell.png')
@@ -27,6 +28,7 @@ export default class startMenu extends Phaser.Scene {
       'pointerdown',
       function() {
         console.log('Imma blue')
+        this.team = 'blue'
         this.scene.start('gamePlay')
       },
       this
@@ -43,6 +45,7 @@ export default class startMenu extends Phaser.Scene {
       'pointerdown',
       function() {
         console.log('Imma red')
+        this.team = 'red'
         this.scene.start('gamePlay')
       },
       this

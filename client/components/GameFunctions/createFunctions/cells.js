@@ -1,9 +1,9 @@
 // import Phaser from 'phaser'
 
 // const histamineParticles = 2
-const numberOfMastCells = 2
-const numberOfDormantTCells = 5
-const numberOfEpithelialCells = 5
+const numberOfMastCells = 4
+const numberOfDormantTCells = 15
+const numberOfEpithelialCells = 20
 
 const defaultCellParams = {
   restitution: 1,
@@ -12,10 +12,10 @@ const defaultCellParams = {
 }
 
 // function changeCell(secretor, cell) {
-  //   console.log('OW, A PARTICLE COLLISION!')
-  // }
-  
-export function NPCCells () {
+//   console.log('OW, A PARTICLE COLLISION!')
+// }
+
+export function NPCCells() {
   //Create automated mast cells and their histamine secretors
   //This code creates mast cells that secrete histamines. Histamines activate dormant immune cells to alert them of an active infection. Contact with the histamines being secreted should activate nearby dormant white blood cells: additional code is needed for this functionality speed of cells and their secretion speeds should also be adjusted
   // this.dormantTCells = this.physics.add.group({
@@ -33,11 +33,18 @@ export function NPCCells () {
     const randomPositionX = Math.floor(Math.random() * 500)
     const randomPositionY = Math.floor(Math.random() * 500)
 
-    cell = this.matter.add.image(randomPositionX, randomPositionY, 'dormantTCell')
-    console.log("CELL: ", cell)
+    cell = this.matter.add.image(
+      randomPositionX,
+      randomPositionY,
+      'dormantTCell'
+    )
+    console.log('CELL: ', cell)
     cell.setCircle(cell.width / 2, defaultCellParams)
     cell.setVelocity(randomVelocityX, randomVelocityY)
-    cell.randomDirection = {x: Math.random() * 0.0006 - 0.0003, y: Math.random() * 0.0006 - 0.0003}
+    cell.randomDirection = {
+      x: Math.random() * 0.0006 - 0.0003,
+      y: Math.random() * 0.0006 - 0.0003
+    }
     cell.activated = false
     cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
@@ -48,21 +55,21 @@ export function NPCCells () {
     return cell
   })
   // this.dormantTCells.forEach(cell => {
-    //   const randomX = Math.floor(Math.random() * 100)
-    //   const randomY = Math.floor(Math.random() * 250)
-    //   const randomCellLocationX = Math.floor(Math.random() * 500)
-    //   const randomCellLocationY = Math.floor(Math.random() * 500)
-    //   // cell.setBounce(1, 1)
-    //   // cell.x = randomCellLocationX
-    //   // cell.y = randomCellLocationY
-    // cell.body.setCollideWorldBounds(true)
+  //   const randomX = Math.floor(Math.random() * 100)
+  //   const randomY = Math.floor(Math.random() * 250)
+  //   const randomCellLocationX = Math.floor(Math.random() * 500)
+  //   const randomCellLocationY = Math.floor(Math.random() * 500)
+  //   // cell.setBounce(1, 1)
+  //   // cell.x = randomCellLocationX
+  //   // cell.y = randomCellLocationY
+  // cell.body.setCollideWorldBounds(true)
   //   // cell.setPosition(randomCellLocationX, randomCellLocationY)
 
   // })
   // let circle = new Phaser.Geom.Circle(400, 300, 150)
   // Randomly position the dormantTCells within the circle
   // Phaser.Actions.RandomCircle(this.dormantTCells.getChildren(), circle)
-    
+
   const changeCell = {
     contains: (x, y) => {
       for (let i = 0; i < this.dormantTCells.length; i++) {
@@ -77,10 +84,12 @@ export function NPCCells () {
       return false
     }
   }
-  
-    //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
 
-  const particles = new Array(numberOfMastCells).fill(this.add.particles('histamines'))
+  //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
+
+  const particles = new Array(numberOfMastCells).fill(
+    this.add.particles('histamines')
+  )
   particles.forEach(particle => {
     const randomParticleSpeed = Math.floor(Math.random() * 200) + 100
     const secretors = particle.createEmitter({
@@ -106,34 +115,43 @@ export function NPCCells () {
     particle.mastCell.setCircle(particle.mastCell.width / 2, defaultCellParams)
     particle.mastCell.setVelocity(randomMastCellSpeedX, randomMastCellSpeedY)
     secretors.startFollow(particle.mastCell)
-  // //   mastCells.forEach(mastCell => {
-  // //     const randomCellLocationX = Math.floor(Math.random() * 500)
-  // //     const randomCellLocationY = Math.floor(Math.random() * 500)
-  // //     mastCell.setBounce(1, 1)
-  // //     mastCell.setCollideWorldBounds(true)
-  // //     mastCell.x = randomCellLocationX
-  // //     mastCell.y = randomCellLocationY
-  // //     console.log("Cell: ", mastCell)
-  // //   })
-  // // })
+    // //   mastCells.forEach(mastCell => {
+    // //     const randomCellLocationX = Math.floor(Math.random() * 500)
+    // //     const randomCellLocationY = Math.floor(Math.random() * 500)
+    // //     mastCell.setBounce(1, 1)
+    // //     mastCell.setCollideWorldBounds(true)
+    // //     mastCell.x = randomCellLocationX
+    // //     mastCell.y = randomCellLocationY
+    // //     console.log("Cell: ", mastCell)
+    // //   })
+    // // })
   })
 
-  this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(cell => {
-    const randomEpithelialX = Math.floor(Math.random() * 1000)
-    const randomEpithelialY = Math.floor(Math.random() * 1000)
+  this.epithelialCells = new Array(numberOfEpithelialCells)
+    .fill(null)
+    .map(cell => {
+      const randomEpithelialX = Math.floor(Math.random() * 1000)
+      const randomEpithelialY = Math.floor(Math.random() * 1000)
 
-    cell = this.matter.add.image(randomEpithelialX, randomEpithelialY, 'epithelialCell')
-    cell.setRectangle(cell.width, cell.height, {isStatic: true, ...defaultCellParams})
-    cell.activated = false
-    cell.activate = function() {
-      this.setVelocity(0, 0) //PLACEHOLDER
-      console.log("I'm a bad guy now!")
-      cell.setTint(0xd60000)
-      cell.activated = true
-    }
-    console.log("epithelialCells: ", cell)
-    return cell
-  })
+      cell = this.matter.add.image(
+        randomEpithelialX,
+        randomEpithelialY,
+        'epithelialCell'
+      )
+      cell.setRectangle(cell.width, cell.height, {
+        isStatic: true,
+        ...defaultCellParams
+      })
+      cell.activated = false
+      cell.activate = function() {
+        this.setVelocity(0, 0) //PLACEHOLDER
+        console.log("I'm a bad guy now!")
+        cell.setTint(0xd60000)
+        cell.activated = true
+      }
+      console.log('epithelialCells: ', cell)
+      return cell
+    })
 
   const changeEpithelialCell = {
     contains: (x, y) => {
@@ -149,10 +167,10 @@ export function NPCCells () {
       return false
     }
   }
-  console.log("THIS: ", this, "THIS AGAIN: ", this, "SHIP: ", this.ship)
+  console.log('THIS: ', this, 'THIS AGAIN: ', this, 'SHIP: ', this.ship)
   // this.ship.body = "HELLO AMANDA!"
   // console.log("ship: ", this.ship.body)
-  console.log("otherPlayers ", this.otherPlayers)
+  console.log('otherPlayers ', this.otherPlayers)
   // console.log("self.ship: ", self)
   // // These epithelialCells are lung cells that act as the possible infection sites. If infected, it'll produce more units for the infected team. They need to be protected by the white blood cells to avoid losing the game
   // // const epithelialCells = this.physics.add.group({
