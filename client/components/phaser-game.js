@@ -21,6 +21,33 @@ const config = {
   scene: [startMenu, gamePlay]
 }
 
+export class Antibody extends Phaser.GameObjects.Image {
+  constructor(scene) {
+    super(scene);
+    console.log('in the constructor')
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody");
+    this.speed = Phaser.Math.GetSpeed(400, 1);
+    console.log(this, scene.ship)
+  }
+  
+  fire(x, y) {
+    this.setPosition(x, y - this.scene.ship.height/2);
+    this.angle = this.scene.ship.body.angle
+      this.setActive(true);
+      this.setVisible(true);
+  }
+  
+  update(time, delta) {
+    this.y -= this.speed * delta;
+    this.x -= this.speed * delta;
+    
+    if (this.y < -50) {
+      this.setActive(false);
+      this.setVisible(false);
+    }
+  }
+}
+
 export default class Game extends Component {
   constructor(props) {
     super(props)
