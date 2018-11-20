@@ -1,7 +1,8 @@
 // var React = require('react-phaser')
 import Phaser from 'phaser'
 import React, {Component} from 'react'
-import {preload, create, update} from './GameFunctions/index'
+import gamePlay from './GameFunctions/index'
+import startMenu from './GameFunctions/startMenu'
 
 const config = {
   type: Phaser.AUTO,
@@ -17,11 +18,7 @@ const config = {
       }
     }
   },
-  scene: {
-    preload: preload,
-    create: create,
-    update: update
-  }
+  scene: [startMenu, gamePlay]
 }
 
 export class Antibody extends Phaser.GameObjects.Image {
