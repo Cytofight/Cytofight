@@ -18,33 +18,6 @@ export function preload() {
 }
 
 export function create() {
-<<<<<<< HEAD
-  const play = this.add.image(400, 300, 'click').setInteractive()
-  play.once(
-    'pointerup',
-    function() {
-      play.setVisible(false)
-      // PUT IN A SETUP FUNC
-      this.matter.world.setBounds(0, 0, 1000, 1000)
-      this.cameras.main.setBounds(0, 0, 1000, 1000)
-      players.call(this)
-      keyboardControls.call(this)
-      // scoreAndStars.call(this)
-      NPCCells.call(this)
-      // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-      //   console.log('collision detected, emitting bodies:', bodyA)
-      //   console.log('ship id: ', this.ship.body.id)
-      //   if (bodyA.id === this.ship.body.id) console.log('THEY MATCH')
-      //   // this.socket.emit('anyCollision', bodyA, bodyB)
-      // })
-      // this.socket.on('collided', (bodyA, bodyB) => {
-      //   console.log('WHOLE DATAS: ', bodyA, bodyB)
-      // })
-    },
-    this
-  )
-}
-=======
   // PUT IN A SETUP FUNC
   this.matter.world.setBounds(0, 0, 1000, 1000)
   this.cameras.main.setBounds(0, 0, 1000, 1000)
@@ -62,4 +35,3 @@ export function create() {
   //   console.log('WHOLE DATAS: ', bodyA, bodyB)
   // })
 }
->>>>>>> 917ee2570c31ae82c1d474836ef8ad49a0d9678f
