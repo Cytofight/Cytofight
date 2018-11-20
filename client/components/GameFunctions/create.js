@@ -27,16 +27,6 @@ export function create() {
   keyboardControls.call(this)
   // scoreAndStars.call(this)
   NPCCells.call(this)
-  this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-    // console.log('collision detected, emitting bodies:', bodyA)
-    // console.log('ship id: ', this.ship.body.id)
-    // console.log(this.epithelialCells)
-    const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
-    if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
-      matchingCell.setTint(0xd60000)
-    }
-    // this.socket.emit('anyCollision', bodyA, bodyB)
-  })
   // this.socket.on('collided', (bodyA, bodyB) => {
   //   console.log('WHOLE DATAS: ', bodyA, bodyB)
   // })
