@@ -4,9 +4,9 @@
 module.exports = io => {
   let players = {}
   let star = {
-    x: Math.floor(Math.random() * 700) + 50,
-    y: Math.floor(Math.random() * 500) + 50
-  }
+    x: Math.floor(Math.random() * 900) + 50,
+    y: Math.floor(Math.random() * 900) + 50
+  };
   let scores = {
     blue: 0,
     red: 0
@@ -71,8 +71,8 @@ module.exports = io => {
       } else {
         scores.blue += 10
       }
-      star.x = Math.floor(Math.random() * 700) + 50
-      star.y = Math.floor(Math.random() * 500) + 50
+      star.x = Math.floor(Math.random() * 900) + 50
+      star.y = Math.floor(Math.random() * 900) + 50
       io.emit('starLocation', star)
       io.emit('scoreUpdate', scores)
     })

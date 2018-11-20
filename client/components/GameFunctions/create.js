@@ -17,7 +17,7 @@ export function create() {
   this.cameras.main.setBounds(0, 0, 1000, 1000)
   players.call(this)
   keyboardControls.call(this)
-  // scoreAndStars.call(this)
+  scoreAndStars.call(this)
   NPCCells.call(this)
   // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
   //   console.log('collision detected, emitting bodies:', bodyA)

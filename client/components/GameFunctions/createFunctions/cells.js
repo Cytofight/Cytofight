@@ -3,7 +3,7 @@
 // const histamineParticles = 2
 const numberOfMastCells = 2
 const numberOfDormantTCells = 5
-// const numberOfEpithelialCells = 5
+const numberOfEpithelialCells = 5
 
 const defaultCellParams = {
   restitution: 1,
@@ -37,6 +37,7 @@ export function NPCCells () {
     console.log("CELL: ", cell)
     cell.setCircle(cell.width / 2, defaultCellParams)
     cell.setVelocity(randomVelocityX, randomVelocityY)
+    cell.randomDirection = {x: Math.random() * 0.0006 - 0.0003, y: Math.random() * 0.0006 - 0.0003}
     cell.activated = false
     cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
@@ -113,9 +114,17 @@ export function NPCCells () {
   // //     console.log("Cell: ", mastCell)
   // //   })
   // // })
+  })
 
   // //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
 
+  this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(cell => {
+    const randomEpithelialX = Math.floor(Math.random() * 1000)
+    const randomEpithelialY = Math.floor(Math.random() * 1000)
+
+    cell = this.matter.add.image(randomEpithelialX, randomEpithelialY, 'epithelialCell')
+    cell.setRectangle(cell.width, cell.height, {isStatic: true, ...defaultCellParams})
+  })
   // // These epithelialCells are lung cells that act as the possible infection sites. If infected, it'll produce more units for the infected team. They need to be protected by the white blood cells to avoid losing the game
   // // const epithelialCells = this.physics.add.group({
   // //   key: 'epithelialCell',
@@ -131,5 +140,4 @@ export function NPCCells () {
   // //   const randomCellLocationY = Math.floor(Math.random() * 500)
   // //   cell.x = randomCellLocationX
   // //   cell.y = randomCellLocationY
-  })
 }
