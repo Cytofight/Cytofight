@@ -1,5 +1,6 @@
-export function limitSpeed(velX, velY) {
-  const maxSpeed = 10
+export function limitSpeed(obj, maxSpeed) {
+  const velX = obj.body.velocity.x
+  const velY = obj.body.velocity.y
   const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
@@ -11,7 +12,7 @@ export function limitSpeed(velX, velY) {
     const newY = Math.sin(angle)
     // console.log(newX, newY)
     // console.log(this.ship.body)
-    this.ship.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
+    obj.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
   }
 }
 
@@ -31,6 +32,11 @@ export function fire () {
 }
 // export const throttledFire = throttle(fire, 200)
 
-export function randomTravel(x, y) {
-  
+export function updateForce(obj) {
+  const randomX = Math.random() * 0.0006 - 0.0003
+  const randomY = Math.random() * 0.0006 - 0.0003
+  obj.randomDirection = {x: randomX, y: randomY}
+  // cells have a max speed
+  // each cell has its own per-update x,y force
+  // force changes every ? ms
 }

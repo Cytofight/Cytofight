@@ -1,5 +1,5 @@
 import { NPCCells } from './createFunctions';
-import { limitSpeed, throttle, fire } from './util'
+import { limitSpeed, throttle, fire, updateForce } from './util'
 
 // const debounce = require('lodash.debounce')
 
@@ -18,6 +18,7 @@ import { limitSpeed, throttle, fire } from './util'
 //   console.log("FIRE!!! But working now!")
 // }
 const throttledFire = throttle(fire, 200)
+const throttledUpdateForce = throttle(updateForce, 2000)
 
 // function randomTravel(x, y) {
   
@@ -61,7 +62,7 @@ export function update(time) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
 
-    limitSpeed.call(this, this.ship.body.velocity.x, this.ship.body.velocity.y)
+    limitSpeed(this.ship, 10)
 
     // if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
     //   // console.log('Too fast!')
@@ -114,4 +115,10 @@ export function update(time) {
       velocity, angularVelocity
     }
   }
+  this.dormantTCells.forEach(cell => {
+    throttledUpdateForce(cell)
+    // console.log(cell.randomDirection)
+    cell.applyForce(cell.randomDirection)
+    limitSpeed(cell, 5)
+  })
 }

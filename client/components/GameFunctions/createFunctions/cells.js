@@ -36,6 +36,7 @@ export function NPCCells () {
     cell = this.matter.add.image(randomPositionX, randomPositionY, 'dormantTCell')
     cell.setCircle(cell.width / 2, defaultCellParams)
     cell.setVelocity(randomVelocityX, randomVelocityY)
+    cell.randomDirection = {x: Math.random() * 0.0006 - 0.0003, y: Math.random() * 0.0006 - 0.0003}
     cell.activated = false
     cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
