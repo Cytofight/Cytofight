@@ -19,8 +19,8 @@ export function preload() {
 
 export function create() {
   // PUT IN A SETUP FUNC
-  this.matter.world.setBounds(0, 0, 1000, 1000)
-  this.cameras.main.setBounds(0, 0, 1000, 1000)
+  this.matter.world.setBounds(0, 0, 7000, 7000)
+  this.cameras.main.setBounds(0, 0, 7000, 7000)
   players.call(this)
   keyboardControls.call(this)
   scoreAndStars.call(this)
