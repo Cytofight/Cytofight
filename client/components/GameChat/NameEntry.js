@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react'
 import { connect } from 'react-redux'
-import { userSet } from '../../store'
+import { userSet } from '../../store/gameChat'
 
 export class NameEntry extends Component {
     constructor() {
@@ -14,13 +14,14 @@ export class NameEntry extends Component {
     }
 
     render() {
+    console.log(this.props)
         return (
             <Fragment>
                 <label htmlFor="name">Your name:</label>
                 <input
                     name="name"
                     onChange={this.handleChange}
-                    value={this.props.userName}
+                    // value={this.props.userName}
                 />
             </Fragment>
         )

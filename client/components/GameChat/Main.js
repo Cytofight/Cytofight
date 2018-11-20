@@ -20,7 +20,7 @@ export class Main extends Component {
         <main>
           <Switch>
             <Route path="/channels/:channelId" component={MessagesList} />
-            <Redirect to="/channels/1" />
+            {/* <Redirect to="/channels/1" /> */}
           </Switch>
         </main>
       </div>

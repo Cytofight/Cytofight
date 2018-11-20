@@ -22,12 +22,12 @@ export const userSet = userName => ({
 
 // Thunk Creator
 export const fetchMessages = () => async dispatch => {
-    const { data: messages } = await axios.get('/api/messages')
+    const { data: messages } = await axios.get('/api/GameChat/messages')
     dispatch(gotMessagesFromServer(messages))
 }
 export const sendMessage = message => async (dispatch, getState) => {
     message.name = getState().user
-    const { data: newMessage } = await axios.post('/api/messages', message)
+    const { data: newMessage } = await axios.post('/api/GameChat/messages', message)
     dispatch(gotNewMessage(newMessage))
     socket.emit('new-message', newMessage)
 }
