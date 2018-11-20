@@ -1,6 +1,12 @@
-import { players, keyboardControls, scoreAndStars, NPCCells } from './createFunctions'
+import {
+  players,
+  keyboardControls,
+  scoreAndStars,
+  NPCCells
+} from './createFunctions'
 
 export function preload() {
+  this.load.image('click', 'assets/PNG/play.png')
   this.load.image('ship', 'assets/PNG/b_cell.png')
   this.load.image('otherPlayer', 'assets/PNG/whitebloodcell.png')
   this.load.image('star', 'assets/PNG/star_gold.png')
