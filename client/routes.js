@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import {withRouter, Route, Switch} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import {Login, Signup, UserHome, Game, Heroes, Villains} from './components'
+import { Main } from './components/GameChat'
 import {me} from './store'
 
 /**
@@ -24,6 +25,7 @@ class Routes extends Component {
         <Route path="/game" component={Game} />
         <Route path="/heroes" component={Heroes} />
         <Route path="/villains" component={Villains} />
+        <Route path="/messages" component={Main} />
         {isLoggedIn && (
           <Switch>
             {/* Routes placed here are only available after logging in */}

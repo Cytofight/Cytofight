@@ -46,16 +46,16 @@
     //   .image(playerInfo.x, playerInfo.y, 'ship')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
-    playerInfo.x = 500
-    playerInfo.y = 500
-    self.ship = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
+    const randomX = Math.floor(Math.random() * 1000)
+    const randomY = Math.floor(Math.random() * 1000)
+    self.ship = self.matter.add.image(randomX, randomY, 'ship')
     self.ship.setScale(0.5)
     self.ship.setCircle(self.ship.width / 2, {label: 'me', ...shipParams})
     self.cameras.main.startFollow(self.ship) //******* */
     if (playerInfo.team === 'blue') {
-      self.ship.setTint(0x0000ff)
+      self.ship.setTint(0xd60000)
     } else {
-      self.ship.setTint(0xff0000)
+      self.ship.setTint(0x01c0ff)
     }
     console.log('ME: ', self.ship)
     // self.ship.setDrag(100)
@@ -68,13 +68,14 @@
     //   .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
-    const otherPlayer = self.matter.add.image(playerInfo.x, playerInfo.y, 'ship')
+    const randomXY = Math.floor(Math.random() * 1000)
+    const otherPlayer = self.matter.add.image(randomXY, randomXY, 'ship')
     otherPlayer.setScale(0.5);
     otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
     if (playerInfo.team === 'blue') {
-      otherPlayer.setTint(0x0000ff)
+      otherPlayer.setTint(0xd60000)
     } else {
-      otherPlayer.setTint(0xff0000)
+      otherPlayer.setTint(0x01c0ff)
     }
     otherPlayer.playerId = playerInfo.playerId
     self.otherPlayers.push(otherPlayer)
