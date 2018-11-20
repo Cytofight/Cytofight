@@ -23,23 +23,26 @@ const throttledUpdateForce = throttle(updateForce, 2000)
   
   
   // function limitSpeed(velX, velY) {
-  //   const maxSpeed = 10
-  //   const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
-  //   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
-
-  //   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    //     console.log('Too fast!')
-    //     const angle = Math.abs(Math.atan(velY / velX))
-    //     // console.log('THING: ', angle, Math.cos(angle))
-    //     const newX = Math.cos(angle)
-    //     const newY = Math.sin(angle)
-    //     // console.log(newX, newY)
-    //     // console.log(this.ship.body)
-    //     this.ship.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
-    //   }
-    // }
+    //   const maxSpeed = 10
+    //   const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
+    //   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
     
-    export function update(time) {
+    //   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
+      //     console.log('Too fast!')
+      //     const angle = Math.abs(Math.atan(velY / velX))
+      //     // console.log('THING: ', angle, Math.cos(angle))
+      //     const newX = Math.cos(angle)
+      //     const newY = Math.sin(angle)
+      //     // console.log(newX, newY)
+      //     // console.log(this.ship.body)
+      //     this.ship.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
+      //   }
+      // }
+      
+const throttledFire = throttle(fire, 200)
+  export function update(time) {
+    const boundFire = throttledFire.bind(this)
+
       if (this.ship) {
         // const maxSpeed = 10
         // // const accel = 0.005
@@ -75,11 +78,10 @@ const throttledUpdateForce = throttle(updateForce, 2000)
     // this.physics.world.wrap(this.ship, 5)
     
     //This needs to be edited so that your cell has the ability to fire antibodies
-    const throttledFire = throttle(fire, 200).bind(this)
     if(this.keyFire.isDown){
       // console.log("Fire!")
       // limit(400, fire)
-      throttledFire()
+      boundFire()
     }
     
     // emit player movement
