@@ -50,13 +50,15 @@ module.exports = io => {
 
     // when a player moves, update the player data
     socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity }) {
-      players[socket.id].angle = angle
-      players[socket.id].position = position
-      players[socket.id].velocity = velocity
-      players[socket.id].angularVelocity = angularVelocity
-      // players[socket.id].rotation = movementData.rotation
-      // emit a message to all players about the player that moved
-      socket.broadcast.emit('playerMoved', players[socket.id])
+      if(players[socket.id]){
+        players[socket.id].angle = angle
+        players[socket.id].position = position
+        players[socket.id].velocity = velocity
+        players[socket.id].angularVelocity = angularVelocity
+        // players[socket.id].rotation = movementData.rotation
+        // emit a message to all players about the player that moved
+        socket.broadcast.emit('playerMoved', players[socket.id])
+      }
     })
 
     // socket.on('anyCollision', (bodyA, bodyB) => {
