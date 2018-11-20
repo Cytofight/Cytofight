@@ -5,7 +5,7 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    console.log('Too fast!')
+    // console.log('Too fast!')
     const angle = Math.abs(Math.atan(velY / velX))
     // console.log('THING: ', angle, Math.cos(angle))
     const newX = Math.cos(angle)
