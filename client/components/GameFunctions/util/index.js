@@ -44,3 +44,11 @@ export function updateForce(obj) {
   // each cell has its own per-update x,y force
   // force changes every ? ms
 }
+
+export function limitNumber(num, lowerLimit, higherLimit) {
+  if (lowerLimit > higherLimit) [lowerLimit, higherLimit] = [higherLimit, lowerLimit]
+  
+  if (num < lowerLimit) return lowerLimit
+  if (num > higherLimit) return higherLimit
+  return num
+}

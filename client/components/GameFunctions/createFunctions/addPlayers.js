@@ -1,3 +1,5 @@
+  import {limitNumber} from '../util'
+  
   //Initialize the players in the game
   export function players() {
     console.log("TOP OF PAGE THIS: ", this)
@@ -59,11 +61,20 @@
     } else {
       this.ship.setTint(0x01c0ff)
     }
-    console.log("ADDPLAYER: ", this)
-    console.log('ME: ', this.ship)
-    // self.ship.setDrag(100)
-    // self.ship.setAngularDrag(100)
-    // self.ship.setMaxVelocity(200)
+    this.input.on("pointermove", function(pointer) {
+      const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + 200)
+      const adjustedPointerY = limitNumber(pointer.y + this.ship.y - 300, pointer.y, pointer.y + 400)
+      console.log('POINTERS AND ADJUSTS', pointer.x, adjustedPointerX, pointer.y, adjustedPointerY)
+      // let adjustedPointerX = pointer.x, adjustedPointerY = pointer.y
+      //DEPENDENT ON VIEWPORT AND MAP SIZING; REMEMBER TO CHANGE
+      //greater than 600 x, greater than 700 Y for camera to STOP moving (map size - viewport / 2)
+      // if (this.ship.y > 700) adjustedPointerY += 400
+      // else if (this.ship.y > 300) adustedPointerY += this.ship.y - 300
+      // if (this.ship.x > 600) adjustedPointerX += 200
+      // else if (this.ship.x > 400) adjustedPointerX += this.ship.x - 400
+      var angle = Math.atan2(adjustedPointerY - this.ship.y, adjustedPointerX - this.ship.x) * 180 / Math.PI;
+      this.ship.angle = angle;
+    }, this);
   }
 
   function addOtherPlayers(self, playerInfo) {

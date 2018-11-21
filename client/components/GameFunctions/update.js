@@ -45,6 +45,7 @@ export function update(time) {
     
     //This needs to be edited so that your cell has the ability to fire antibodies
     if(this.keyFire.isDown){
+      console.log(this.input.pointer)
       // console.log("Fire!")
       // limit(400, fire)
       boundFire()

@@ -37,6 +37,7 @@ export function create() {
     }
     // this.socket.emit('anyCollision', bodyA, bodyB)
   })
+  // .on('pointerdown', ())
   // this.socket.on('collided', (bodyA, bodyB) => {
   //   console.log('WHOLE DATAS: ', bodyA, bodyB)
   // })
