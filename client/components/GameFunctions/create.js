@@ -1,5 +1,6 @@
 import { players, keyboardControls, scoreAndStars, NPCCells } from './createFunctions'
 import { Antibody } from '../phaser-game'
+import { worldSize } from './util'
 
 export function preload() {
   this.load.image('click', 'assets/PNG/play.png')
@@ -15,8 +16,8 @@ export function preload() {
 
 export function create() {
   // PUT IN A SETUP FUNC
-  this.matter.world.setBounds(0, 0, 1000, 1000)
-  this.cameras.main.setBounds(0, 0, 1000, 1000)
+  this.matter.world.setBounds(0, 0, worldSize.x, worldSize.y)
+  this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y)
   players.call(this)
   // const test = new Bullet(this)
   this.antibodies = this.add.group({
@@ -27,16 +28,16 @@ export function create() {
   keyboardControls.call(this)
   // scoreAndStars.call(this)
   NPCCells.call(this)
-  this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-    // console.log('collision detected, emitting bodies:', bodyA)
-    // console.log('ship id: ', this.ship.body.id)
-    // console.log(this.epithelialCells)
-    const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
-    if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
-      matchingCell.setTint(0xd60000)
-    }
-    // this.socket.emit('anyCollision', bodyA, bodyB)
-  })
+  // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+  //   // console.log('collision detected, emitting bodies:', bodyA)
+  //   // console.log('ship id: ', this.ship.body.id)
+  //   // console.log(this.epithelialCells)
+  //   const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
+  //   if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
+  //     matchingCell.setTint(0xd60000)
+  //   }
+  //   // this.socket.emit('anyCollision', bodyA, bodyB)
+  // })
   // .on('pointerdown', ())
   // this.socket.on('collided', (bodyA, bodyB) => {
   //   console.log('WHOLE DATAS: ', bodyA, bodyB)

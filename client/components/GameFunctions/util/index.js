@@ -1,3 +1,5 @@
+export const worldSize = {x: 1000, y: 1000}
+
 export function limitSpeed(obj, maxSpeed) {
   const velX = obj.body.velocity.x
   const velY = obj.body.velocity.y

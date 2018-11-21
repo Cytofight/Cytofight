@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r11" pixel_mode="1">
+    <folder id="0">
+        <file id="0" name="epithelial_cell.png" width="53" height="77" pivot_x="0" pivot_y="1"/>
+        <file id="1" name="antibody_transparent.png" width="90" height="87" pivot_x="0.5" pivot_y="0.862069"/>
+        <file id="2" name="White_blood_cell_transparent.png" width="44" height="45" pivot_x="0.5" pivot_y="0.5"/>
+        <file id="3" name="Helper_T_transparent.png" width="220" height="213" pivot_x="0" pivot_y="1"/>
+        <file id="4" name="Killer_T_transparent.png" width="1209" height="1073" pivot_x="0" pivot_y="1"/>
+        <file id="5" name="Macrophage_transparent.png" width="440" height="433" pivot_x="0" pivot_y="1"/>
+        <file id="6" name="B_Cell_transparent.png" width="1165" height="1130" pivot_x="0" pivot_y="1"/>
+        <file id="7" name="Antibody_non-game_transparent.png" width="1920" height="751" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <entity id="0" name="Protagonist Cell">
+        <animation id="0" name="White Blood Cell Animation" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="1">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="202">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="400">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+                <key id="4" time="502">
+                    <object_ref id="0" timeline="0" key="4" z_index="0"/>
+                </key>
+                <key id="5" time="624">
+                    <object_ref id="0" timeline="0" key="5" z_index="0"/>
+                </key>
+                <key id="6" time="808">
+                    <object_ref id="0" timeline="0" key="6" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="White_blood_cell_transparent">
+                <key id="0">
+                    <object folder="0" file="2" x="-2" y="-2" angle="0" scale_x="1.031405"/>
+                </key>
+                <key id="1" time="1">
+                    <object folder="0" file="2" x="-2" y="-2" angle="0.512864" scale_x="1.029558" scale_y="1.001706"/>
+                </key>
+                <key id="2" time="202" spin="-1">
+                    <object folder="0" file="2" x="-2" y="-2" angle="24.284687" scale_x="0.788817" scale_y="1.296308"/>
+                </key>
+                <key id="3" time="400" spin="-1">
+                    <object folder="0" file="2" x="-2" y="-2" angle="20.864287" scale_x="0.960974" scale_y="1.075099"/>
+                </key>
+                <key id="4" time="502" spin="-1">
+                    <object folder="0" file="2" x="-2" y="-2" angle="359.640639" scale_x="1.165989" scale_y="0.920122"/>
+                </key>
+                <key id="5" time="624">
+                    <object folder="0" file="2" x="-2" y="-2" angle="353.42614" scale_x="1.411203" scale_y="0.734758"/>
+                </key>
+                <key id="6" time="808">
+                    <object folder="0" file="2" x="-2" y="-2" angle="355.712417" scale_x="1.551025" scale_y="0.653936"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="NewAnimation" length="1000" interval="100">
+            <mainline>
+                <key id="0"/>
+            </mainline>
+        </animation>
+    </entity>
+    <entity id="1" name="Helper T Animation">
+        <animation id="0" name="Helper T Animation" length="5000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="1215">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="2488">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="3739">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="Helper_T_transparent">
+                <key id="0" spin="-1">
+                    <object folder="0" file="3" x="5" y="-13" pivot_x="0.513701" pivot_y="0.495758" angle="0"/>
+                </key>
+                <key id="1" time="1215" spin="-1">
+                    <object folder="0" file="3" x="5" y="-13" pivot_x="0.513701" pivot_y="0.495758" angle="266.869755" scale_x="1.12593" scale_y="1.141128"/>
+                </key>
+                <key id="2" time="2488" spin="-1">
+                    <object folder="0" file="3" x="5" y="-13" pivot_x="0.513701" pivot_y="0.495758" angle="178.636072" scale_x="0.999849" scale_y="1.009957"/>
+                </key>
+                <key id="3" time="3739" spin="-1">
+                    <object folder="0" file="3" x="5" y="-13" pivot_x="0.513701" pivot_y="0.495758" angle="91.02303" scale_x="0.791916" scale_y="0.791916"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+    <entity id="2" name="Antibody">
+        <obj_info name="bone_000" type="bone" w="57.3522" h="10"/>
+        <animation id="0" name="Info Page Animation" length="3000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="1" time="1499">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="Antibody_non-game_transparent">
+                <key id="0" spin="0">
+                    <object folder="0" file="7" x="-1" y="-2" pivot_x="0.499877" pivot_y="0.495745" angle="180" scale_x="0.229935" scale_y="0.230279"/>
+                </key>
+                <key id="1" spin="0">
+                    <object folder="0" file="7" y="-5" pivot_x="0.49842" pivot_y="0.51095" angle="180" scale_x="0.229935" scale_y="0.230279"/>
+                </key>
+                <key id="2" time="1499" spin="0">
+                    <object folder="0" file="7" x="-1" y="-6" pivot_x="0.49842" pivot_y="0.51095" angle="180" scale_x="0.007441" scale_y="0.230279"/>
+                </key>
+                <key id="3" time="1499" spin="0">
+                    <object folder="0" file="7" x="-1" y="-3" pivot_x="0.499877" pivot_y="0.495745" angle="180" scale_x="0.007441" scale_y="0.230279"/>
+                </key>
+            </timeline>
+        </animation>
+        <animation id="1" name="In Game animation" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <bone_ref id="0" timeline="1" key="0"/>
+                    <object_ref id="0" parent="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="265">
+                    <bone_ref id="0" timeline="1" key="1"/>
+                    <object_ref id="0" parent="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="2" time="502">
+                    <bone_ref id="0" timeline="1" key="2"/>
+                    <object_ref id="0" parent="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="3" time="762">
+                    <bone_ref id="0" timeline="1" key="3"/>
+                    <object_ref id="0" parent="0" timeline="0" key="0" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="antibody_transparent">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-7" y="1" angle="89.739097" scale_x="0.512018" scale_y="1.067319"/>
+                </key>
+            </timeline>
+            <timeline id="1" obj="0" name="bone_000" object_type="bone">
+                <key id="0" spin="0">
+                    <bone x="-51" y="-82" angle="89.620563" scale_x="2.080748" scale_y="1.344792"/>
+                </key>
+                <key id="1" time="265">
+                    <bone x="-51" y="-82" angle="89.620563" scale_x="0.053271" scale_y="1.344792"/>
+                </key>
+                <key id="2" time="502" spin="-1">
+                    <bone x="-51" y="-82" angle="90.6662" scale_x="1.454216" scale_y="1.344792"/>
+                </key>
+                <key id="3" time="762" spin="-1">
+                    <bone x="-51" y="-82" angle="90.317654" scale_x="2.876506" scale_y="1.344792"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+    <entity id="3" name="Killer T Animation">
+        <animation id="0" name="Killer T Spin" length="5000" interval="100">
+            <mainline>
+                <key id="0" time="1245">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="2483">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="3743">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="Killer_T_transparent">
+                <key id="0" time="1245" spin="-1">
+                    <object folder="0" file="4" y="-14" pivot_x="0.530957" pivot_y="0.504676" angle="90" scale_x="0.200579" scale_y="0.243292"/>
+                </key>
+                <key id="1" time="2483" spin="-1">
+                    <object folder="0" file="4" y="-14" pivot_x="0.530957" pivot_y="0.504676" angle="358.646808" scale_x="0.185302" scale_y="0.224067"/>
+                </key>
+                <key id="2" time="3743" spin="-1">
+                    <object folder="0" file="4" y="-14" pivot_x="0.530957" pivot_y="0.504676" angle="270" scale_x="0.149586" scale_y="0.18088"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+    <entity id="4" name="Macrophage">
+        <animation id="0" name="Macrophage Spin" length="5000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="1146">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="2493">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="3661">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="Macrophage_transparent_000">
+                <key id="0" spin="-1">
+                    <object folder="0" file="5" x="11" y="-1" pivot_x="0.521685" pivot_y="0.485817" angle="0" scale_x="0.432302" scale_y="0.414319"/>
+                </key>
+                <key id="1" time="1146" spin="-1">
+                    <object folder="0" file="5" x="11" y="-1" pivot_x="0.521685" pivot_y="0.485817" angle="269.063257" scale_x="0.528166" scale_y="0.506195"/>
+                </key>
+                <key id="2" time="2493" spin="-1">
+                    <object folder="0" file="5" x="11" y="-1" pivot_x="0.521685" pivot_y="0.485817" angle="179.684027" scale_x="0.418021" scale_y="0.400632"/>
+                </key>
+                <key id="3" time="3661" spin="-1">
+                    <object folder="0" file="5" x="11" y="-1" pivot_x="0.521685" pivot_y="0.485817" angle="89.055064" scale_x="0.331738" scale_y="0.325622"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+    <entity id="5" name="B-Cell ">
+        <animation id="0" name="B-Cell Spin" length="5000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                </key>
+                <key id="1" time="1238">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                </key>
+                <key id="2" time="2491">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                </key>
+                <key id="3" time="3743">
+                    <object_ref id="0" timeline="0" key="3" z_index="0"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="B_Cell_transparent">
+                <key id="0" spin="-1">
+                    <object folder="0" file="6" x="1" y="-2" pivot_x="0.497164" pivot_y="0.510803" angle="0" scale_x="0.22855" scale_y="0.22855"/>
+                </key>
+                <key id="1" time="1238" spin="-1">
+                    <object folder="0" file="6" x="1" y="-2" pivot_x="0.497164" pivot_y="0.510803" angle="270" scale_x="0.254134" scale_y="0.254134"/>
+                </key>
+                <key id="2" time="2491" spin="-1">
+                    <object folder="0" file="6" x="1" y="-2" pivot_x="0.497164" pivot_y="0.510803" angle="180" scale_x="0.214905" scale_y="0.214905"/>
+                </key>
+                <key id="3" time="3743" spin="-1">
+                    <object folder="0" file="6" x="1" y="-2" pivot_x="0.497164" pivot_y="0.510803" angle="89.714949" scale_x="0.178229" scale_y="0.178229"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>

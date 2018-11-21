@@ -11,6 +11,7 @@ module.exports = io => {
     blue: 0,
     red: 0
   }
+  let epithelialCells = []
 
   io.on('connection', socket => {
     console.log(`A new player has arrived: ${socket.id}`)
@@ -34,6 +35,8 @@ module.exports = io => {
     socket.emit('currentPlayers', players)
     // send the star object to the new player
     socket.emit('starLocation', star)
+    // send the epithelial cells to the new players
+    socket.emit('epithelialCell', epithelialCells)
     // send the current scores
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
@@ -77,6 +80,10 @@ module.exports = io => {
       star.y = Math.floor(Math.random() * 900) + 50
       io.emit('starLocation', star)
       io.emit('scoreUpdate', scores)
+    })
+
+    socket.on('newEpithelialCells', (newCells) => {
+      epithelialCells = newCells
     })
 
     socket.on('new-message', message => {
