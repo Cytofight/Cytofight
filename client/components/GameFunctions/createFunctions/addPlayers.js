@@ -64,17 +64,7 @@
     this.input.on("pointermove", function(pointer) {
       const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + 200)
       const adjustedPointerY = limitNumber(pointer.y + this.ship.y - 300, pointer.y, pointer.y + 400)
-      // console.log('POINTERS AND ADJUSTS', pointer.x, adjustedPointerX, pointer.y, adjustedPointerY)
-      // let adjustedPointerX = pointer.x, adjustedPointerY = pointer.y
-      //DEPENDENT ON VIEWPORT AND MAP SIZING; REMEMBER TO CHANGE
-      //greater than 600 x, greater than 700 Y for camera to STOP moving (map size - viewport / 2)
-      // if (this.ship.y > 700) adjustedPointerY += 400
-      // else if (this.ship.y > 300) adustedPointerY += this.ship.y - 300
-      // if (this.ship.x > 600) adjustedPointerX += 200
-      // else if (this.ship.x > 400) adjustedPointerX += this.ship.x - 400
       var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
-      // if (angle > 0) 
-      console.log('ANGLE:))) ', angle)
       this.ship.angle = angle;
     }, this);
   }
@@ -84,8 +74,9 @@
     //   .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
     //   .setOrigin(0.5, 0.5)
     //   .setDisplaySize(53, 40)
-    const randomXY = Math.floor(Math.random() * 1000)
-    const otherPlayer = this.matter.add.image(randomXY, randomXY, 'ship')
+    const randomX = Math.floor(Math.random() * 1000)
+    const randomY = Math.floor(Math.random() * 1000)
+    const otherPlayer = this.matter.add.image(randomX, randomY, 'ship')
     otherPlayer.setScale(0.5);
     otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
     if (playerInfo.team === 'blue') {

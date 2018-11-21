@@ -1,7 +1,7 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce } from './util'
 
-const throttledUpdateForce = throttle(updateForce, 2000)
+const throttledUpdateForce = throttle(updateForce, 1200)
 
   
 const throttledFire = throttle(fire, 200)
