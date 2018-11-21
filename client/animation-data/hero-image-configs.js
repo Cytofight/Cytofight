@@ -20,3 +20,5 @@ const heroImgs = [
     width: 133
   }
 ]
+
+export default heroImgs

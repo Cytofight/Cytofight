@@ -1,3 +1,4 @@
+import { limitNumber, worldSize } from '../util'
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
 const numberOfEpithelialCells = 20
@@ -54,15 +55,16 @@ export function players() {
   })
 
   this.socket.on('epithelialCell', (cells) => {
-    if (!cells.length) {
+    console.log('CELLS OMG', cells)
+    if (!cells || !cells.length) {
       console.log('getting in the if')
       this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(() => {
-        const randomEpithelialX = Math.floor(Math.random() * 1000)
-        const randomEpithelialY = Math.floor(Math.random() * 1000)
+        const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
+        const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
         return makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
       })
       //emit new cells
-      console.log("cells: ", cells)
+      console.log("cells: ", this.epithelialCells)
       this.socket.emit('newEpithelialCells', this.epithelialCells)
     } else {
       console.log('epithelialCells: ', this.epithelialCells)
@@ -110,8 +112,8 @@ function addPlayer(self, playerInfo) {
   //   .image(playerInfo.x, playerInfo.y, 'ship')
   //   .setOrigin(0.5, 0.5)
   //   .setDisplaySize(53, 40)
-  const randomX = Math.floor(Math.random() * 1000)
-  const randomY = Math.floor(Math.random() * 1000)
+  const randomX = Math.floor(Math.random() * (worldSize.x - 100))
+  const randomY = Math.floor(Math.random() * (worldSize.y - 100))
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
   this.ship.setScale(0.5)
   this.ship.setCircle(this.ship.width / 2, {
@@ -124,9 +126,13 @@ function addPlayer(self, playerInfo) {
   } else {
     this.ship.setTint(0x01c0ff)
   }
-  // self.ship.setDrag(100)
-  // self.ship.setAngularDrag(100)
-  // self.ship.setMaxVelocity(200)
+  this.input.on("pointermove", function(pointer) {
+    // VIEWPORT: 800x, 600y
+    const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + worldSize.x - 800)
+    const adjustedPointerY = limitNumber(pointer.y + this.ship.y - 300, pointer.y, pointer.y + worldSize.y - 600)
+    var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
+    this.ship.angle = angle;
+  }, this)
 }
 
 function addOtherPlayers(self, playerInfo) {
@@ -134,8 +140,9 @@ function addOtherPlayers(self, playerInfo) {
   //   .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
   //   .setOrigin(0.5, 0.5)
   //   .setDisplaySize(53, 40)
-  const randomXY = Math.floor(Math.random() * 1000)
-  const otherPlayer = this.matter.add.image(randomXY, randomXY, 'ship')
+  const randomX = Math.floor(Math.random() * (worldSize.x - 100))
+  const randomY = Math.floor(Math.random() * (worldSize.y - 100))
+  const otherPlayer = this.matter.add.image(randomX, randomY, 'ship')
   otherPlayer.setScale(0.5);
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (playerInfo.team === 'blue') {
