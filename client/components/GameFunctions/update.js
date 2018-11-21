@@ -1,13 +1,13 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce } from './util'
 
-const throttledUpdateForce = throttle(updateForce, 1200)
+const throttledUpdateForce = throttle(updateForce, 2000)
 
   
 const throttledFire = throttle(fire, 200)
 
 export function update(time) {
-  const boundFire = throttledFire.bind(this)
+  // const boundFire = throttledFire.bind(this)
 
   if (this.ship) {
     // const maxSpeed = 10
@@ -45,10 +45,7 @@ export function update(time) {
     
     //This needs to be edited so that your cell has the ability to fire antibodies
     if(this.keyFire.isDown){
-      console.log(this.input.pointer)
-      // console.log("Fire!")
-      // limit(400, fire)
-      boundFire()
+      throttledFire.call(this)
     }
     
     // emit player movement

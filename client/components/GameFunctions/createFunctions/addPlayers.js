@@ -1,4 +1,5 @@
-import { limitNumber, worldSize } from '../util'
+import { throttle, fire, limitNumber, worldSize } from '../util'
+const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
 const numberOfEpithelialCells = 20
@@ -55,18 +56,21 @@ export function players() {
 
   this.socket.on('epithelialCell', (cells) => {
     console.log('CELLS OMG', cells)
+    const cellData = []
     if (!cells || !cells.length) {
       console.log('getting in the if')
       this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(() => {
         const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
         const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
-        return makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
+        const newCell = makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
+        cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null, id: newCell.body.id})
+        return newCell
       })
       //emit new cells
-      console.log("cells: ", this.epithelialCells)
-      this.socket.emit('newEpithelialCells', this.epithelialCells)
+      console.log("cells asdfasdfasdf: ", cellData)
+      this.socket.emit('newEpithelialCells', cellData)
     } else {
-      console.log('epithelialCells: ', this.epithelialCells)
+      console.log('epithelialCells from server: ', cells)
       this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint))
     }
     this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
@@ -76,9 +80,17 @@ export function players() {
       const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
       if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
         matchingCell.setTint(0xd60000)
+        this.socket.emit('changedEpithelialCell', matchingCell.body.position)
       }
       // this.socket.emit('anyCollision', bodyA, bodyB)
     })
+  })
+
+  this.socket.on('changedEpithelialCellClient', cell => {
+    console.log(cell)
+    const thing = this.epithelialCells.find(epi => epi.body.position.x === cell.x && epi.body.position.y === cell.y)
+    console.log(thing)
+    thing.setTint(0xd60000)
   })
 
 }
@@ -108,6 +120,7 @@ function addPlayer(self, playerInfo) {
   } else {
     this.ship.setTint(0x01c0ff)
   }
+
   this.input.on("pointermove", function(pointer) {
     // VIEWPORT: 800x, 600y
     const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + worldSize.x - 800)
@@ -115,6 +128,9 @@ function addPlayer(self, playerInfo) {
     var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
     this.ship.angle = angle;
   }, this)
+  this.input.on("pointerdown", (event) => {
+    throttledFire.call(this)
+  })
 }
 
 function addOtherPlayers(self, playerInfo) {
