@@ -38,6 +38,7 @@ export function fire () {
 // export const throttledFire = throttle(fire, 200)
 
 export function updateForce(obj) {
+  console.log("In the update force!!: ", obj)
   const randomX = Math.random() * 0.0006 - 0.0003
   const randomY = Math.random() * 0.0006 - 0.0003
   obj.randomDirection = {x: randomX, y: randomY}

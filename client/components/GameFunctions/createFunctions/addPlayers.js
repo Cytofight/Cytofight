@@ -1,6 +1,7 @@
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
 const numberOfEpithelialCells = 20
+const numberOfTCells = 15
 const defaultCellParams = {
   restitution: 1,
   friction: 0,
@@ -79,6 +80,21 @@ export function players() {
     })
   })
 
+  this.socket.on('dormantTCell', (cells) => {
+    if(!cells.length) {
+      this.dormantTCells = new Array(numberOfTCells).fill(null).map(() => {
+        const randomTCellX = Math.floor(Math.random() * 500)
+        const randomTCellY = Math.floor(Math.random() * 500)
+        const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
+        const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
+        return makeTCell.call(this, randomTCellX, randomTCellY, randomVelocityX, randomVelocityY)
+      })
+      this.socket.emit('newTCells', this.dormantTCells)
+    } else {
+      this.dormantTCells = cells.map(cell => makeTCell.call(this, cell.x, cell.y))
+    }
+  })
+
 }
 
 const shipParams = {
@@ -141,4 +157,23 @@ function makeEpithelialCell(x, y, tint) {
   })
   if (tint) this.cell.setTint(tint)
   return this.cell
+}
+
+function makeTCell(positionX, positionY, velocityX, velocityY, tint){
+  this.cell = this.matter.add.image(
+    positionX,
+    positionY,
+    'dormantTCell'
+  )
+  console.log("THIS TCELL: ", this.cell)
+  this.cell.setCircle(this.cell.width / 2, defaultCellParams)
+  this.cell.setVelocity(velocityX, velocityY)
+  this.cell.activate = function() {
+      this.setVelocity(0, 0) //PLACEHOLDER
+      console.log("I'm a good guy now!")
+      this.cell.setTint(0x01c0ff)
+      this.cell.activated = true
+    }
+    if(tint) this.cell.setTint(tint)
+    return this.cell
 }

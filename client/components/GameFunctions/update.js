@@ -115,10 +115,12 @@ const throttledFire = throttle(fire, 200)
       velocity, angularVelocity
     }
   }
-  this.dormantTCells.forEach(cell => {
-    throttledUpdateForce(cell)
-    // console.log(cell.randomDirection)
-    cell.applyForce(cell.randomDirection)
-    limitSpeed(cell, 5)
-  })
+  if(this.dormantTCells){
+  // this.dormantTCells.forEach(cell => {
+  //   throttledUpdateForce(cell)
+  //   // console.log(cell.randomDirection)
+  //   cell.applyForce(cell.randomDirection)
+  //   limitSpeed(cell, 5)
+  // })
+  }
 }
