@@ -127,51 +127,47 @@ export function NPCCells() {
     // // })
   })
 
-  this.epithelialCells = new Array(numberOfEpithelialCells)
-    .fill(null)
-    .map(cell => {
-      const randomEpithelialX = Math.floor(Math.random() * 1000)
-      const randomEpithelialY = Math.floor(Math.random() * 1000)
+  // this.epithelialCells = new Array(numberOfEpithelialCells)
+  //   .fill(null)
+  //   .map(cell => {
+  //     const randomEpithelialX = Math.floor(Math.random() * 1000)
+  //     const randomEpithelialY = Math.floor(Math.random() * 1000)
 
-      cell = this.matter.add.image(
-        randomEpithelialX,
-        randomEpithelialY,
-        'epithelialCell'
-      )
-      cell.setRectangle(cell.width, cell.height, {
-        isStatic: true,
-        ...defaultCellParams
-      })
-      cell.activated = false
-      cell.activate = function() {
-        this.setVelocity(0, 0) //PLACEHOLDER
-        console.log("I'm a bad guy now!")
-        cell.setTint(0xd60000)
-        cell.activated = true
-      }
-      console.log('epithelialCells: ', cell)
-      return cell
-    })
+  //     cell = this.matter.add.image(
+  //       randomEpithelialX,
+  //       randomEpithelialY,
+  //       'epithelialCell'
+  //     )
+  //     cell.setRectangle(cell.width, cell.height, {
+  //       isStatic: true,
+  //       ...defaultCellParams
+  //     })
+  //     // cell.activated = false
+  //     // cell.activate = function() {
+  //     //   this.setVelocity(0, 0) //PLACEHOLDER
+  //     //   console.log("I'm a bad guy now!")
+  //     //   cell.setTint(0xd60000)
+  //     //   cell.activated = true
+  //     // }
+  //     // console.log('epithelialCells: ', cell)
+  //     return cell
+  //   })
 
-  const changeEpithelialCell = {
-    contains: (x, y) => {
-      for (let i = 0; i < this.epithelialCells.length; i++) {
-        const currCell = this.epithelialCells[i]
-        if (currCell.getBounds().contains(x, y)) {
-          if (!currCell.activated) {
-            currCell.activate()
-          }
-          return true
-        }
-      }
-      return false
-    }
-  }
-  console.log('THIS: ', this, 'THIS AGAIN: ', this, 'SHIP: ', this.ship)
-  // this.ship.body = "HELLO AMANDA!"
-  // console.log("ship: ", this.ship.body)
-  console.log('otherPlayers ', this.otherPlayers)
-  // console.log("self.ship: ", self)
+  // const changeEpithelialCell = {
+  //   contains: (x, y) => {
+  //     for (let i = 0; i < this.epithelialCells.length; i++) {
+  //       const currCell = this.epithelialCells[i]
+  //       if (currCell.getBounds().contains(x, y)) {
+  //         if (!currCell.activated) {
+  //           currCell.activate()
+  //         }
+  //         return true
+  //       }
+  //     }
+  //     return false
+  //   }
+  // }
+
   // // These epithelialCells are lung cells that act as the possible infection sites. If infected, it'll produce more units for the infected team. They need to be protected by the white blood cells to avoid losing the game
   // // const epithelialCells = this.physics.add.group({
   // //   key: 'epithelialCell',
