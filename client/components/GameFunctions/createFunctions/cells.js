@@ -26,34 +26,34 @@ export function NPCCells() {
   //     y: 100,
   //     stepX: 200
   //   }
-  // })
-  this.dormantTCells = new Array(numberOfDormantTCells).fill(null).map(cell => {
-    const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
-    const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
-    const randomPositionX = Math.floor(Math.random() * 500)
-    const randomPositionY = Math.floor(Math.random() * 500)
+  // // })
+  // this.dormantTCells = new Array(numberOfDormantTCells).fill(null).map(cell => {
+  //   const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
+  //   const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
+  //   const randomPositionX = Math.floor(Math.random() * 500)
+  //   const randomPositionY = Math.floor(Math.random() * 500)
 
-    cell = this.matter.add.image(
-      randomPositionX,
-      randomPositionY,
-      'dormantTCell'
-    )
-    console.log('CELL: ', cell)
-    cell.setCircle(cell.width / 2, defaultCellParams)
-    cell.setVelocity(randomVelocityX, randomVelocityY)
-    cell.randomDirection = {
-      x: Math.random() * 0.0006 - 0.0003,
-      y: Math.random() * 0.0006 - 0.0003
-    }
-    cell.activated = false
-    cell.activate = function() {
-      this.setVelocity(0, 0) //PLACEHOLDER
-      console.log("I'm a good guy now!")
-      cell.setTint(0x01c0ff)
-      cell.activated = true
-    }
-    return cell
-  })
+  //   cell = this.matter.add.image(
+  //     randomPositionX,
+  //     randomPositionY,
+  //     'dormantTCell'
+  //   )
+  //   console.log('CELL: ', cell)
+  //   cell.setCircle(cell.width / 2, defaultCellParams)
+  //   cell.setVelocity(randomVelocityX, randomVelocityY)
+  //   cell.randomDirection = {
+  //     x: Math.random() * 0.0006 - 0.0003,
+  //     y: Math.random() * 0.0006 - 0.0003
+  //   }
+  //   cell.activated = false
+  //   cell.activate = function() {
+  //     this.setVelocity(0, 0) //PLACEHOLDER
+  //     console.log("I'm a good guy now!")
+  //     cell.setTint(0x01c0ff)
+  //     cell.activated = true
+  //   }
+  //   return cell
+  // })
   // this.dormantTCells.forEach(cell => {
   //   const randomX = Math.floor(Math.random() * 100)
   //   const randomY = Math.floor(Math.random() * 250)
@@ -70,20 +70,20 @@ export function NPCCells() {
   // Randomly position the dormantTCells within the circle
   // Phaser.Actions.RandomCircle(this.dormantTCells.getChildren(), circle)
 
-  const changeCell = {
-    contains: (x, y) => {
-      for (let i = 0; i < this.dormantTCells.length; i++) {
-        const currCell = this.dormantTCells[i]
-        if (currCell.getBounds().contains(x, y)) {
-          if (!currCell.activated) {
-            currCell.activate()
-          }
-          return true
-        }
-      }
-      return false
-    }
-  }
+  // const changeCell = {
+  //   contains: (x, y) => {
+  //     for (let i = 0; i < this.dormantTCells.length; i++) {
+  //       const currCell = this.dormantTCells[i]
+  //       if (currCell.getBounds().contains(x, y)) {
+  //         if (!currCell.activated) {
+  //           currCell.activate()
+  //         }
+  //         return true
+  //       }
+  //     }
+  //     return false
+  //   }
+  // }
 
   //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
 
@@ -103,7 +103,7 @@ export function NPCCells() {
       blendMode: 'ADD',
       deathZone: {
         type: 'onEnter',
-        source: changeCell
+        // source: changeCell
       }
     })
     // const mastCells = []
