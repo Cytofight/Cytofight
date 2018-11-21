@@ -1,3 +1,5 @@
+export const worldSize = {x: 1000, y: 1000}
+
 export function limitSpeed(obj, maxSpeed) {
   const velX = obj.body.velocity.x
   const velY = obj.body.velocity.y
@@ -17,7 +19,6 @@ export function limitSpeed(obj, maxSpeed) {
 }
 
 export function throttle(func, milliseconds) {
-  console.log(this)
   let time = Date.now() - milliseconds;
   return function(...args){
     if(Date.now() - time >= milliseconds){
@@ -30,9 +31,9 @@ export function throttle(func, milliseconds) {
 
 export function fire () {
   console.log("FIRE!!! But working now! I swear!")
-  let bullet = this.bullets.get();
-  if(bullet) {
-    bullet.fire(this.ship.body.position.x, this.ship.body.position.y);
+  let antibody = this.antibodies.get();
+  if(antibody) {
+    antibody.fire(this.ship.body.position.x, this.ship.body.position.y, this.ship.body.angle);
   }
 }
 // export const throttledFire = throttle(fire, 200)
@@ -44,4 +45,12 @@ export function updateForce(obj) {
   // cells have a max speed
   // each cell has its own per-update x,y force
   // force changes every ? ms
+}
+
+export function limitNumber(num, lowerLimit, higherLimit) {
+  if (lowerLimit > higherLimit) [lowerLimit, higherLimit] = [higherLimit, lowerLimit]
+  
+  if (num < lowerLimit) return lowerLimit
+  if (num > higherLimit) return higherLimit
+  return num
 }
