@@ -82,6 +82,7 @@ export function players() {
 
   this.socket.on('dormantTCell', (cells) => {
     if(!cells.length) {
+      console.log("I WAS CREATED FOR THE FIRST TIME!!!")
       this.dormantTCells = new Array(numberOfTCells).fill(null).map(() => {
         const randomTCellX = Math.floor(Math.random() * 500)
         const randomTCellY = Math.floor(Math.random() * 500)
@@ -91,6 +92,7 @@ export function players() {
       })
       this.socket.emit('newTCells', this.dormantTCells)
     } else {
+      console.log("I was not. I was created by someone else who came before you")
       this.dormantTCells = cells.map(cell => makeTCell.call(this, cell.x, cell.y))
     }
   })
