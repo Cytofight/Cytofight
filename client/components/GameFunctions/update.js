@@ -81,11 +81,11 @@ export function update(time) {
   }
   if(this.dormantTCells){
     throttledUpdateForce(this.dormantTCells)
-  this.dormantTCells.forEach(cell => {
-    // console.log('RANDOMDIRECTION: ', cell.randomDirection)
-    cell.applyForce(cell.randomDirection)
-    // console.log(cell)
-    limitSpeed(cell, 5)
-  })
+      this.dormantTCells.forEach(cell => {
+      // console.log('RANDOMDIRECTION: ', cell.randomDirection)
+      cell.applyForce(cell.randomDirection)
+      // console.log(cell)
+      limitSpeed(cell, 5)
+    })
   }
 }

@@ -93,8 +93,13 @@ export function players() {
         const randomVelocityX = Math.floor(Math.random() * 8 - 4)
         const randomVelocityY = Math.floor(Math.random() * 8 - 4)
         const randomAngularVelocity = Math.random() * 0.5 - 0.25
-        return makeTCell.call(this, randomTCellX, randomTCellY, randomVelocityX, randomVelocityY, 0, randomAngularVelocity)
+        return makeTCell.call(this, {
+          randomTCellX, randomTCellY, 
+          randomVelocityX, randomVelocityY, 
+          angle: 0, randomAngularVelocity
+        })
       })
+      this.clientDormantTCells = dormantTCells // the list of cells for whose behavior the player is responsible
       this.socket.emit('newTCells', this.dormantTCells.map(cell => 
         ({positionX: cell.body.position.x, positionY: cell.body.position.y, 
           velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y, 
@@ -103,9 +108,26 @@ export function players() {
     } else {
       console.log("I was not. I was created by someone else who came before you")
       this.dormantTCells = cells.map(cell => makeTCell.call(
-        this, cell.positionX, cell.positionY, cell.velocityX, cell.velocityY, cell.angle, cell.angularVelocity, cell.randomDirection, cell.tint
+        this, {positionX: cell.positionX, positionY: cell.positionY, 
+          velocityX: cell.velocityX, velocityY: cell.velocityY, 
+          angle: cell.angle, angularVelocity: cell.angularVelocity, 
+          randomDirection: cell.randomDirection, tint: cell.tint}
       ))
+      this.clientDormantTCells = []
     }
+  })
+
+  this.socket.on('passDormantTCells', passedCells => {
+    // for each cell passed on from the disconnecting player, find its corresponding cell in the game...
+    const cellsToTransfer = passedCells.map(inputCell => 
+      this.dormantTCells.find(cell => 
+        !clientDormantTCells.includes(cell) && 
+        (cell.body.position.x >= inputCell.positionX - 4 || cell.body.position.x <= inputCell.positionX + 4) && 
+        (cell.body.position.y >= inputCell.positionY - 4 || cell.body.position.y <= inputCell.positionY + 4)
+      )
+    )
+    // and add it to the list of cells that the player is responsible for monitoring
+    this.clientDormantTCells.concat(cellsToTransfer)
   })
 
   this.socket.on('changedEpithelialCellClient', cell => {
@@ -188,7 +210,7 @@ function makeEpithelialCell(x, y, tint) {
   return cell
 }
 
-function makeTCell(positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint){
+function makeTCell({ positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint } ){
   const cell = this.matter.add.image(
     positionX,
     positionY,

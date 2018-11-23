@@ -29,7 +29,8 @@ module.exports = io => {
       },
       angularVelocity: 0,
       playerId: socket.id,
-      team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue'
+      team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
+      clientDormantTCells = {}
     }
     
     // send the players object to the new player
@@ -48,6 +49,15 @@ module.exports = io => {
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
+      if (Object.keys(players).length > 1) {
+        const 
+        // const lowestCellPlayer = Math.min(...Object.keys(players).map(key => players[key].clientDormantTCells.length))
+        const lowestCellPlayer = Object.keys(players).reduce((currLowestPlayer, id) => {
+          const currAmount = players[id].clientDormantTCells.length
+          if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
+        })
+        io.to('${lowestCellPlayer.id}').emit('passDormantTCells', players[socket.id].clientDormantTCells)
+      }
       // remove this player from our players object
       delete players[socket.id]
       // emit a message to all players to remove this player
@@ -100,7 +110,8 @@ module.exports = io => {
 
     socket.on('newTCells', (newCells) => {
       console.log('NEW T CELLS ON SERVER: ', newCells)
-      dormantTCells = newCells
+      dormantTCells.concat(newCells)
+      players[socket.id].clientDormantTCells.concat(newCells)
     })
 
     socket.on('new-message', message => {
