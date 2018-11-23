@@ -56,7 +56,6 @@ export function players() {
   })
 
   this.socket.on('epithelialCell', (cells) => {
-    console.log('CELLS OMG', cells)
     const cellData = []
     if (!cells || !cells.length) {
       console.log('getting in the if')
@@ -64,22 +63,20 @@ export function players() {
         const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
         const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
         const newCell = makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
-        cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null, id: newCell.body.id})
+        cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null})
         return newCell
       })
       //emit new cells
-      console.log("cells asdfasdfasdf: ", cellData)
       this.socket.emit('newEpithelialCells', cellData)
     } else {
       console.log('epithelialCells from server: ', cells)
       this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint))
     }
     this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-      // console.log('collision detected, emitting bodies:', bodyA)
-      // console.log('ship id: ', this.ship.body.id)
-      // console.log(this.epithelialCells)
       const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
-      if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
+      if (this.ship && this.ship.tintBottomLeft === 214 && 
+        matchingCell && matchingCell.tintBottomLeft !== 214 &&
+        (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
         matchingCell.setTint(0xd60000)
         this.socket.emit('changedEpithelialCell', matchingCell.body.position)
       }
@@ -91,16 +88,23 @@ export function players() {
     if(!cells.length) {
       console.log("I WAS CREATED FOR THE FIRST TIME!!!")
       this.dormantTCells = new Array(numberOfTCells).fill(null).map(() => {
-        const randomTCellX = Math.floor(Math.random() * 500)
-        const randomTCellY = Math.floor(Math.random() * 500)
-        const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
-        const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
-        return makeTCell.call(this, randomTCellX, randomTCellY, randomVelocityX, randomVelocityY)
+        const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100))
+        const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100))
+        const randomVelocityX = Math.floor(Math.random() * 8 - 4)
+        const randomVelocityY = Math.floor(Math.random() * 8 - 4)
+        const randomAngularVelocity = Math.random() * 0.5 - 0.25
+        return makeTCell.call(this, randomTCellX, randomTCellY, randomVelocityX, randomVelocityY, 0, randomAngularVelocity)
       })
-      this.socket.emit('newTCells', this.dormantTCells)
+      this.socket.emit('newTCells', this.dormantTCells.map(cell => 
+        ({positionX: cell.body.position.x, positionY: cell.body.position.y, 
+          velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y, 
+          angle: cell.body.angle, angularVelocity: cell.body.angularVelocity})
+      ))
     } else {
       console.log("I was not. I was created by someone else who came before you")
-      this.dormantTCells = cells.map(cell => makeTCell.call(this, cell.x, cell.y))
+      this.dormantTCells = cells.map(cell => makeTCell.call(
+        this, cell.positionX, cell.positionY, cell.velocityX, cell.velocityY, cell.angle, cell.angularVelocity, cell.randomDirection, cell.tint
+      ))
     }
   })
 
@@ -171,34 +175,40 @@ function addOtherPlayers(self, playerInfo) {
 }
 
 function makeEpithelialCell(x, y, tint) {
-  this.cell = this.matter.add.image(
+  const cell = this.matter.add.image(
     x,
     y,
     'epithelialCell'
   )
-  this.cell.setRectangle(this.cell.width, this.cell.height, {
+  cell.setRectangle(cell.width, cell.height, {
     isStatic: true,
     ...defaultCellParams
   })
-  if (tint) this.cell.setTint(tint)
-  return this.cell
+  if (tint) cell.setTint(tint)
+  return cell
 }
 
-function makeTCell(positionX, positionY, velocityX, velocityY, tint){
-  this.cell = this.matter.add.image(
+function makeTCell(positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint){
+  const cell = this.matter.add.image(
     positionX,
     positionY,
     'dormantTCell'
   )
-  console.log("THIS TCELL: ", this.cell)
-  this.cell.setCircle(this.cell.width / 2, defaultCellParams)
-  this.cell.setVelocity(velocityX, velocityY)
-  this.cell.activate = function() {
+  console.log("THIS TCELL WHEEEOO: ", positionX, positionY, cell)
+  cell.setCircle(cell.width / 2, defaultCellParams)
+  console.log('CELL AFTER SET CIRCLE: ', cell)
+  cell.setVelocity(velocityX, velocityY)
+  console.log('CELL AFTER SET VELOCITY: ', cell)
+  cell.randomDirection = randomDirection
+  cell.body.angle = angle
+  cell.body.angularVelocity = angularVelocity
+  console.log('CELL AFTER SET ANGLE AND ANGULAR VELOCITY: ', cell)
+  cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
       console.log("I'm a good guy now!")
-      this.cell.setTint(0x01c0ff)
-      this.cell.activated = true
+      cell.setTint(0x01c0ff)
+      cell.activated = true
     }
-    if(tint) this.cell.setTint(tint)
-    return this.cell
+  if(tint) cell.setTint(tint)
+  return cell
 }

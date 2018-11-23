@@ -7,7 +7,7 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    // console.log('Too fast!')
+    console.log('Too fast!')
     const angle = Math.abs(Math.atan(velY / velX))
     // console.log('THING: ', angle, Math.cos(angle))
     const newX = Math.cos(angle)
@@ -38,11 +38,13 @@ export function fire () {
 }
 // export const throttledFire = throttle(fire, 200)
 
-export function updateForce(obj) {
-  console.log("In the update force!!: ", obj)
+export function updateForce(objs) {
+  console.log("In the update force!!: ", objs)
+  objs.forEach(obj => {
   const randomX = Math.random() * 0.0006 - 0.0003
   const randomY = Math.random() * 0.0006 - 0.0003
   obj.randomDirection = {x: randomX, y: randomY}
+  })
   // cells have a max speed
   // each cell has its own per-update x,y force
   // force changes every ? ms

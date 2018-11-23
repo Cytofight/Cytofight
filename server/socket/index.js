@@ -91,15 +91,7 @@ module.exports = io => {
     })
 
     socket.on('changedEpithelialCell', cellPosition => {
-      // epithelialCells.forEach(cell => {
-      //   console.log(cell)
-      //   if (cell.id === cellId) {
-      //     cell.tint = 0xd60000
-      //   }
-      // })
-      // console.log(epithelialCells, cellId)
       let myCell = epithelialCells.find(cell => {
-        console.log('in the find: ', cell, cellPosition)
         return cell.x === cellPosition.x && cell.y === cellPosition.y})
       console.log(myCell)
       myCell.tint = 0xd60000
@@ -107,6 +99,7 @@ module.exports = io => {
     })
 
     socket.on('newTCells', (newCells) => {
+      console.log('NEW T CELLS ON SERVER: ', newCells)
       dormantTCells = newCells
     })
 
