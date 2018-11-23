@@ -31,7 +31,7 @@ export function update(time) {
       console.log('ALL T CELLS: ', this.dormantTCells)
       console.log('MY T CELLS: ', this.clientDormantTCells)
     } if (this.keyCreateCell.isDown) {
-      this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x + 50, positionY: this.ship.body.position.y + 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
+      this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
     }
     
     limitSpeed(this.ship, 10)
@@ -85,13 +85,18 @@ export function update(time) {
       velocity, angularVelocity
     }
   }
-  if(this.clientDormantTCells){
+  if(this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
     throttledUpdateForce(this.clientDormantTCells)
-      this.dormantTCells.forEach(cell => {
-      // console.log('RANDOMDIRECTION: ', cell.randomDirection)
+    //   this.dormantTCells.forEach(cell => {
+    //   // console.log('RANDOMDIRECTION: ', cell.randomDirection)
+    //   cell.applyForce(cell.randomDirection)
+    //   // console.log(cell)
+    //   limitSpeed(cell, 5)
+    // })
+    for (let id in this.dormantTCells) {
+      const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
-      // console.log(cell)
       limitSpeed(cell, 5)
-    })
+    }
   }
 }

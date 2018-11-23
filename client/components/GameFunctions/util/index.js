@@ -37,12 +37,17 @@ export function fire () {
 }
 // export const throttledFire = throttle(fire, 200)
 
-export function updateForce(objs) {
-  objs.forEach(obj => {
-  const randomX = Math.random() * 0.0006 - 0.0003
-  const randomY = Math.random() * 0.0006 - 0.0003
-  obj.randomDirection = {x: randomX, y: randomY}
-  })
+export function updateForce(objObj) {
+  // objs.forEach(obj => {
+  // const randomX = Math.random() * 0.0006 - 0.0003
+  // const randomY = Math.random() * 0.0006 - 0.0003
+  // obj.randomDirection = {x: randomX, y: randomY}
+  // })
+  for (let key in objObj) {
+    const randomX = Math.random() * 0.0006 - 0.0003
+    const randomY = Math.random() * 0.0006 - 0.0003
+    objObj[key].randomDirection = {x: randomX, y: randomY}
+  }
   // cells have a max speed
   // each cell has its own per-update x,y force
   // force changes every ? ms
