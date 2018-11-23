@@ -26,7 +26,7 @@ export class Antibody extends Phaser.GameObjects.Image {
     super(scene)
     console.log('in the constructor')
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
-    console.log(this)
+    // console.log(this)
     this.speed = Phaser.Math.GetSpeed(575, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
@@ -64,7 +64,6 @@ export default class Game extends Component {
   componentDidMount() {
     this.game = new Phaser.Game(config)
     console.log(document.eve)
-    console.log('hi')
   }
 
   render() {

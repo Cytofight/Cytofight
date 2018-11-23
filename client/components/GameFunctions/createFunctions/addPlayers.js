@@ -140,13 +140,13 @@ export function players() {
       console.log('DONE MAKING T CELLS: ', this.clientDormantTCells)
       this.socket.emit('newTCells', this.cellData)
     } else {
-      // console.log("I was not. I was created by someone else who came before you")
-      // // this.dormantTCells = cells.map(cell => makeTCell.call(this, cell))
+      console.log("I was not. I was created by someone else who came before you")
+      // this.dormantTCells = cells.map(cell => makeTCell.call(this, cell))
       // this.clientDormantTCells = []
       for (let id in cells) {
         this.dormantTCells[id] = makeTCell.call(this, cells[id])
-        this.clientDormantTCells = {}
       }
+      this.clientDormantTCells = {}
       //TESTING
       const testingCellParams = {'999': {positionX: 50, positionY: 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 0, globalId: 999}}
       const testingCell = makeTCell.call(this, testingCellParams)
