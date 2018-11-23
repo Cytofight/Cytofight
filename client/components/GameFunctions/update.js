@@ -34,22 +34,9 @@ export function update(time) {
       this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
     }
     
-    limitSpeed(this.ship, 10)
-    
-    // if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-      //   // console.log('Too fast!')
-      //   const angle = Math.abs(Math.atan(velY / velX))
-      //   // console.log('THING: ', angle, Math.cos(angle))
-      //   const newX = Math.cos(angle)
-    //   const newY = Math.sin(angle)
-    //   // console.log(newX, newY)
-    //   // console.log(this.ship.body)
-    //   this.ship.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
-    // }
-    
+    limitSpeed(this.ship, 8)
     // this.physics.world.wrap(this.ship, 5)
     
-    //This needs to be edited so that your cell has the ability to fire antibodies
     if(this.keyFire.isDown){
       throttledFire.call(this)
     }
@@ -96,7 +83,7 @@ export function update(time) {
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
-      limitSpeed(cell, 5)
+      limitSpeed(cell, 4)
     }
   }
 }

@@ -1,5 +1,4 @@
 import { throttle, fire, limitNumber, worldSize } from '../util'
-import { ENGINE_METHOD_ALL } from 'constants';
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
@@ -57,21 +56,23 @@ export function players() {
   })
 
   this.socket.on('epithelialCell', (cells) => {
+    //CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
     const cellData = {}
     this.epithelialCells = {}
     if (!cells || !cells.length) {
       console.log('getting in the if')
       // this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(() => {
-        // const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
-        // const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
+        // const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+        // const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) = 50
       //   const newCell = makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
       //   newCell.globalId = newCell.body.id
       //   cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: newCell.globalId})
       //   return newCell
       // })
       for (let i = 0; i < numberOfEpithelialCells; i++) {
-        const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
-        const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
+        const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+        const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+        // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
         cellData[i] = {x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: i}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
@@ -93,6 +94,8 @@ export function players() {
       //   matchingCell.setTint(0xd60000)
       //   this.socket.emit('changedEpithelialCell', matchingCell.globalId)
       // }
+
+      // Moved to helper function
       epithelialCellCollision.call(this, bodyA, bodyB)
     })
   })
@@ -102,8 +105,8 @@ export function players() {
     if(!Object.keys(cells).length) {
       console.log("I WAS CREATED FOR THE FIRST TIME!!!")
       // this.dormantTCells = new Array(numberOfTCells).fill(null).map((_, index) => {
-      //   const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100))
-      //   const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100))
+      //   const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+      //   const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
       //   const randomVelocityX = Math.floor(Math.random() * 8 - 4)
       //   const randomVelocityY = Math.floor(Math.random() * 8 - 4)
       //   const randomAngularVelocity = Math.random() * 0.5 - 0.25
@@ -121,13 +124,16 @@ export function players() {
       //     angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
       //     globalId: cell.globalId})
       // ))
+
+      // CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
       this.cellData = {}
       for (let i = 0; i < numberOfTCells; i++) {
-        const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100))
-        const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100))
+        const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+        const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
         const randomVelocityX = Math.floor(Math.random() * 8 - 4)
         const randomVelocityY = Math.floor(Math.random() * 8 - 4)
         const randomAngularVelocity = Math.random() * 0.5 - 0.25
+        // Again, since these are the first cells, the client can handle the IDs with no need for server guidance
         this.cellData[i] = {
           positionX: randomTCellX, positionY: randomTCellY, 
           velocityX: randomVelocityX, velocityY: randomVelocityY, 
@@ -136,7 +142,7 @@ export function players() {
         }
         this.dormantTCells[i] = makeTCell.call(this, this.cellData[i])
       }
-      this.clientDormantTCells = {...this.dormantTCells}
+      this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical in length
       console.log('DONE MAKING T CELLS: ', this.clientDormantTCells)
       this.socket.emit('newTCells', this.cellData)
     } else {
@@ -148,31 +154,34 @@ export function players() {
       }
       this.clientDormantTCells = {}
       //TESTING
-      const testingCellParams = {'999': {positionX: 50, positionY: 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 0, globalId: 999}}
-      const testingCell = makeTCell.call(this, testingCellParams)
-      console.log(testingCell)
-      this.dormantTCells[999] = testingCell
-      this.clientDormantTCells[999] = testingCell
-      this.socket.emit('newTCells', testingCellParams)
+      // const testingCellParams = {'999': {positionX: 50, positionY: 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 0, globalId: 999}}
+      // const testingCell = makeTCell.call(this, testingCellParams)
+      // console.log(testingCell)
+      // this.dormantTCells[999] = testingCell
+      // this.clientDormantTCells[999] = testingCell
+      // this.socket.emit('newTCells', testingCellParams)
     }
   })
 
+  // Mid-game generation of any new T cells
   this.socket.on('addDormantTCells', (newCells, ownerId) => {
     // const newCells = newCellData.map(cell => makeTCell.call(this, cell))
     // console.log('T CELLS BEFORE ADDITION: ', this.dormantTCells)
     // this.dormantTCells.push(...newCells)
     // console.log('T CELLS AFTER ADDITION: ', this.dormantTCells)
     // if (ownerId === this.socket.id) this.clientDormantTCells.push(...newCells)
+
     for (let id in newCells) {
       const newCell = makeTCell.call(this, newCells[id])
       this.dormantTCells[id] = newCell
+      // If the server decides that you should be responsible for the new cell(s)
       if (ownerId === this.socket.id) this.clientDormantTCells[id] = newCell
-      console.log('OWNERID VS SOCKET ID: ', ownerId, this.socket.id)
     }
   })
 
-  this.socket.on('passDormantTCells', passedCells => {
-    // for each cell passed on from the disconnecting player, find its corresponding cell in the game...
+  // When a player disconnects and the server decides you should get responsibility for their cells
+  this.socket.on('passDormantTCells', passedCellIds => { // AN ARRAY
+    // // for each cell passed on from the disconnecting player, find its corresponding cell in the game...
     // const cellsToTransfer = passedCells.map(inputCell => 
     //   this.dormantTCells.find(cell => 
     //     !clientDormantTCells.includes(cell) && 
@@ -182,9 +191,8 @@ export function players() {
     // )
     // // and add it to the list of cells that the player is responsible for monitoring
     // this.clientDormantTCells.push(...cellsToTransfer)
-    for (let id in passedCells) {
-      this.clientDormantTCells[id] = this.dormantTCells[id]
-    }
+
+    passedCellIds.forEach(id => {if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]})
   })
 
   this.socket.on('changedEpithelialCellClient', globalId => {
@@ -204,8 +212,8 @@ const shipParams = {
 }
 
 function addPlayer(playerInfo) {
-  const randomX = Math.floor(Math.random() * (worldSize.x - 100))
-  const randomY = Math.floor(Math.random() * (worldSize.y - 100))
+  const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
   this.ship.setScale(0.5)
   this.ship.setCircle(this.ship.width / 2, {
@@ -232,8 +240,8 @@ function addPlayer(playerInfo) {
 }
 
 function addOtherPlayers(playerInfo) {
-  const randomX = Math.floor(Math.random() * (worldSize.x - 100))
-  const randomY = Math.floor(Math.random() * (worldSize.y - 100))
+  const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   const otherPlayer = this.matter.add.image(randomX, randomY, 'ship')
   otherPlayer.setScale(0.5);
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)

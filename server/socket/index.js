@@ -3,6 +3,9 @@
 
 module.exports = io => {
   let players = {}
+  // CELL STORAGE NOW OBJECTS, LIKE PLAYER STORAGE
+  let epithelialCells = {}
+  let dormantTCells = {}
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
     y: Math.floor(Math.random() * 900) + 50
@@ -11,8 +14,6 @@ module.exports = io => {
     blue: 0,
     red: 0
   }
-  let epithelialCells = {}
-  let dormantTCells = {}
 
   io.on('connection', socket => {
     console.log(`A new player has arrived: ${socket.id}`)
@@ -30,7 +31,7 @@ module.exports = io => {
       angularVelocity: 0,
       playerId: socket.id,
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
-      clientDormantTCells: []
+      clientDormantTCells: {}
     }
     
     // send the players object to the new player
@@ -49,14 +50,15 @@ module.exports = io => {
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
+      // Pass "their" T cells onto the player with the lowest number
+      // (Only if there are multiple players to begin with)
       if (Object.keys(players).length > 1) {
-        // const lowestCellPlayer = Math.min(...Object.keys(players).map(key => players[key].clientDormantTCells.length))
-        const lowestCellPlayer = Object.keys(players).reduce((currLowestPlayer, id) => {
+        const lowestCellPlayerId = Object.keys(players).reduce((currLowestPlayer, id) => {
           const currAmount = Object.keys(players[id].clientDormantTCells).length
           if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
           else return currLowestPlayer
-        })
-        io.to(`${lowestCellPlayer.id}`).emit('passDormantTCells', players[socket.id].clientDormantTCells)
+        }, {id: null}).id
+        io.to(`${lowestCellPlayerId}`).emit('passDormantTCells', Object.keys(players[socket.id].clientDormantTCells))
       }
       // remove this player from our players object
       delete players[socket.id]
@@ -100,6 +102,8 @@ module.exports = io => {
       //   epithelialCells[cell.globalId] = cell
       // })
       // epithelialCells = {...epithelialCells, ...newCells}
+
+      // Basically like pushing newCells into epithelialCells, but for an object
       Object.assign(epithelialCells, newCells)
     })
 
@@ -123,10 +127,10 @@ module.exports = io => {
       socket.broadcast.emit('addDormantTCells', newCells)
     })
 
-    socket.on('requestNewTCells', cellData => { //CELLDATA REMAINS AN ARRAY BECAUSE NO IDS YET
+    socket.on('requestNewTCells', cellData => { //CELLDATA RECEIVED IS AN ARRAY BECAUSE IT HAS NO IDS YET
       const playerIds = Object.keys(players)
       let lowestCellPlayerId
-      if (playerIds.length === 0) return
+      if (playerIds.length === 0) return // dunno how this would happen, but whatever
       else if (playerIds.length === 1) lowestCellPlayerId = playerIds[0]
       else {
         lowestCellPlayerId = playerIds.reduce((currLowestPlayer, id) => {
@@ -135,18 +139,20 @@ module.exports = io => {
           else return currLowestPlayer
         }, {id: null, amount: Infinity}).id
       }
-      let nextId = Math.max(...Object.keys(dormantTCells))
-      const cellDataObj = {}
-      cellData.forEach(cell => {
-        nextId++
-        cell.globalId = nextId
-        cellDataObj[nextId] = cell
-      })
-      // dormantTCells = {...dormantTCells, ...cellDataObj}
+      // The next available globalId, determined by the server to ensure consistency
+      let nextId = Math.max(...Object.keys(dormantTCells)) + 1
+      // const cellDataObj = {}
+      // cellData.forEach(cell => {
+      //   cell.globalId = nextId
+      //   cellDataObj[nextId] = cell
+      //   nextId++
+      // })
+      const cellDataObj = cellData.reduce((obj, currCell) => {
+        // Please humor my code golf here, I'm bored; assigns currCell to nextId, and nextId to currCell's globalId
+        return {...obj, [nextId]: {...currCell, globalId: nextId++}}
+      }, {})
       Object.assign(dormantTCells, cellDataObj)
-      // players[id].clientDormantTCells = {...players[id].clientDormantTCells, ...cellDataObj}
       Object.assign(players[lowestCellPlayerId].clientDormantTCells, cellDataObj)
-      console.log(Object.keys(cellDataObj))
       io.emit('addDormantTCells', cellDataObj, lowestCellPlayerId)
     })
 

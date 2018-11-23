@@ -1,4 +1,5 @@
 // import Phaser from 'phaser'
+import { worldSize } from '../util'
 
 // const histamineParticles = 2
 const numberOfMastCells = 4
@@ -30,8 +31,8 @@ export function NPCCells() {
   // this.dormantTCells = new Array(numberOfDormantTCells).fill(null).map(cell => {
   //   const randomVelocityX = Math.floor(Math.random() * 8 - 4) + 10
   //   const randomVelocityY = Math.floor(Math.random() * 8 - 4) + 10
-  //   const randomPositionX = Math.floor(Math.random() * 500)
-  //   const randomPositionY = Math.floor(Math.random() * 500)
+  //   const randomPositionX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  //   const randomPositionY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
 
   //   cell = this.matter.add.image(
   //     randomPositionX,
@@ -109,8 +110,8 @@ export function NPCCells() {
     // const mastCells = []
     const randomMastCellSpeedX = Math.floor(Math.random() * 12 - 6)
     const randomMastCellSpeedY = Math.floor(Math.random() * 12 - 6)
-    const randomX = Math.floor(Math.random() * 1000)
-    const randomY = Math.floor(Math.random() * 1000)
+    const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+    const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
     particle.mastCell = this.matter.add.image(randomX, randomY, 'mastCell')
     particle.mastCell.setCircle(particle.mastCell.width / 2, defaultCellParams)
     particle.mastCell.setVelocity(randomMastCellSpeedX, randomMastCellSpeedY)

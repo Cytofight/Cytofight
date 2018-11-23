@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import React, {Component} from 'react'
 import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
+import { worldSize } from './gameFunctions/util'
 
 const config = {
   type: Phaser.AUTO,
@@ -47,7 +48,7 @@ export class Antibody extends Phaser.GameObjects.Image {
     this.y -= this.velocity.y * delta;
     this.x -= this.velocity.x * delta;
     
-    if (this.y < -50 || this.x < -50 || this.y > 1000 || this.x > 1000) {
+    if (this.y < -50 || this.x < -50 || this.y > worldSize.y + 50 || this.x > worldSize.x + 50) {
       console.log('gone awaaay')
       this.setActive(false);
       this.setVisible(false);

@@ -1,4 +1,4 @@
-export const worldSize = {x: 1000, y: 1000}
+export const worldSize = {x: 2000, y: 2000}
 
 export function limitSpeed(obj, maxSpeed) {
   const velX = obj.body.velocity.x
@@ -44,8 +44,8 @@ export function updateForce(objObj) {
   // obj.randomDirection = {x: randomX, y: randomY}
   // })
   for (let key in objObj) {
-    const randomX = Math.random() * 0.0006 - 0.0003
-    const randomY = Math.random() * 0.0006 - 0.0003
+    const randomX = Math.random() * 0.001 - 0.0005
+    const randomY = Math.random() * 0.001 - 0.0005
     objObj[key].randomDirection = {x: randomX, y: randomY}
   }
   // cells have a max speed
