@@ -27,6 +27,12 @@ export function update(time) {
     } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
+    if (this.keyDebug.isDown) {
+      console.log('ALL T CELLS: ', this.dormantTCells)
+      console.log('MY T CELLS: ', this.clientDormantTCells)
+    } if (this.keyCreateCell.isDown) {
+      this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x + 50, positionY: this.ship.body.position.y + 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
+    }
     
     limitSpeed(this.ship, 10)
     
@@ -79,8 +85,8 @@ export function update(time) {
       velocity, angularVelocity
     }
   }
-  if(this.dormantTCells){
-    throttledUpdateForce(this.dormantTCells)
+  if(this.clientDormantTCells){
+    throttledUpdateForce(this.clientDormantTCells)
       this.dormantTCells.forEach(cell => {
       // console.log('RANDOMDIRECTION: ', cell.randomDirection)
       cell.applyForce(cell.randomDirection)

@@ -8,5 +8,7 @@ export function keyboardControls() {
   this.keyDown = this.input.keyboard.addKey(83) // S
   this.keyRight = this.input.keyboard.addKey(68) // D
   this.keyFire = this.input.keyboard.addKey(32) // Spacebar
+  this.keyDebug = this.input.keyboard.addKey(66) // B
+  this.keyCreateCell = this.input.keyboard.addKey(67) // C
 
 }

@@ -54,8 +54,9 @@ module.exports = io => {
         const lowestCellPlayer = Object.keys(players).reduce((currLowestPlayer, id) => {
           const currAmount = players[id].clientDormantTCells.length
           if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
+          else return currLowestPlayer
         })
-        io.to('${lowestCellPlayer.id}').emit('passDormantTCells', players[socket.id].clientDormantTCells)
+        io.to(`${lowestCellPlayer.id}`).emit('passDormantTCells', players[socket.id].clientDormantTCells)
       }
       // remove this player from our players object
       delete players[socket.id]
@@ -99,23 +100,34 @@ module.exports = io => {
       console.log('EXAMPLE OF NEW EPI CELL ON SERVER: ', epithelialCells[0])
     })
 
-    socket.on('changedEpithelialCell', identifier => {
-      console.log('total changed epi cells before update: ', epithelialCells.filter(cell => cell.tint))
-      const redCells = epithelialCells.filter(cell => cell.tint || cell.identifier === identifier)
-      let myCell = epithelialCells.find(cell => cell.identifier = identifier)
-      console.log('FOUND CHANGED EPI CELL ON SERVER: ', myCell)
-      // console.log(epithelialCells.indexOf(myCell))
-      // epithelialCells[epithelialCells.indexOf(myCell)].tint = 0xd60000
-      // myCell.tint = 0xd60000
-      redCells.forEach(cell => cell.tint = 0xd60000)
-      console.log('total changed epi cells AFTER: ', epithelialCells)
-      socket.broadcast.emit('changedEpithelialCellClient', identifier)
+    socket.on('changedEpithelialCell', globalId => {
+      epithelialCells.forEach(cell => {
+        if (cell.globalId === globalId) cell.tint = 0xd60000
+      })
+      socket.broadcast.emit('changedEpithelialCellClient', globalId)
     })
 
     socket.on('newTCells', (newCells) => {
       console.log('EXAMPLE OF NEW T CELLS ON SERVER: ', newCells[0])
-      dormantTCells.concat(newCells)
-      players[socket.id].clientDormantTCells.concat(newCells)
+      dormantTCells.push(...newCells)
+      players[socket.id].clientDormantTCells.push(...newCells)
+      console.log('CLIENT AND SERVER T CELLS: ', players[socket.id].clientDormantTCells, dormantTCells)
+      socket.broadcast.emit('addDormantTCells', newCells)
+    })
+
+    socket.on('requestNewTCells', cellData => {
+      const lowestCellPlayer = Object.keys(players).reduce((currLowestPlayer, id) => {
+        const currAmount = players[id].clientDormantTCells.length
+        if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
+        else return currLowestPlayer
+      })
+      let lastId = dormantTCells.reduce((largest, currCell) => {
+        if (largest < currCell.globalId) return currCell.globalId
+        else return largest
+      }, -1)
+      cellData.forEach(cell => cell.globalId = ++lastId)
+      dormantTCells.push(...cellData)
+      io.emit('addDormantTCells', cellData, lowestCellPlayer)
     })
 
     socket.on('new-message', message => {
