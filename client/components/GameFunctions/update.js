@@ -27,6 +27,9 @@ export function update(time) {
     } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
+    if (this.input.activePointer.isDown || this.keyFire.isDown) {
+      throttledFire.call(this)
+    }
     if (this.keyDebug.isDown) {
       console.log('ALL T CELLS: ', this.dormantTCells)
       console.log('MY T CELLS: ', this.clientDormantTCells)
@@ -36,10 +39,6 @@ export function update(time) {
     
     limitSpeed(this.ship, 8)
     // this.physics.world.wrap(this.ship, 5)
-    
-    if(this.keyFire.isDown){
-      throttledFire.call(this)
-    }
     
     // emit player movement
     const { angle, angularVelocity, velocity, position } = this.ship.body

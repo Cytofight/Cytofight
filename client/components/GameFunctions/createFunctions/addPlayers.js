@@ -234,9 +234,9 @@ function addPlayer(playerInfo) {
     var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
     this.ship.angle = angle;
   }, this)
-  this.input.on("pointerdown", (event) => {
-    throttledFire.call(this)
-  })
+  // this.input.on("pointerdown", (event) => {
+  //   throttledFire.call(this)
+  // })
 }
 
 function addOtherPlayers(playerInfo) {
