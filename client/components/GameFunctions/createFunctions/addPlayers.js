@@ -21,14 +21,14 @@ export function players() {
   this.socket.on('currentPlayers', (players) => {
     Object.keys(players).forEach((id) => {
       if (players[id].playerId === this.socket.id) {
-        addPlayer.call(this, this, players[id])
+        addPlayer.call(this, players[id])
       } else {
-        addOtherPlayers.call(this, this, players[id])
+        addOtherPlayers.call(this, players[id])
       }
     })
   })
   this.socket.on('newPlayer', (playerInfo) => {
-    addOtherPlayers.call(this, this, playerInfo)
+    addOtherPlayers.call(this, playerInfo)
   })
   this.socket.on('disconnect', (playerId) => {
     this.otherPlayers.forEach((otherPlayer) => {
@@ -63,22 +63,29 @@ export function players() {
         const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100))
         const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100))
         const newCell = makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
-        cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null})
+        newCell.identifier = newCell.body.id
+        cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null, identifier: newCell.identifier})
         return newCell
       })
       //emit new cells
       this.socket.emit('newEpithelialCells', cellData)
     } else {
       console.log('epithelialCells from server: ', cells)
-      this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint))
+      this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint, cell.identifier))
+      // TESTING
+      const myRedCells = this.epithelialCells.filter(cell => cell.tintBottomLeft === 214)
+      const serverRedCells = cells.filter(cell => cell.tint)
+      console.log('RED CELL AMOUNT COMPARISON: ', myRedCells.length, serverRedCells.length)
     }
     this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
       const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
+      if (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) console.log('there was a collision! matching cell: ', matchingCell)
       if (this.ship && this.ship.tintBottomLeft === 214 && 
-        matchingCell && matchingCell.tintBottomLeft !== 214 &&
+        matchingCell &&
         (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
+          console.log('something happened!')
         matchingCell.setTint(0xd60000)
-        this.socket.emit('changedEpithelialCell', matchingCell.body.position)
+        this.socket.emit('changedEpithelialCell', matchingCell.identifier)
       }
       // this.socket.emit('anyCollision', bodyA, bodyB)
     })
@@ -94,12 +101,12 @@ export function players() {
         const randomVelocityY = Math.floor(Math.random() * 8 - 4)
         const randomAngularVelocity = Math.random() * 0.5 - 0.25
         return makeTCell.call(this, {
-          randomTCellX, randomTCellY, 
-          randomVelocityX, randomVelocityY, 
-          angle: 0, randomAngularVelocity
+          positionX: randomTCellX, positionY: randomTCellY, 
+          velocityX: randomVelocityX, velocityY: randomVelocityY, 
+          angle: 0, angularVelocity: randomAngularVelocity
         })
       })
-      this.clientDormantTCells = dormantTCells // the list of cells for whose behavior the player is responsible
+      this.clientDormantTCells = this.dormantTCells // the list of cells for whose behavior the player is responsible
       this.socket.emit('newTCells', this.dormantTCells.map(cell => 
         ({positionX: cell.body.position.x, positionY: cell.body.position.y, 
           velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y, 
@@ -130,11 +137,11 @@ export function players() {
     this.clientDormantTCells.concat(cellsToTransfer)
   })
 
-  this.socket.on('changedEpithelialCellClient', cell => {
-    console.log(cell)
-    const thing = this.epithelialCells.find(epi => epi.body.position.x === cell.x && epi.body.position.y === cell.y)
-    console.log(thing)
-    thing.setTint(0xd60000)
+  this.socket.on('changedEpithelialCellClient', identifier => {
+    console.log(identifier)
+    const correspondingCell = this.epithelialCells.find(cell => cell.identifier === identifier)
+    console.log('found corresponding cell: ', correspondingCell)
+    correspondingCell.setTint(0xd60000)
   })
 
 }
@@ -145,11 +152,7 @@ const shipParams = {
   frictionAir: 0.05
 }
 
-function addPlayer(self, playerInfo) {
-  // self.ship = self.physics.add
-  //   .image(playerInfo.x, playerInfo.y, 'ship')
-  //   .setOrigin(0.5, 0.5)
-  //   .setDisplaySize(53, 40)
+function addPlayer(playerInfo) {
   const randomX = Math.floor(Math.random() * (worldSize.x - 100))
   const randomY = Math.floor(Math.random() * (worldSize.y - 100))
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
@@ -177,11 +180,7 @@ function addPlayer(self, playerInfo) {
   })
 }
 
-function addOtherPlayers(self, playerInfo) {
-  // const otherPlayer = self.add
-  //   .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
-  //   .setOrigin(0.5, 0.5)
-  //   .setDisplaySize(53, 40)
+function addOtherPlayers(playerInfo) {
   const randomX = Math.floor(Math.random() * (worldSize.x - 100))
   const randomY = Math.floor(Math.random() * (worldSize.y - 100))
   const otherPlayer = this.matter.add.image(randomX, randomY, 'ship')
@@ -196,7 +195,7 @@ function addOtherPlayers(self, playerInfo) {
   this.otherPlayers.push(otherPlayer)
 }
 
-function makeEpithelialCell(x, y, tint) {
+function makeEpithelialCell(x, y, tint, identifier) {
   const cell = this.matter.add.image(
     x,
     y,
@@ -207,6 +206,7 @@ function makeEpithelialCell(x, y, tint) {
     ...defaultCellParams
   })
   if (tint) cell.setTint(tint)
+  cell.identifier = identifier
   return cell
 }
 

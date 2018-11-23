@@ -30,7 +30,7 @@ module.exports = io => {
       angularVelocity: 0,
       playerId: socket.id,
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
-      clientDormantTCells = {}
+      clientDormantTCells: []
     }
     
     // send the players object to the new player
@@ -50,7 +50,6 @@ module.exports = io => {
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
       if (Object.keys(players).length > 1) {
-        const 
         // const lowestCellPlayer = Math.min(...Object.keys(players).map(key => players[key].clientDormantTCells.length))
         const lowestCellPlayer = Object.keys(players).reduce((currLowestPlayer, id) => {
           const currAmount = players[id].clientDormantTCells.length
@@ -97,19 +96,24 @@ module.exports = io => {
 
     socket.on('newEpithelialCells', (newCells) => {
       epithelialCells = newCells
-      console.log(epithelialCells)
+      console.log('EXAMPLE OF NEW EPI CELL ON SERVER: ', epithelialCells[0])
     })
 
-    socket.on('changedEpithelialCell', cellPosition => {
-      let myCell = epithelialCells.find(cell => {
-        return cell.x === cellPosition.x && cell.y === cellPosition.y})
-      console.log(myCell)
-      myCell.tint = 0xd60000
-      socket.broadcast.emit('changedEpithelialCellClient', cellPosition)
+    socket.on('changedEpithelialCell', identifier => {
+      console.log('total changed epi cells before update: ', epithelialCells.filter(cell => cell.tint))
+      const redCells = epithelialCells.filter(cell => cell.tint || cell.identifier === identifier)
+      let myCell = epithelialCells.find(cell => cell.identifier = identifier)
+      console.log('FOUND CHANGED EPI CELL ON SERVER: ', myCell)
+      // console.log(epithelialCells.indexOf(myCell))
+      // epithelialCells[epithelialCells.indexOf(myCell)].tint = 0xd60000
+      // myCell.tint = 0xd60000
+      redCells.forEach(cell => cell.tint = 0xd60000)
+      console.log('total changed epi cells AFTER: ', epithelialCells)
+      socket.broadcast.emit('changedEpithelialCellClient', identifier)
     })
 
     socket.on('newTCells', (newCells) => {
-      console.log('NEW T CELLS ON SERVER: ', newCells)
+      console.log('EXAMPLE OF NEW T CELLS ON SERVER: ', newCells[0])
       dormantTCells.concat(newCells)
       players[socket.id].clientDormantTCells.concat(newCells)
     })
