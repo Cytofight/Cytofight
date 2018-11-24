@@ -190,6 +190,7 @@ export function players() {
     // this.clientDormantTCells.push(...cellsToTransfer)
 
     passedCellIds.forEach(id => {if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]})
+    console.log('passed cells, new total client cells: ', this.clientDormantTCells)
   })
 
   this.socket.on('changedDormantTCells', cellData => {
@@ -279,11 +280,6 @@ function makeTCell(cellDatum){
     'dormantTCell'
   )
   cell.setCircle(cell.width / 2, defaultCellParams)
-  // cell.setVelocity(velocityX, velocityY)
-  // if (angle) cell.setAngle(angle)
-  // if (angularVelocity) cell.setAngularVelocity(angularVelocity)
-  // if(tint) cell.setTint(tint)
-  // cell.randomDirection = randomDirection || {x: 0, y: 0}
   setTCellParams(cell, cellDatum)
   cell.globalId = cellDatum.globalId
   cell.activate = function() {
@@ -298,8 +294,10 @@ function makeTCell(cellDatum){
 function setTCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint }) {
   cell.setPosition(positionX, positionY)
   cell.setVelocity(velocityX, velocityY)
-  cell.setAngle(angle)
+  // cell.setAngle(angle) // blocks spin transmission for some reason
+  // console.log('setParams input angular velocity: ', angularVelocity)
   cell.setAngularVelocity(angularVelocity)
+  // console.log('setParams cell angular velocity now: ', cell.body.angularVelocity)
   if(tint) cell.setTint(tint)
   cell.randomDirection = randomDirection || {x: 0, y: 0}
 }
@@ -314,14 +312,14 @@ function epithelialCellCollision(bodyA, bodyB) {
   }
 }
 
-function tCellCollision(bodyA, bodyB) {
-  const matchingCells = this.clientDormantTCells.filter(currCell => currCell.body.id === bodyA.id || currCell.body.id === bodyB.id)
-  if (matchingCells.length) {
-    this.socket.emit('changedTCells', matchingCells.map(cell => ({
-      positionX: cell.body.position.x, positionY: cell.body.position.y,
-      velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-      angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-      globalId: cell.globalId
-    })))
-  }
-}
+// function tCellCollision(bodyA, bodyB) {
+//   const matchingCells = this.clientDormantTCells.filter(currCell => currCell.body.id === bodyA.id || currCell.body.id === bodyB.id)
+//   if (matchingCells.length) {
+//     this.socket.emit('changedTCells', matchingCells.map(cell => ({
+//       positionX: cell.body.position.x, positionY: cell.body.position.y,
+//       velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
+//       angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
+//       globalId: cell.globalId
+//     })))
+//   }
+// }

@@ -100,12 +100,16 @@ export function update(time) {
       const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 4)
-      cellData[id] = {
-        positionX: cell.body.position.x, positionY: cell.body.position.y,
-        velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-        angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-        randomDirection: cell.randomDirection,
-        globalId: cell.globalId
+      if (this.clientDormantTCells[id])  {
+        cellData[id] = {
+          positionX: cell.body.position.x, positionY: cell.body.position.y,
+          velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
+          angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
+          randomDirection: cell.randomDirection,
+          globalId: cell.globalId
+        }
+        // console.log('passing angular velocity: ', cell.body.angularVelocity, cellData[id].angularVelocity)
+        if (cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
       }
     }
     this.socket.emit('changedTCells', cellData)
