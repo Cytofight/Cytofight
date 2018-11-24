@@ -1,4 +1,4 @@
-import { throttle, fire, limitNumber, worldSize } from '../util'
+import { throttle, fire, limitNumber, worldSize, activate } from '../util'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
@@ -18,6 +18,8 @@ export function players() {
   // const self = this
   this.socket = io()
   this.otherPlayers = []
+  this.badGuys = []
+  this.goodGuys = []
   this.socket.on('currentPlayers', (players) => {
     Object.keys(players).forEach((id) => {
       if (players[id].playerId === this.socket.id) {
@@ -90,6 +92,7 @@ export function players() {
 
   this.socket.on('changedEpithelialCellClient', globalId => {
     this.epithelialCells[globalId].setTint(0xd60000)
+    this.badGuys.push(this.epithelialCells[globalId])
   })
 
   this.socket.on('dormantTCell', (cells) => {
@@ -215,8 +218,10 @@ function addPlayer(playerInfo) {
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
     this.ship.setTint(0xd60000)
+    this.badGuys.push(this.ship)
   } else {
     this.ship.setTint(0x01c0ff)
+    this.goodGuys.push(this.ship)
   }
 
   this.input.on("pointermove", function(pointer) {
@@ -236,8 +241,10 @@ function addOtherPlayers(playerInfo) {
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (playerInfo.team === 'blue') {
     otherPlayer.setTint(0xd60000)
+    this.badGuys.push(otherPlayer)
   } else {
     otherPlayer.setTint(0x01c0ff)
+    this.goodGuys.push(otherPlayer)
   }
   otherPlayer.playerId = playerInfo.playerId
   this.otherPlayers.push(otherPlayer)
@@ -249,7 +256,10 @@ function makeEpithelialCell({ x, y, tint, globalId }) {
     isStatic: true,
     ...defaultCellParams
   })
-  if (tint) cell.setTint(tint)
+  if (tint === 0xd60000) {
+    cell.setTint(tint)
+    this.badGuys.push(cell)
+  }
   cell.globalId = globalId
   return cell
 }
@@ -258,12 +268,13 @@ function makeTCell(cellDatum){
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
   cell.setCircle(cell.width / 2, defaultCellParams)
   setCellParams(cell, cellDatum)
-  cell.activate = function() {
-      this.setVelocity(0, 0) //PLACEHOLDER
-      console.log("I'm a good guy now!")
-      cell.setTint(0x01c0ff)
-      cell.activated = true
-    }
+  // cell.activate = function() {
+  //     this.setVelocity(0, 0) //PLACEHOLDER
+  //     console.log("I'm a good guy now!")
+  //     cell.setTint(0x01c0ff)
+
+  //     cell.activated = true
+  //   }
   return cell
 }
 
@@ -297,7 +308,7 @@ function cellContains(x, y) {
     const currCell = this.dormantTCells[id]
     if (currCell.getBounds().contains(x, y)) {
       if (!currCell.activated) {
-        currCell.activate()
+        activate.call(this, currCell)
       }
       return true
     }
@@ -310,7 +321,11 @@ function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
   cell.setAngularVelocity(angularVelocity)
-  if(tint) cell.setTint(tint)
+  if(tint && tint !== cell.tintBottomLeft) {
+    cell.setTint(tint)
+    if (tint === 0x01c0ff) this.goodGuys.push(cell)
+    if (tint === 0xd60000) this.badGuys.push(cell)
+  }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId
 }
@@ -321,6 +336,7 @@ function epithelialCellCollision(bodyA, bodyB) {
     this.epithelialCells[matchingCellId] &&
     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
+    this.badGuys.push(this.epithelialCells[matchingCellId])
     this.socket.emit('changedEpithelialCell', matchingCellId)
   }
 }
