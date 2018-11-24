@@ -168,9 +168,7 @@ module.exports = io => {
       //   relevantCell = datum
       // })
       for (let id in cellData) {
-        // Object.assign(dormantTCells[id], cellData[id])
         dormantTCells[id] = cellData[id]
-        // console.log('received angular velocity: ', cellData[id].angularVelocity)
       }
       socket.broadcast.emit('changedDormantTCells', cellData)
     })

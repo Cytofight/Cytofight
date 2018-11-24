@@ -295,9 +295,7 @@ function setTCellParams(cell, { positionX, positionY, velocityX, velocityY, angl
   cell.setPosition(positionX, positionY)
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
-  // console.log('setParams input angular velocity: ', angularVelocity)
   cell.setAngularVelocity(angularVelocity)
-  // console.log('setParams cell angular velocity now: ', cell.body.angularVelocity)
   if(tint) cell.setTint(tint)
   cell.randomDirection = randomDirection || {x: 0, y: 0}
 }

@@ -108,7 +108,6 @@ export function update(time) {
           randomDirection: cell.randomDirection,
           globalId: cell.globalId
         }
-        // console.log('passing angular velocity: ', cell.body.angularVelocity, cellData[id].angularVelocity)
         if (cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
       }
     }
