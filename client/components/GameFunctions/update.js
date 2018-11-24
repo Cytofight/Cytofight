@@ -71,18 +71,43 @@ export function update(time) {
       velocity, angularVelocity
     }
   }
-  if(this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
-    throttledUpdateForce(this.clientDormantTCells)
+
+  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
+    throttledUpdateForce.call(this, this.clientDormantTCells)
     //   this.dormantTCells.forEach(cell => {
     //   // console.log('RANDOMDIRECTION: ', cell.randomDirection)
     //   cell.applyForce(cell.randomDirection)
     //   // console.log(cell)
     //   limitSpeed(cell, 5)
     // })
+
+    // const cellData = Object.keys(objObj).reduce((obj, id) => {
+    //   const currCell = objObj[id]
+    //   obj[id] = {
+    //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
+    //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
+    //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
+    //     randomDirection: currCell.randomDirection,
+    //     globalId: currCell.globalId
+    //   }
+    //   console.log('random dir being sent: ', currCell.randomDirection)
+    //   return obj
+    // }, {})
+    // this.socket.emit('changedTCells', cellData)
+
+    const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 4)
+      cellData[id] = {
+        positionX: cell.body.position.x, positionY: cell.body.position.y,
+        velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
+        angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
+        randomDirection: cell.randomDirection,
+        globalId: cell.globalId
+      }
     }
+    this.socket.emit('changedTCells', cellData)
   }
 }

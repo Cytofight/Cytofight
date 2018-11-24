@@ -51,6 +51,19 @@ export function updateForce(objObj) {
   // cells have a max speed
   // each cell has its own per-update x,y force
   // force changes every ? ms
+  // const cellData = Object.keys(objObj).reduce((obj, id) => {
+  //   const currCell = objObj[id]
+  //   obj[id] = {
+  //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
+  //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
+  //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
+  //     randomDirection: currCell.randomDirection,
+  //     globalId: currCell.globalId
+  //   }
+  //   console.log('random dir being sent: ', currCell.randomDirection)
+  //   return obj
+  // }, {})
+  // this.socket.emit('changedTCells', cellData)
 }
 
 export function limitNumber(num, lowerLimit, higherLimit) {

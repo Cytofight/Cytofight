@@ -14,7 +14,6 @@ const defaultCellParams = {
 //change name of function to init()
 //must STILL call with this
 export function players() {
-  console.log("TOP OF PAGE THIS: ", this)
   // const self = this
   this.socket = io()
   this.otherPlayers = []
@@ -60,7 +59,6 @@ export function players() {
     const cellData = {}
     this.epithelialCells = {}
     if (!cells || !cells.length) {
-      console.log('getting in the if')
       // this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(() => {
         // const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
         // const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) = 50
@@ -142,8 +140,7 @@ export function players() {
         }
         this.dormantTCells[i] = makeTCell.call(this, this.cellData[i])
       }
-      this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical in length
-      console.log('DONE MAKING T CELLS: ', this.clientDormantTCells)
+      this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical
       this.socket.emit('newTCells', this.cellData)
     } else {
       console.log("I was not. I was created by someone else who came before you")
@@ -195,8 +192,14 @@ export function players() {
     passedCellIds.forEach(id => {if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]})
   })
 
+  this.socket.on('changedDormantTCells', cellData => {
+    for (let id in cellData) {
+      const currCell = this.dormantTCells[id]
+      setTCellParams(currCell, cellData[id])
+    }
+  })
+
   this.socket.on('changedEpithelialCellClient', globalId => {
-    console.log(globalId)
     // const correspondingCell = this.epithelialCells.find(cell => cell.globalId === globalId)
     // console.log('found corresponding cell: ', correspondingCell)
     // correspondingCell.setTint(0xd60000)
@@ -269,19 +272,20 @@ function makeEpithelialCell({ x, y, tint, globalId }) {
   return cell
 }
 
-function makeTCell({ positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId } ){
+function makeTCell(cellDatum){
   const cell = this.matter.add.image(
-    positionX,
-    positionY,
+    cellDatum.positionX,
+    cellDatum.positionY,
     'dormantTCell'
   )
   cell.setCircle(cell.width / 2, defaultCellParams)
-  cell.setVelocity(velocityX, velocityY)
-  if (angle) cell.setAngle(angle)
-  if (angularVelocity) cell.setAngularVelocity(angularVelocity)
-  if(tint) cell.setTint(tint)
-  cell.randomDirection = randomDirection || {x: 0, y: 0}
-  cell.globalId = globalId
+  // cell.setVelocity(velocityX, velocityY)
+  // if (angle) cell.setAngle(angle)
+  // if (angularVelocity) cell.setAngularVelocity(angularVelocity)
+  // if(tint) cell.setTint(tint)
+  // cell.randomDirection = randomDirection || {x: 0, y: 0}
+  setTCellParams(cell, cellDatum)
+  cell.globalId = cellDatum.globalId
   cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
       console.log("I'm a good guy now!")
@@ -291,12 +295,20 @@ function makeTCell({ positionX, positionY, velocityX, velocityY, angle, angularV
   return cell
 }
 
+function setTCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint }) {
+  cell.setPosition(positionX, positionY)
+  cell.setVelocity(velocityX, velocityY)
+  cell.setAngle(angle)
+  cell.setAngularVelocity(angularVelocity)
+  if(tint) cell.setTint(tint)
+  cell.randomDirection = randomDirection || {x: 0, y: 0}
+}
+
 function epithelialCellCollision(bodyA, bodyB) {
   const matchingCellId = Object.keys(this.epithelialCells).find(key => (this.epithelialCells[key].body.id === bodyA.id || this.epithelialCells[key].body.id === bodyB.id))
   if (this.ship && this.ship.tintBottomLeft === 214 && 
     this.epithelialCells[matchingCellId] &&
     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
-      console.log('something happened!')
     this.epithelialCells[matchingCellId].setTint(0xd60000)
     this.socket.emit('changedEpithelialCell', matchingCellId)
   }
