@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 import React, {Component} from 'react'
 import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
-import { worldSize } from './gameFunctions/util'
+import { worldSize } from './GameFunctions/util'
 
 const config = {
   type: Phaser.AUTO,
