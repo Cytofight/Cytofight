@@ -1,13 +1,13 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce } from './util'
 
-const throttledUpdateForce = throttle(updateForce, 1200)
+const throttledUpdateForce = throttle(updateForce, 2000)
 
   
 const throttledFire = throttle(fire, 200)
 
 export function update(time) {
-  const boundFire = throttledFire.bind(this)
+  // const boundFire = throttledFire.bind(this)
 
   if (this.ship) {
     // const maxSpeed = 10
@@ -27,29 +27,18 @@ export function update(time) {
     } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
-    
-    limitSpeed(this.ship, 10)
-    
-    // if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-      //   // console.log('Too fast!')
-      //   const angle = Math.abs(Math.atan(velY / velX))
-      //   // console.log('THING: ', angle, Math.cos(angle))
-      //   const newX = Math.cos(angle)
-    //   const newY = Math.sin(angle)
-    //   // console.log(newX, newY)
-    //   // console.log(this.ship.body)
-    //   this.ship.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
-    // }
-    
-    // this.physics.world.wrap(this.ship, 5)
-    
-    //This needs to be edited so that your cell has the ability to fire antibodies
-    if(this.keyFire.isDown){
-      console.log(this.input.pointer)
-      // console.log("Fire!")
-      // limit(400, fire)
-      boundFire()
+    if (this.input.activePointer.isDown || this.keyFire.isDown) {
+      throttledFire.call(this)
     }
+    if (this.keyDebug.isDown) {
+      console.log('ALL T CELLS: ', this.dormantTCells)
+      console.log('MY T CELLS: ', this.clientDormantTCells)
+    } if (this.keyCreateCell.isDown) {
+      this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
+    }
+    
+    limitSpeed(this.ship, 8)
+    // this.physics.world.wrap(this.ship, 5)
     
     // emit player movement
     const { angle, angularVelocity, velocity, position } = this.ship.body
@@ -82,12 +71,46 @@ export function update(time) {
       velocity, angularVelocity
     }
   }
-  if(this.dormantTCells){
-  // this.dormantTCells.forEach(cell => {
-  //   throttledUpdateForce(cell)
-  //   // console.log(cell.randomDirection)
-  //   cell.applyForce(cell.randomDirection)
-  //   limitSpeed(cell, 5)
-  // })
+
+  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
+    throttledUpdateForce.call(this, this.clientDormantTCells)
+    //   this.dormantTCells.forEach(cell => {
+    //   // console.log('RANDOMDIRECTION: ', cell.randomDirection)
+    //   cell.applyForce(cell.randomDirection)
+    //   // console.log(cell)
+    //   limitSpeed(cell, 5)
+    // })
+
+    // const cellData = Object.keys(objObj).reduce((obj, id) => {
+    //   const currCell = objObj[id]
+    //   obj[id] = {
+    //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
+    //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
+    //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
+    //     randomDirection: currCell.randomDirection,
+    //     globalId: currCell.globalId
+    //   }
+    //   console.log('random dir being sent: ', currCell.randomDirection)
+    //   return obj
+    // }, {})
+    // this.socket.emit('changedTCells', cellData)
+
+    const cellData = {}
+    for (let id in this.dormantTCells) {
+      const cell = this.dormantTCells[id]
+      cell.applyForce(cell.randomDirection)
+      limitSpeed(cell, 4)
+      if (this.clientDormantTCells[id])  {
+        cellData[id] = {
+          positionX: cell.body.position.x, positionY: cell.body.position.y,
+          velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
+          angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
+          randomDirection: cell.randomDirection,
+          globalId: cell.globalId
+        }
+        if (cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
+      }
+    }
+    this.socket.emit('changedTCells', cellData)
   }
 }

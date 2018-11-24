@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import React, {Component} from 'react'
 import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
+import { worldSize } from './gameFunctions/util'
 
 const config = {
   type: Phaser.AUTO,
@@ -26,7 +27,7 @@ export class Antibody extends Phaser.GameObjects.Image {
     super(scene)
     console.log('in the constructor')
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
-    console.log(this)
+    // console.log(this)
     this.speed = Phaser.Math.GetSpeed(575, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
@@ -47,7 +48,7 @@ export class Antibody extends Phaser.GameObjects.Image {
     this.y -= this.velocity.y * delta;
     this.x -= this.velocity.x * delta;
     
-    if (this.y < -50 || this.x < -50 || this.y > 1000 || this.x > 1000) {
+    if (this.y < -50 || this.x < -50 || this.y > worldSize.y + 50 || this.x > worldSize.x + 50) {
       console.log('gone awaaay')
       this.setActive(false);
       this.setVisible(false);
@@ -64,7 +65,6 @@ export default class Game extends Component {
   componentDidMount() {
     this.game = new Phaser.Game(config)
     console.log(document.eve)
-    console.log('hi')
   }
 
   render() {

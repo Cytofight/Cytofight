@@ -10,6 +10,11 @@ export function scoreAndStars() {
   })
 
   //Create the life stars and scoreboard associated with the collections
+  self.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+    if(bodyA.label === 'me' && bodyB.label === 'star') {
+      self.socket.emit('starCollected')
+    }
+  })
   this.socket.on('scoreUpdate', function (scores) {
     self.blueScoreText.setText('Blue: ' + scores.blue)
     self.redScoreText.setText('Red: ' + scores.red)
@@ -21,10 +26,5 @@ export function scoreAndStars() {
     // self.physics.add.overlap(self.ship, self.star, function () {
     //   this.socket.emit('starCollected')
     // }, null, self)
-    self.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-      if(bodyA.label === 'me' && bodyB.label === 'star') {
-        self.socket.emit('starCollected')
-      }
-    })
   })
 }

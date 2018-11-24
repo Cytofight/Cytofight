@@ -1,4 +1,4 @@
-export const worldSize = {x: 1000, y: 1000}
+export const worldSize = {x: 2000, y: 2000}
 
 export function limitSpeed(obj, maxSpeed) {
   const velX = obj.body.velocity.x
@@ -7,7 +7,6 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    // console.log('Too fast!')
     const angle = Math.abs(Math.atan(velY / velX))
     // console.log('THING: ', angle, Math.cos(angle))
     const newX = Math.cos(angle)
@@ -38,14 +37,33 @@ export function fire () {
 }
 // export const throttledFire = throttle(fire, 200)
 
-export function updateForce(obj) {
-  console.log("In the update force!!: ", obj)
-  const randomX = Math.random() * 0.0006 - 0.0003
-  const randomY = Math.random() * 0.0006 - 0.0003
-  obj.randomDirection = {x: randomX, y: randomY}
+export function updateForce(objObj) {
+  // objs.forEach(obj => {
+  // const randomX = Math.random() * 0.0006 - 0.0003
+  // const randomY = Math.random() * 0.0006 - 0.0003
+  // obj.randomDirection = {x: randomX, y: randomY}
+  // })
+  for (let key in objObj) {
+    const randomX = Math.random() * 0.001 - 0.0005
+    const randomY = Math.random() * 0.001 - 0.0005
+    objObj[key].randomDirection = {x: randomX, y: randomY}
+  }
   // cells have a max speed
   // each cell has its own per-update x,y force
   // force changes every ? ms
+  // const cellData = Object.keys(objObj).reduce((obj, id) => {
+  //   const currCell = objObj[id]
+  //   obj[id] = {
+  //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
+  //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
+  //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
+  //     randomDirection: currCell.randomDirection,
+  //     globalId: currCell.globalId
+  //   }
+  //   console.log('random dir being sent: ', currCell.randomDirection)
+  //   return obj
+  // }, {})
+  // this.socket.emit('changedTCells', cellData)
 }
 
 export function limitNumber(num, lowerLimit, higherLimit) {
