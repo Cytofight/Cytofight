@@ -2,7 +2,7 @@ import { throttle, fire, limitNumber, worldSize } from '../util'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 20
+const numberOfEpithelialCells = 40
 const numberOfTCells = 15
 const numberOfMastCells = 4
 const defaultCellParams = {
@@ -61,9 +61,20 @@ export function players() {
     this.epithelialCells = {}
     if (!cells || !cells.length) {
       for (let i = 0; i < numberOfEpithelialCells; i++) {
-        const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-        const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
         // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
+        let checkingOverlap = true
+        let randomEpithelialX, randomEpithelialY
+        while (checkingOverlap) {
+          console.log('checking overlap of new epi cell...')
+          randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+          randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+          if (Object.keys(this.epithelialCells).every(id => 
+          !this.epithelialCells[id].getBounds().contains(randomEpithelialX, randomEpithelialY))) {
+            console.log('no overlap! wheeoo!')
+            checkingOverlap = false
+            }
+        }
+        console.log('finalizing coordinates!')
         cellData[i] = {x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: i}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
