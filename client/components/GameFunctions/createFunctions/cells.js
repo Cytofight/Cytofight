@@ -117,16 +117,6 @@ export function NPCCells() {
     particle.mastCell.setCircle(particle.mastCell.width / 2, defaultCellParams)
     particle.mastCell.setVelocity(randomMastCellSpeedX, randomMastCellSpeedY)
     secretors.startFollow(particle.mastCell)
-    // //   mastCells.forEach(mastCell => {
-    // //     const randomCellLocationX = Math.floor(Math.random() * 500)
-    // //     const randomCellLocationY = Math.floor(Math.random() * 500)
-    // //     mastCell.setBounce(1, 1)
-    // //     mastCell.setCollideWorldBounds(true)
-    // //     mastCell.x = randomCellLocationX
-    // //     mastCell.y = randomCellLocationY
-    // //     console.log("Cell: ", mastCell)
-    // //   })
-    // // })
   })
 
   // this.epithelialCells = new Array(numberOfEpithelialCells)

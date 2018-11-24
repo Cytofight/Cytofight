@@ -102,28 +102,7 @@ export function players() {
     this.dormantTCells = {}
     if(!Object.keys(cells).length) {
       console.log("I WAS CREATED FOR THE FIRST TIME!!!")
-      // this.dormantTCells = new Array(numberOfTCells).fill(null).map((_, index) => {
-      //   const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-      //   const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-      //   const randomVelocityX = Math.floor(Math.random() * 8 - 4)
-      //   const randomVelocityY = Math.floor(Math.random() * 8 - 4)
-      //   const randomAngularVelocity = Math.random() * 0.5 - 0.25
-      //   return makeTCell.call(this, {
-      //     positionX: randomTCellX, positionY: randomTCellY, 
-      //     velocityX: randomVelocityX, velocityY: randomVelocityY, 
-      //     angle: 0, angularVelocity: randomAngularVelocity,
-      //     globalId: index
-      //   })
-      // })
-      // this.clientDormantTCells = [...this.dormantTCells] // the list of cells for whose behavior the player is responsible
-      // this.socket.emit('newTCells', this.dormantTCells.map(cell => 
-      //   ({positionX: cell.body.position.x, positionY: cell.body.position.y, 
-      //     velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y, 
-      //     angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-      //     globalId: cell.globalId})
-      // ))
-
-      // CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
+      // CELL DATA STORAGE IS OBJECT W/ GLOBAL IDS
       this.cellData = {}
       for (let i = 0; i < numberOfTCells; i++) {
         const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
@@ -141,7 +120,7 @@ export function players() {
         this.dormantTCells[i] = makeTCell.call(this, this.cellData[i])
       }
       this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical
-      this.socket.emit('newTCells', this.cellData)
+      this.socket.emit('myNewTCells', this.cellData)
     } else {
       console.log("I was not. I was created by someone else who came before you")
       // this.dormantTCells = cells.map(cell => makeTCell.call(this, cell))
@@ -150,24 +129,11 @@ export function players() {
         this.dormantTCells[id] = makeTCell.call(this, cells[id])
       }
       this.clientDormantTCells = {}
-      //TESTING
-      // const testingCellParams = {'999': {positionX: 50, positionY: 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 0, globalId: 999}}
-      // const testingCell = makeTCell.call(this, testingCellParams)
-      // console.log(testingCell)
-      // this.dormantTCells[999] = testingCell
-      // this.clientDormantTCells[999] = testingCell
-      // this.socket.emit('newTCells', testingCellParams)
     }
   })
 
   // Mid-game generation of any new T cells
   this.socket.on('addDormantTCells', (newCells, ownerId) => {
-    // const newCells = newCellData.map(cell => makeTCell.call(this, cell))
-    // console.log('T CELLS BEFORE ADDITION: ', this.dormantTCells)
-    // this.dormantTCells.push(...newCells)
-    // console.log('T CELLS AFTER ADDITION: ', this.dormantTCells)
-    // if (ownerId === this.socket.id) this.clientDormantTCells.push(...newCells)
-
     for (let id in newCells) {
       const newCell = makeTCell.call(this, newCells[id])
       this.dormantTCells[id] = newCell
@@ -178,17 +144,6 @@ export function players() {
 
   // When a player disconnects and the server decides you should get responsibility for their cells
   this.socket.on('passDormantTCells', passedCellIds => { // AN ARRAY
-    // // for each cell passed on from the disconnecting player, find its corresponding cell in the game...
-    // const cellsToTransfer = passedCells.map(inputCell => 
-    //   this.dormantTCells.find(cell => 
-    //     !clientDormantTCells.includes(cell) && 
-    //     (cell.body.position.x >= inputCell.positionX - 4 || cell.body.position.x <= inputCell.positionX + 4) && 
-    //     (cell.body.position.y >= inputCell.positionY - 4 || cell.body.position.y <= inputCell.positionY + 4)
-    //   )
-    // )
-    // // and add it to the list of cells that the player is responsible for monitoring
-    // this.clientDormantTCells.push(...cellsToTransfer)
-
     passedCellIds.forEach(id => {if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]})
     console.log('passed cells, new total client cells: ', this.clientDormantTCells)
   })
@@ -201,9 +156,6 @@ export function players() {
   })
 
   this.socket.on('changedEpithelialCellClient', globalId => {
-    // const correspondingCell = this.epithelialCells.find(cell => cell.globalId === globalId)
-    // console.log('found corresponding cell: ', correspondingCell)
-    // correspondingCell.setTint(0xd60000)
     this.epithelialCells[globalId].setTint(0xd60000)
   })
 
@@ -238,9 +190,6 @@ function addPlayer(playerInfo) {
     var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
     this.ship.angle = angle;
   }, this)
-  // this.input.on("pointerdown", (event) => {
-  //   throttledFire.call(this)
-  // })
 }
 
 function addOtherPlayers(playerInfo) {
@@ -309,15 +258,3 @@ function epithelialCellCollision(bodyA, bodyB) {
     this.socket.emit('changedEpithelialCell', matchingCellId)
   }
 }
-
-// function tCellCollision(bodyA, bodyB) {
-//   const matchingCells = this.clientDormantTCells.filter(currCell => currCell.body.id === bodyA.id || currCell.body.id === bodyB.id)
-//   if (matchingCells.length) {
-//     this.socket.emit('changedTCells', matchingCells.map(cell => ({
-//       positionX: cell.body.position.x, positionY: cell.body.position.y,
-//       velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-//       angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-//       globalId: cell.globalId
-//     })))
-//   }
-// }
