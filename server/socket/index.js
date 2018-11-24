@@ -45,6 +45,7 @@ module.exports = io => {
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players
     socket.emit('mastCell', mastCells)
+    socket.broadcast.emit('disownMastCells')
     // send the current scores
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
@@ -56,8 +57,11 @@ module.exports = io => {
       // Pass "their" T cells onto the player with the lowest number
       // (Only if there are multiple players to begin with)
       if (Object.keys(players).length > 1) {
+        // passing on of "ownerships"
         const lowestCellPlayerId = findLowestCellPlayerId(players)
         io.to(`${lowestCellPlayerId}`).emit('passDormantTCells', Object.keys(players[socket.id].clientDormantTCells))
+        const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
+        io.to(`${randomPlayerId}`).emit('passMastCells')
       }
       // remove this player from our players object
       delete players[socket.id]
@@ -141,6 +145,17 @@ module.exports = io => {
         dormantTCells[id] = cellData[id]
       }
       socket.broadcast.emit('changedDormantTCells', cellData)
+    })
+
+    socket.on('newMastCells', newCells => {
+      Object.assign(mastCells, newCells)
+    })
+
+    socket.on('updateMastCells', cellData => {
+      for (let id in cellData) {
+        mastCells[id] = cellData[id]
+      }
+      socket.broadcast.emit('updateMastCellsClient', cellData)
     })
 
     socket.on('new-message', message => {
