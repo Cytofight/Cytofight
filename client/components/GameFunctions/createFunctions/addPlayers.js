@@ -277,9 +277,10 @@ function makeTCell({ positionX, positionY, velocityX, velocityY, angle, angularV
   )
   cell.setCircle(cell.width / 2, defaultCellParams)
   cell.setVelocity(velocityX, velocityY)
+  if (angle) cell.setAngle(angle)
+  if (angularVelocity) cell.setAngularVelocity(angularVelocity)
+  if(tint) cell.setTint(tint)
   cell.randomDirection = randomDirection || {x: 0, y: 0}
-  cell.body.angle = angle || 0
-  cell.body.angularVelocity = angularVelocity || 0
   cell.globalId = globalId
   cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
@@ -287,7 +288,6 @@ function makeTCell({ positionX, positionY, velocityX, velocityY, angle, angularV
       cell.setTint(0x01c0ff)
       cell.activated = true
     }
-  if(tint) cell.setTint(tint)
   return cell
 }
 

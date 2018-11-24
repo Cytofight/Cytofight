@@ -70,21 +70,22 @@ export function NPCCells() {
   // let circle = new Phaser.Geom.Circle(400, 300, 150)
   // Randomly position the dormantTCells within the circle
   // Phaser.Actions.RandomCircle(this.dormantTCells.getChildren(), circle)
+  const boundContains = (x, y) => {
+    for (let id in this.dormantTCells) {
+      const currCell = this.dormantTCells[id]
+      if (currCell.getBounds().contains(x, y)) {
+        if (!currCell.activated) {
+          currCell.activate()
+        }
+        return true
+      }
+    }
+    return false
+  }
 
-  // const changeCell = {
-  //   contains: (x, y) => {
-  //     for (let i = 0; i < this.dormantTCells.length; i++) {
-  //       const currCell = this.dormantTCells[i]
-  //       if (currCell.getBounds().contains(x, y)) {
-  //         if (!currCell.activated) {
-  //           currCell.activate()
-  //         }
-  //         return true
-  //       }
-  //     }
-  //     return false
-  //   }
-  // }
+  const changeCell = {
+    contains: boundContains
+  }
 
   //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
 
@@ -104,7 +105,7 @@ export function NPCCells() {
       blendMode: 'ADD',
       deathZone: {
         type: 'onEnter',
-        // source: changeCell
+        source: changeCell
       }
     })
     // const mastCells = []
