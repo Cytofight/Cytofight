@@ -26,8 +26,16 @@ export function update(time) {
     } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
     } 
-    if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 0x01c0ff) {
-      throttledFire.call(this)
+    if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
+      const firingInfo = {
+        x: this.ship.body.position.x,
+        y: this.ship.body.position.y,
+        angle: this.ship.body.angle,
+        globalId: this.socket.id,
+        type: 'ship'
+      }
+      throttledFire.call(this, firingInfo)
+      this.socket.emit('firedAntibody', firingInfo)
     }
     if (this.keyDebug.isDown) {
       console.log('ALL T CELLS: ', this.dormantTCells)
@@ -114,6 +122,8 @@ export function update(time) {
     this.badGuys.forEach(badGuy => 
       overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {
         console.log('owie!')
+        // antibody.setActive(false)
+        // antibody.setVisible(false)
         antibody.destroy()
       })
     )

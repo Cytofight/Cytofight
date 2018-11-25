@@ -52,7 +52,8 @@ export function players() {
         otherPlayer.setPosition(position.x, position.y)
         otherPlayer.setVelocity(velocity.x, velocity.y)
         otherPlayer.setAngularVelocity(angularVelocity)
-        otherPlayer.setAngle(angle)
+        // otherPlayer.setAngle(angle)
+        otherPlayer.body.angle = angle
       }
     })
   })
@@ -185,6 +186,15 @@ export function players() {
   })
   this.socket.on('passMastCells', () => {
     this.ownsMastCells = true
+  })
+
+  this.socket.on('otherFiredAntibody', firingInfo => {
+    throttledFire.call(this, firingInfo)
+    if (firingInfo.type === 'tCell') {
+      this.dormantTCells[firingInfo.id].body.angle = firingInfo.angle
+    } else if (firingInfo.type === 'player') {
+      this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
+    }
   })
 
 

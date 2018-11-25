@@ -22,7 +22,7 @@ export function create() {
   // const test = new Bullet(this)
   this.antibodies = this.add.group({
     classType: Antibody,
-    maxSize: 30,
+    maxSize: 100,
     runChildUpdate: true
   })
   keyboardControls.call(this)

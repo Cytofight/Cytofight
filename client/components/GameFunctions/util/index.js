@@ -25,11 +25,11 @@ export function throttle(func, milliseconds) {
   }
 }
 
-export function fire () {
+export function fire ({x, y, angle}) {
   console.log("FIRE!!! But working now! I swear!")
   let antibody = this.antibodies.get();
   if(antibody) {
-    antibody.fire(this.ship.body.position.x, this.ship.body.position.y, this.ship.body.angle);
+    antibody.fire(x, y, angle);
   }
 }
 // export const throttledFire = throttle(fire, 200)
