@@ -1,4 +1,5 @@
-import { throttle, fire, limitNumber, worldSize, activate } from '../util'
+import { throttle, fire, limitNumber, worldSize, activate, setCellParams } from '../util'
+import { epithelialCells, epithelialCellCollision } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
@@ -51,50 +52,52 @@ export function players() {
       if (playerId === otherPlayer.playerId) {
         otherPlayer.setPosition(position.x, position.y)
         otherPlayer.setVelocity(velocity.x, velocity.y)
-        otherPlayer.setAngularVelocity(angularVelocity)
+        // otherPlayer.setAngularVelocity(angularVelocity)
         // otherPlayer.setAngle(angle)
         otherPlayer.body.angle = angle
       }
     })
   })
 
-  this.socket.on('epithelialCell', (cells) => {
-    //CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
-    const cellData = {}
-    this.epithelialCells = {}
-    if (!cells || !cells.length) {
-      for (let i = 0; i < numberOfEpithelialCells; i++) {
-        // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
-        let checkingOverlap = true
-        let randomEpithelialX, randomEpithelialY
-        while (checkingOverlap) {
-          console.log('checking overlap of new epi cell...')
-          randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-          randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-          if (Object.keys(this.epithelialCells).every(id => 
-          !this.epithelialCells[id].getBounds().contains(randomEpithelialX, randomEpithelialY))) {
-            console.log('no overlap! wheeoo!')
-            checkingOverlap = false
-            }
-        }
-        console.log('finalizing coordinates!')
-        cellData[i] = {x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: i}
-        this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
-      }
-      //emit new cells
-      this.socket.emit('newEpithelialCells', cellData)
-    } else {
-      // this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint, cell.globalId))
-      for (let id in cells) {
-        this.epithelialCells[id] = makeEpithelialCell.call(this, cells[id])
-      }
-    }
-  })
+  epithelialCells.call(this, numberOfEpithelialCells, defaultCellParams)
 
-  this.socket.on('changedEpithelialCellClient', globalId => {
-    this.epithelialCells[globalId].setTint(0xd60000)
-    this.badGuys.push(this.epithelialCells[globalId])
-  })
+  // this.socket.on('epithelialCell', (cells) => {
+  //   //CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
+  //   const cellData = {}
+  //   this.epithelialCells = {}
+  //   if (!cells || !cells.length) {
+  //     for (let i = 0; i < numberOfEpithelialCells; i++) {
+  //       // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
+  //       let checkingOverlap = true
+  //       let randomEpithelialX, randomEpithelialY
+  //       while (checkingOverlap) {
+  //         console.log('checking overlap of new epi cell...')
+  //         randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  //         randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+  //         if (Object.keys(this.epithelialCells).every(id => 
+  //         !this.epithelialCells[id].getBounds().contains(randomEpithelialX, randomEpithelialY))) {
+  //           console.log('no overlap! wheeoo!')
+  //           checkingOverlap = false
+  //           }
+  //       }
+  //       console.log('finalizing coordinates!')
+  //       cellData[i] = {x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: i}
+  //       this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
+  //     }
+  //     //emit new cells
+  //     this.socket.emit('newEpithelialCells', cellData)
+  //   } else {
+  //     // this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint, cell.globalId))
+  //     for (let id in cells) {
+  //       this.epithelialCells[id] = makeEpithelialCell.call(this, cells[id])
+  //     }
+  //   }
+  // })
+
+  // this.socket.on('changedEpithelialCellClient', globalId => {
+  //   this.epithelialCells[globalId].setTint(0xd60000)
+  //   this.badGuys.push(this.epithelialCells[globalId])
+  // })
 
   this.socket.on('dormantTCell', (cells) => {
     this.dormantTCells = {}
@@ -260,19 +263,19 @@ function addOtherPlayers(playerInfo) {
   this.otherPlayers.push(otherPlayer)
 }
 
-function makeEpithelialCell({ x, y, tint, globalId }) {
-  const cell = this.matter.add.image(x, y, 'epithelialCell')
-  cell.setRectangle(cell.width / 2, cell.height / 2, {
-    isStatic: true,
-    ...defaultCellParams
-  })
-  if (tint === 0xd60000) {
-    cell.setTint(tint)
-    this.badGuys.push(cell)
-  }
-  cell.globalId = globalId
-  return cell
-}
+// function makeEpithelialCell({ x, y, tint, globalId }) {
+//   const cell = this.matter.add.image(x, y, 'epithelialCell')
+//   cell.setRectangle(cell.width / 2, cell.height / 2, {
+//     isStatic: true,
+//     ...defaultCellParams
+//   })
+//   if (tint === 0xd60000) {
+//     cell.setTint(tint)
+//     this.badGuys.push(cell)
+//   }
+//   cell.globalId = globalId
+//   return cell
+// }
 
 function makeTCell(cellDatum){
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
@@ -326,27 +329,27 @@ function cellContains(x, y) {
   return false
 }
 
-function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
-  cell.setPosition(positionX, positionY)
-  cell.setVelocity(velocityX, velocityY)
-  // cell.setAngle(angle) // blocks spin transmission for some reason
-  cell.setAngularVelocity(angularVelocity)
-  if(tint && tint !== cell.tintBottomLeft) {
-    cell.setTint(tint)
-    if (tint === 0x01c0ff) this.goodGuys.push(cell)
-    if (tint === 0xd60000) this.badGuys.push(cell)
-  }
-  if (randomDirection) cell.randomDirection = randomDirection
-  cell.globalId = globalId
-}
+// function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
+//   cell.setPosition(positionX, positionY)
+//   cell.setVelocity(velocityX, velocityY)
+//   // cell.setAngle(angle) // blocks spin transmission for some reason
+//   cell.setAngularVelocity(angularVelocity)
+//   if(tint && tint !== cell.tintBottomLeft) {
+//     cell.setTint(tint)
+//     if (tint === 0x01c0ff) this.goodGuys.push(cell)
+//     if (tint === 0xd60000) this.badGuys.push(cell)
+//   }
+//   if (randomDirection) cell.randomDirection = randomDirection
+//   cell.globalId = globalId
+// }
 
-function epithelialCellCollision(bodyA, bodyB) {
-  const matchingCellId = Object.keys(this.epithelialCells).find(key => (this.epithelialCells[key].body.id === bodyA.id || this.epithelialCells[key].body.id === bodyB.id))
-  if (this.ship && this.ship.tintBottomLeft === 214 && 
-    this.epithelialCells[matchingCellId] &&
-    (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
-    this.epithelialCells[matchingCellId].setTint(0xd60000)
-    this.badGuys.push(this.epithelialCells[matchingCellId])
-    this.socket.emit('changedEpithelialCell', matchingCellId)
-  }
-}
+// function epithelialCellCollision(bodyA, bodyB) {
+//   const matchingCellId = Object.keys(this.epithelialCells).find(key => (this.epithelialCells[key].body.id === bodyA.id || this.epithelialCells[key].body.id === bodyB.id))
+//   if (this.ship && this.ship.tintBottomLeft === 214 && 
+//     this.epithelialCells[matchingCellId] &&
+//     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
+//     this.epithelialCells[matchingCellId].setTint(0xd60000)
+//     this.badGuys.push(this.epithelialCells[matchingCellId])
+//     this.socket.emit('changedEpithelialCell', matchingCellId)
+//   }
+// }

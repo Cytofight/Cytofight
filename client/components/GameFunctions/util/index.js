@@ -59,7 +59,22 @@ export function activate(cell) {
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {
+  console.log('largeBody in overlapCollision: ', largeBody)
   if (largeBody.getBounds().contains(coords.x, coords.y)) {
     callback.call(this, ...args)
   }
+}
+
+export function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
+  cell.setPosition(positionX, positionY)
+  cell.setVelocity(velocityX, velocityY)
+  // cell.setAngle(angle) // blocks spin transmission for some reason
+  cell.setAngularVelocity(angularVelocity)
+  if(tint && tint !== cell.tintBottomLeft) {
+    cell.setTint(tint)
+    if (tint === 0x01c0ff) this.goodGuys.push(cell)
+    if (tint === 0xd60000) this.badGuys.push(cell)
+  }
+  if (randomDirection) cell.randomDirection = randomDirection
+  cell.globalId = globalId
 }
