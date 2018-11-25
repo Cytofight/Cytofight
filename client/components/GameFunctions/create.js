@@ -38,4 +38,7 @@ export function create() {
   //   }
   //   // this.socket.emit('anyCollision', bodyA, bodyB)
   // })
+  console.log(this.antibodies)
+  //antibodies.children.entries
+  //antibodies.getChildren()
 }

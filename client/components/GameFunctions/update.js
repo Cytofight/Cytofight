@@ -1,5 +1,5 @@
 import { NPCCells } from './createFunctions';
-import { limitSpeed, throttle, fire, updateForce } from './util'
+import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './util'
 
 const throttledUpdateForce = throttle(updateForce, 2000)
 const throttledFire = throttle(fire, 200)
@@ -109,4 +109,13 @@ export function update(time) {
     }
     this.socket.emit('updateMastCells', cellData)
   }
+
+  this.antibodies.getChildren().forEach(antibody => {
+    this.badGuys.forEach(badGuy => 
+      overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {
+        console.log('owie!')
+        antibody.destroy()
+      })
+    )
+  })
 }

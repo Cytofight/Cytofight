@@ -57,3 +57,9 @@ export function activate(cell) {
   this.goodGuys.push(cell)
   cell.activated = true
 }
+
+export function overlapCollision(coords, largeBody, callback, ...args) {
+  if (largeBody.getBounds().contains(coords.x, coords.y)) {
+    callback.call(this, ...args)
+  }
+}

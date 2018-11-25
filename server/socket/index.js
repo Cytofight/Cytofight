@@ -106,7 +106,6 @@ module.exports = io => {
     socket.on('myNewTCells', (newCells) => {
       Object.assign(dormantTCells, newCells)
       Object.assign(players[socket.id].clientDormantTCells, newCells)
-      console.log('CLIENT AND SERVER T CELLS: ', players[socket.id].clientDormantTCells, dormantTCells)
       socket.broadcast.emit('addDormantTCells', newCells)
     })
 
