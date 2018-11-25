@@ -24,6 +24,11 @@ const User = db.define('user', {
       return () => this.getDataValue('salt')
     }
   },
+  userType: {
+    type: Sequelize.ENUM,
+    values: ['regular', 'admin'],
+    defaultValue: 'regular'
+  },
   googleId: {
     type: Sequelize.STRING
   }
