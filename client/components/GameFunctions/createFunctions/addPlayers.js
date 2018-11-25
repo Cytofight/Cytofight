@@ -14,28 +14,38 @@ const numberOfMastCells = 4
 export function players() {
   // const self = this
   this.socket = io()
-  this.otherPlayers = []
+  this.otherPlayers = {}
   this.badGuys = []
   this.goodGuys = []
   this.socket.on('currentPlayers', (players) => {
-    Object.keys(players).forEach((id) => {
-      if (players[id].playerId === this.socket.id) {
+    // Object.keys(players).forEach((id) => {
+    //   if (players[id].playerId === this.socket.id) {
+    //     addPlayer.call(this, players[id])
+    //   } else {
+    //     addOtherPlayers.call(this, players[id])
+    //   }
+    // })
+    for (let id in players) {
+      if (id === this.socket.id) {
         addPlayer.call(this, players[id])
       } else {
         addOtherPlayers.call(this, players[id])
       }
-    })
+    }
   })
   this.socket.on('newPlayer', (playerInfo) => {
     addOtherPlayers.call(this, playerInfo)
   })
   this.socket.on('disconnect', (playerId) => {
-    this.otherPlayers.forEach((otherPlayer) => {
-      if (playerId === otherPlayer.playerId) {
-        otherPlayer.destroy()
-        this.otherPlayers.filter(() => playerId !== otherPlayer.playerId)
-      }
-    })
+    // this.otherPlayers.forEach((otherPlayer) => {
+    //   if (playerId === otherPlayer.playerId) {
+    //     otherPlayer.destroy()
+    //     this.otherPlayers.filter(() => playerId !== otherPlayer.playerId)
+    //   }
+    // })
+    console.log('destroy me: ', this.otherPlayers[playerId])
+    this.otherPlayers[playerId].destroy()
+    delete this.otherPlayers[playerId]
   })
   this.socket.on('playerMoved', ({
     playerId,
@@ -44,15 +54,24 @@ export function players() {
     velocity,
     angularVelocity
   }) => {
-    this.otherPlayers.forEach((otherPlayer) => {
-      if (playerId === otherPlayer.playerId) {
-        otherPlayer.setPosition(position.x, position.y)
-        otherPlayer.setVelocity(velocity.x, velocity.y)
-        // otherPlayer.setAngularVelocity(angularVelocity)
-        // otherPlayer.setAngle(angle)
-        otherPlayer.body.angle = angle
-      }
-    })
+    // this.otherPlayers.forEach((otherPlayer) => {
+    //   if (playerId === otherPlayer.playerId) {
+    //     otherPlayer.setPosition(position.x, position.y)
+    //     otherPlayer.setVelocity(velocity.x, velocity.y)
+    //     // otherPlayer.setAngularVelocity(angularVelocity)
+    //     // otherPlayer.setAngle(angle)
+    //     otherPlayer.body.angle = angle
+    //   }
+    // })
+    const currPlayer = this.otherPlayers[playerId]
+    console.log('this player moved: ', currPlayer)
+    if (currPlayer) {
+      currPlayer.setPosition(position.x, position.y)
+        .setVelocity(velocity.x, velocity.y)
+        // .setAngularVelocity(angularVelocity)
+        // .setAngle(angle)
+      currPlayer.body.angle = angle
+    }
   })
 
   epithelialCells.call(this, numberOfEpithelialCells)
@@ -244,21 +263,24 @@ function addPlayer(playerInfo) {
   }, this)
 }
 
-function addOtherPlayers(playerInfo) {
-  const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-  const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-  const otherPlayer = this.matter.add.image(randomX, randomY, 'ship')
+function addOtherPlayers({ position, team, playerId }) {
+  // const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  // const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+  const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5);
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
-  if (playerInfo.team === 'blue') {
+  if (team === 'blue') {
     otherPlayer.setTint(0xd60000)
     this.badGuys.push(otherPlayer)
   } else {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.push(otherPlayer)
   }
-  otherPlayer.playerId = playerInfo.playerId
-  this.otherPlayers.push(otherPlayer)
+  otherPlayer.playerId = playerId
+  this.otherPlayers[playerId] = otherPlayer
+  console.log('this player: ', otherPlayer)
+  console.log('total players: ', this.otherPlayers)
+  console.log('otherPlayer lookup: '), this.otherPlayers[playerId]
 }
 
 // function makeEpithelialCell({ x, y, tint, globalId }) {

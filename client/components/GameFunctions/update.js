@@ -112,7 +112,7 @@ export function update(time) {
 
   mastCellLimiter = (mastCellLimiter + 1) % 7
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
-    console.log('updating mast cells!')
+    // console.log('updating mast cells!')
     const cellData = {}
     for (let id in this.mastCells) {
       const cell = this.mastCells[id]
