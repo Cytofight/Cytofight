@@ -15,6 +15,7 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
+    // console.log('current velocity capped out at: ', obj.body.velocity)
     const angle = Math.abs(Math.atan(velY / velX))
     const newX = Math.cos(angle)
     const newY = Math.sin(angle)
@@ -44,8 +45,8 @@ export function fire ({x, y, angle}) {
 
 export function updateForce(cellsObj) {
   for (let key in cellsObj) {
-    const randomX = Math.random() * 0.001 - 0.0005
-    const randomY = Math.random() * 0.001 - 0.0005
+    const randomX = Math.random() * 0.002 - 0.001
+    const randomY = Math.random() * 0.002 - 0.001
     cellsObj[key].randomDirection = {x: randomX, y: randomY}
   }
 }

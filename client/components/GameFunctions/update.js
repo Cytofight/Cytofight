@@ -19,12 +19,16 @@ export function update(time) {
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
       // console.log(this.ship.body)
       this.ship.applyForce({x: -0.005, y: 0})
+      limitSpeed(this.ship, 8)
     } if (this.cursors.right.isDown || this.keyRight.isDown) {
       this.ship.applyForce({x: 0.005, y: 0})
+      limitSpeed(this.ship, 8)
     } if (this.cursors.up.isDown || this.keyUp.isDown) {
       this.ship.applyForce({x: 0, y: -0.005})
+      limitSpeed(this.ship, 8)
     } if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({x: 0, y: 0.005})
+      limitSpeed(this.ship, 8)
     } 
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
       const firingInfo = {
@@ -38,8 +42,8 @@ export function update(time) {
       this.socket.emit('firedAntibody', firingInfo)
     }
     if (this.keyDebug.isDown) {
-      // console.log('ALL T CELLS: ', this.dormantTCells)
-      // console.log('MY T CELLS: ', this.clientDormantTCells)
+      console.log('ALL T CELLS: ', this.dormantTCells)
+      console.log('MY T CELLS: ', this.clientDormantTCells)
       console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
     } if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
@@ -49,7 +53,7 @@ export function update(time) {
         randomDirection: {x: 0, y: 0}}])
     }
     
-    limitSpeed(this.ship, 8)
+    limitSpeed(this.ship, 10)
     // this.physics.world.wrap(this.ship, 5)
     
     // emit player movement
@@ -106,8 +110,9 @@ export function update(time) {
     this.socket.emit('changedTCells', cellData)
   }
 
-  mastCellLimiter = (mastCellLimiter + 1) % 5
+  mastCellLimiter = (mastCellLimiter + 1) % 7
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
+    console.log('updating mast cells!')
     const cellData = {}
     for (let id in this.mastCells) {
       const cell = this.mastCells[id]
