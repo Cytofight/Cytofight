@@ -1,7 +1,7 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './util'
 
-const throttledUpdateForce = throttle(updateForce, 2000)
+const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
 let mastCellLimiter = 0
 

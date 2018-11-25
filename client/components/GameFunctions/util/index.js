@@ -1,5 +1,13 @@
 export const worldSize = {x: 2000, y: 2000}
 
+export const defaultCellParams = {
+  restitution: 1,
+  friction: 0,
+  frictionAir: 0
+}
+
+
+
 export function limitSpeed(obj, maxSpeed) {
   const velX = obj.body.velocity.x
   const velY = obj.body.velocity.y

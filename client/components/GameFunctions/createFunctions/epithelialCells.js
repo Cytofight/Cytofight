@@ -1,6 +1,6 @@
-import { worldSize } from '../util'
+import { worldSize, defaultCellParams } from '../util'
 
-export function epithelialCells(amount, params) {
+export function epithelialCells(amount) {
   this.socket.on('epithelialCell', (cells) => {
     const cellData = {}
     this.epithelialCells = {}
@@ -20,7 +20,7 @@ export function epithelialCells(amount, params) {
             }
         }
         console.log('finalizing coordinates!')
-        cellData[i] = {x: randomX, y: randomY, tint: null, globalId: i, params}
+        cellData[i] = {x: randomX, y: randomY, tint: null, globalId: i}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
       //emit new cells
@@ -39,11 +39,11 @@ export function epithelialCells(amount, params) {
   })
 }
 
-export function makeEpithelialCell({ x, y, tint, globalId, params }) {
+export function makeEpithelialCell({ x, y, tint, globalId }) {
   const cell = this.matter.add.image(x, y, 'epithelialCell')
   cell.setRectangle(cell.width / 2, cell.height / 2, {
     isStatic: true,
-    ...params
+    ...defaultCellParams
   })
   if (tint === 0xd60000) {
     cell.setTint(tint)
