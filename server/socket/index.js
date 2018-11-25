@@ -44,9 +44,9 @@ module.exports = io => {
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
-    // send the mast cells to the new players
-    socket.emit('mastCell', mastCells)
+    // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
+    socket.emit('mastCell', mastCells)
     // send the current scores
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
@@ -55,17 +55,17 @@ module.exports = io => {
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
-      // Pass "their" T cells onto the player with the lowest number
-      // (Only if there are multiple players to begin with)
-      if (Object.keys(players).length > 1) {
-        // passing on of "ownerships"
-        const lowestCellPlayerId = findLowestCellPlayerId(players)
-        io.to(`${lowestCellPlayerId}`).emit('passDormantTCells', Object.keys(players[socket.id].clientDormantTCells))
+      const passingCellIds = Object.keys(players[socket.id].clientDormantTCells)
+      delete players[socket.id]
+      // passing on of "ownerships" (but only if there are any more players to begin with)
+      if (Object.keys(players).length > 0) {
+        // Pass "their" T cells onto the player with the lowest number
+        // const lowestCellPlayerId = findLowestCellPlayerId(players)
+        io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
       }
       // remove this player from our players object
-      delete players[socket.id]
       // emit a message to all players to remove this player
       io.emit('disconnect', socket.id)
     })

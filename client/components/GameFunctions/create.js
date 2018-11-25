@@ -19,7 +19,6 @@ export function create() {
   this.matter.world.setBounds(0, 0, worldSize.x, worldSize.y)
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y)
   players.call(this)
-  // const test = new Bullet(this)
   this.antibodies = this.add.group({
     classType: Antibody,
     maxSize: 100,

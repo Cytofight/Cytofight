@@ -3,7 +3,7 @@ import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './uti
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
-let mastCellLimiter = 0
+let tCellLimiter = 0, mastCellLimiter = 0
 
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
@@ -38,14 +38,15 @@ export function update(time) {
       this.socket.emit('firedAntibody', firingInfo)
     }
     if (this.keyDebug.isDown) {
-      console.log('ALL T CELLS: ', this.dormantTCells)
-      console.log('MY T CELLS: ', this.clientDormantTCells)
+      // console.log('ALL T CELLS: ', this.dormantTCells)
+      // console.log('MY T CELLS: ', this.clientDormantTCells)
+      console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
     } if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
         positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, 
         velocityX: 0, velocityY: 0, 
         angle: 0, angularVelocity: 1, 
-        randomDirection: {x: 0, y: 0}, globalId: 555}])
+        randomDirection: {x: 0, y: 0}}])
     }
     
     limitSpeed(this.ship, 8)
@@ -83,7 +84,8 @@ export function update(time) {
     }
   }
 
-  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
+  tCellLimiter = (tCellLimiter + 1) % 3
+  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter){
     throttledUpdateForce.call(this, this.clientDormantTCells)
     const cellData = {}
     for (let id in this.dormantTCells) {
@@ -104,7 +106,7 @@ export function update(time) {
     this.socket.emit('changedTCells', cellData)
   }
 
-  mastCellLimiter = (mastCellLimiter + 1) % 3
+  mastCellLimiter = (mastCellLimiter + 1) % 5
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
     const cellData = {}
     for (let id in this.mastCells) {
@@ -119,7 +121,6 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
-    console.log(antibody)
     this.badGuys.forEach(badGuy => {
       console.log(badGuy)
       overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {

@@ -1,5 +1,5 @@
-import { throttle, fire, limitNumber, worldSize, activate, defaultCellParams, setCellParams } from '../util'
-import { epithelialCells, epithelialCellCollision, tCells } from './index'
+import { throttle, fire, limitNumber, worldSize, defaultCellParams, setCellParams } from '../util'
+import { epithelialCells, epithelialCellCollision, tCells, mastCells } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
@@ -57,6 +57,7 @@ export function players() {
 
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
+  mastCells.call(this, numberOfMastCells)
 
   // this.socket.on('epithelialCell', (cells) => {
   //   //CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
@@ -151,42 +152,42 @@ export function players() {
   //   }
   // })
 
-  this.socket.on('mastCell', cells => {
-    this.mastCells = {}
-    if (!cells || !Object.keys(cells).length) {
-      const cellData = {}
-      console.log('creating mast cells for the first time!!!')
-      for (let i = 0; i < numberOfMastCells; i++) {
-        const positionX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-        const positionY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-        const velocityX = Math.floor(Math.random() * 12 - 6)
-        const velocityY = Math.floor(Math.random() * 12 - 6)
-        const angularVelocity = Math.random() * 0.3 - 0.15
-        cellData[i] = {positionX, positionY, velocityX, velocityY, angularVelocity, globalId: i}
-        this.mastCells[i] = makeMastCell.call(this, cellData[i])
-      }
-      this.socket.emit('newMastCells', cellData)
-    } else {
-      console.log('copying existing mast cells from server...')
-      for (let id in cells) {
-        this.mastCells[id] = makeMastCell.call(this, cells[id])
-      }
-    }
-    this.ownsMastCells = true
-  })
+  // this.socket.on('mastCell', cells => {
+  //   this.mastCells = {}
+  //   if (!cells || !Object.keys(cells).length) {
+  //     const cellData = {}
+  //     console.log('creating mast cells for the first time!!!')
+  //     for (let i = 0; i < numberOfMastCells; i++) {
+  //       const positionX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  //       const positionY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+  //       const velocityX = Math.floor(Math.random() * 12 - 6)
+  //       const velocityY = Math.floor(Math.random() * 12 - 6)
+  //       const angularVelocity = Math.random() * 0.3 - 0.15
+  //       cellData[i] = {positionX, positionY, velocityX, velocityY, angularVelocity, globalId: i}
+  //       this.mastCells[i] = makeMastCell.call(this, cellData[i])
+  //     }
+  //     this.socket.emit('newMastCells', cellData)
+  //   } else {
+  //     console.log('copying existing mast cells from server...')
+  //     for (let id in cells) {
+  //       this.mastCells[id] = makeMastCell.call(this, cells[id])
+  //     }
+  //   }
+  //   this.ownsMastCells = true
+  // })
 
-  this.socket.on('updateMastCellsClient', cells => {
-    for (let id in cells) {
-      setCellParams.call(this, this.mastCells[id], cells[id])
-    }
-  })
+  // this.socket.on('updateMastCellsClient', cells => {
+  //   for (let id in cells) {
+  //     setCellParams.call(this, this.mastCells[id], cells[id])
+  //   }
+  // })
 
-  this.socket.on('disownMastCells', () => {
-    this.ownsMastCells = false
-  })
-  this.socket.on('passMastCells', () => {
-    this.ownsMastCells = true
-  })
+  // this.socket.on('disownMastCells', () => {
+  //   this.ownsMastCells = false
+  // })
+  // this.socket.on('passMastCells', () => {
+  //   this.ownsMastCells = true
+  // })
 
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
@@ -288,43 +289,42 @@ function addOtherPlayers(playerInfo) {
 //   return cell
 // }
 
-function makeMastCell(cellDatum) {
+// function makeMastCell(cellDatum) {
+//   const contains = (x, y) => {
+//     for (let id in this.dormantTCells) {
+//       const currCell = this.dormantTCells[id]
+//       if (currCell.getBounds().contains(x, y)) {
+//         if (!currCell.activated) {
+//           activate.call(this, currCell)
+//         }
+//         return true
+//       }
+//     }
+//     return false
+//   }
   
-  const boundContains = cellContains.bind(this)
-  const histamines = this.add.particles('histamines')
-  const secretor = histamines.createEmitter({
-    x: 1,
-    y: 1,
-    speed: Math.floor(Math.random() * 150) + 150,
-    scale: {
-      start: 1,
-      end: 0
-    },
-    blendMode: 'ADD',
-    deathZone: {
-      type: 'onEnter',
-      source: { contains: boundContains }
-    }
-  })
-  const mastCell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'mastCell')
-  mastCell.setCircle(mastCell.width / 2, defaultCellParams)
-  setCellParams(mastCell, cellDatum)
-  secretor.startFollow(mastCell)
-  return mastCell
-}
+//   const histamines = this.add.particles('histamines')
+//   const secretor = histamines.createEmitter({
+//     x: 1,
+//     y: 1,
+//     speed: Math.floor(Math.random() * 150) + 150,
+//     scale: {
+//       start: 1,
+//       end: 0
+//     },
+//     blendMode: 'ADD',
+//     deathZone: {
+//       type: 'onEnter',
+//       source: { contains }
+//     }
+//   })
 
-function cellContains(x, y) {
-  for (let id in this.dormantTCells) {
-    const currCell = this.dormantTCells[id]
-    if (currCell.getBounds().contains(x, y)) {
-      if (!currCell.activated) {
-        activate.call(this, currCell)
-      }
-      return true
-    }
-  }
-  return false
-}
+//   const mastCell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'mastCell')
+//   mastCell.setCircle(mastCell.width / 2, defaultCellParams)
+//   setCellParams(mastCell, cellDatum)
+//   secretor.startFollow(mastCell)
+//   return mastCell
+// }
 
 // function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
 //   cell.setPosition(positionX, positionY)

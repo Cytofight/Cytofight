@@ -58,14 +58,6 @@ export function limitNumber(num, lowerLimit, higherLimit) {
   return num
 }
 
-export function activate(cell) {
-  cell.setVelocity(0, 0) //PLACEHOLDER
-  console.log("I'm a good guy now!")
-  cell.setTint(0x01c0ff)
-  this.goodGuys.push(cell)
-  cell.activated = true
-}
-
 export function overlapCollision(coords, largeBody, callback, ...args) {
   console.log('largeBody in overlapCollision: ', largeBody)
   if (largeBody.getBounds().contains(coords.x, coords.y)) {
