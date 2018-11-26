@@ -1,8 +1,8 @@
-import { throttle, fire, limitNumber, worldSize } from '../util'
+import { throttle, fire, limitNumber, worldSize, activate } from '../util'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 20
+const numberOfEpithelialCells = 40
 const numberOfTCells = 15
 const numberOfMastCells = 4
 const defaultCellParams = {
@@ -18,6 +18,8 @@ export function players() {
   // const self = this
   this.socket = io()
   this.otherPlayers = []
+  this.badGuys = []
+  this.goodGuys = []
   this.socket.on('currentPlayers', (players) => {
     Object.keys(players).forEach((id) => {
       if (players[id].playerId === this.socket.id) {
@@ -50,7 +52,8 @@ export function players() {
         otherPlayer.setPosition(position.x, position.y)
         otherPlayer.setVelocity(velocity.x, velocity.y)
         otherPlayer.setAngularVelocity(angularVelocity)
-        otherPlayer.setAngle(angle)
+        // otherPlayer.setAngle(angle)
+        otherPlayer.body.angle = angle
       }
     })
   })
@@ -61,9 +64,20 @@ export function players() {
     this.epithelialCells = {}
     if (!cells || !cells.length) {
       for (let i = 0; i < numberOfEpithelialCells; i++) {
-        const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-        const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
         // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
+        let checkingOverlap = true
+        let randomEpithelialX, randomEpithelialY
+        while (checkingOverlap) {
+          console.log('checking overlap of new epi cell...')
+          randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+          randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+          if (Object.keys(this.epithelialCells).every(id => 
+          !this.epithelialCells[id].getBounds().contains(randomEpithelialX, randomEpithelialY))) {
+            console.log('no overlap! wheeoo!')
+            checkingOverlap = false
+            }
+        }
+        console.log('finalizing coordinates!')
         cellData[i] = {x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: i}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
@@ -79,6 +93,7 @@ export function players() {
 
   this.socket.on('changedEpithelialCellClient', globalId => {
     this.epithelialCells[globalId].setTint(0xd60000)
+    this.badGuys.push(this.epithelialCells[globalId])
   })
 
   this.socket.on('dormantTCell', (cells) => {
@@ -173,6 +188,15 @@ export function players() {
     this.ownsMastCells = true
   })
 
+  this.socket.on('otherFiredAntibody', firingInfo => {
+    throttledFire.call(this, firingInfo)
+    if (firingInfo.type === 'tCell') {
+      this.dormantTCells[firingInfo.id].body.angle = firingInfo.angle
+    } else if (firingInfo.type === 'player') {
+      this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
+    }
+  })
+
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
     // for various collision events
@@ -204,8 +228,10 @@ function addPlayer(playerInfo) {
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
     this.ship.setTint(0xd60000)
+    this.badGuys.push(this.ship)
   } else {
     this.ship.setTint(0x01c0ff)
+    this.goodGuys.push(this.ship)
   }
 
   this.input.on("pointermove", function(pointer) {
@@ -225,8 +251,10 @@ function addOtherPlayers(playerInfo) {
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (playerInfo.team === 'blue') {
     otherPlayer.setTint(0xd60000)
+    this.badGuys.push(otherPlayer)
   } else {
     otherPlayer.setTint(0x01c0ff)
+    this.goodGuys.push(otherPlayer)
   }
   otherPlayer.playerId = playerInfo.playerId
   this.otherPlayers.push(otherPlayer)
@@ -238,7 +266,10 @@ function makeEpithelialCell({ x, y, tint, globalId }) {
     isStatic: true,
     ...defaultCellParams
   })
-  if (tint) cell.setTint(tint)
+  if (tint === 0xd60000) {
+    cell.setTint(tint)
+    this.badGuys.push(cell)
+  }
   cell.globalId = globalId
   return cell
 }
@@ -247,12 +278,13 @@ function makeTCell(cellDatum){
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
   cell.setCircle(cell.width / 2, defaultCellParams)
   setCellParams(cell, cellDatum)
-  cell.activate = function() {
-      this.setVelocity(0, 0) //PLACEHOLDER
-      console.log("I'm a good guy now!")
-      cell.setTint(0x01c0ff)
-      cell.activated = true
-    }
+  // cell.activate = function() {
+  //     this.setVelocity(0, 0) //PLACEHOLDER
+  //     console.log("I'm a good guy now!")
+  //     cell.setTint(0x01c0ff)
+
+  //     cell.activated = true
+  //   }
   return cell
 }
 
@@ -286,7 +318,7 @@ function cellContains(x, y) {
     const currCell = this.dormantTCells[id]
     if (currCell.getBounds().contains(x, y)) {
       if (!currCell.activated) {
-        currCell.activate()
+        activate.call(this, currCell)
       }
       return true
     }
@@ -299,7 +331,11 @@ function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
   cell.setAngularVelocity(angularVelocity)
-  if(tint) cell.setTint(tint)
+  if(tint && tint !== cell.tintBottomLeft) {
+    cell.setTint(tint)
+    if (tint === 0x01c0ff) this.goodGuys.push(cell)
+    if (tint === 0xd60000) this.badGuys.push(cell)
+  }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId
 }
@@ -310,6 +346,7 @@ function epithelialCellCollision(bodyA, bodyB) {
     this.epithelialCells[matchingCellId] &&
     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
+    this.badGuys.push(this.epithelialCells[matchingCellId])
     this.socket.emit('changedEpithelialCell', matchingCellId)
   }
 }

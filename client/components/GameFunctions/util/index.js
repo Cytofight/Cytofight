@@ -25,37 +25,21 @@ export function throttle(func, milliseconds) {
   }
 }
 
-export function fire () {
+export function fire ({x, y, angle}) {
   console.log("FIRE!!! But working now! I swear!")
   let antibody = this.antibodies.get();
   if(antibody) {
-    antibody.fire(this.ship.body.position.x, this.ship.body.position.y, this.ship.body.angle);
+    antibody.fire(x, y, angle);
   }
 }
 // export const throttledFire = throttle(fire, 200)
 
-export function updateForce(objObj) {
-  for (let key in objObj) {
+export function updateForce(cellsObj) {
+  for (let key in cellsObj) {
     const randomX = Math.random() * 0.001 - 0.0005
     const randomY = Math.random() * 0.001 - 0.0005
-    objObj[key].randomDirection = {x: randomX, y: randomY}
+    cellsObj[key].randomDirection = {x: randomX, y: randomY}
   }
-  // cells have a max speed
-  // each cell has its own per-update x,y force
-  // force changes every ? ms
-  // const cellData = Object.keys(objObj).reduce((obj, id) => {
-  //   const currCell = objObj[id]
-  //   obj[id] = {
-  //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
-  //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
-  //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
-  //     randomDirection: currCell.randomDirection,
-  //     globalId: currCell.globalId
-  //   }
-  //   console.log('random dir being sent: ', currCell.randomDirection)
-  //   return obj
-  // }, {})
-  // this.socket.emit('changedTCells', cellData)
 }
 
 export function limitNumber(num, lowerLimit, higherLimit) {
@@ -64,4 +48,18 @@ export function limitNumber(num, lowerLimit, higherLimit) {
   if (num < lowerLimit) return lowerLimit
   if (num > higherLimit) return higherLimit
   return num
+}
+
+export function activate(cell) {
+  cell.setVelocity(0, 0) //PLACEHOLDER
+  console.log("I'm a good guy now!")
+  cell.setTint(0x01c0ff)
+  this.goodGuys.push(cell)
+  cell.activated = true
+}
+
+export function overlapCollision(coords, largeBody, callback, ...args) {
+  if (largeBody.getBounds().contains(coords.x, coords.y)) {
+    callback.call(this, ...args)
+  }
 }
