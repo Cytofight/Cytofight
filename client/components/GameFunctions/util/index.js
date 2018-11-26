@@ -15,7 +15,6 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    // console.log('current velocity capped out at: ', obj.body.velocity)
     const angle = Math.abs(Math.atan(velY / velX))
     const newX = Math.cos(angle)
     const newY = Math.sin(angle)

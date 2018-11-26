@@ -59,7 +59,6 @@ export default class Game extends Component {
 
   componentDidMount() {
     this.game = new Phaser.Game(config)
-    console.log(document.eve)
   }
 
   render() {

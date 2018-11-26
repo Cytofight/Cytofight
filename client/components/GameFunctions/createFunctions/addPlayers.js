@@ -18,13 +18,6 @@ export function players() {
   this.badGuys = []
   this.goodGuys = []
   this.socket.on('currentPlayers', (players) => {
-    // Object.keys(players).forEach((id) => {
-    //   if (players[id].playerId === this.socket.id) {
-    //     addPlayer.call(this, players[id])
-    //   } else {
-    //     addOtherPlayers.call(this, players[id])
-    //   }
-    // })
     for (let id in players) {
       if (id === this.socket.id) {
         addPlayer.call(this, players[id])
@@ -77,12 +70,6 @@ export function players() {
   })
 }
 
-
-
-
-
-
-
 const shipParams = {
   restitution: 0.9,
   friction: 0.15,
@@ -117,8 +104,6 @@ function addPlayer(playerInfo) {
 }
 
 function addOtherPlayers({ position, team, playerId }) {
-  // const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-  // const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5);
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
@@ -131,8 +116,4 @@ function addOtherPlayers({ position, team, playerId }) {
   }
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
-  console.log('this player: ', otherPlayer)
-  console.log('total players: ', this.otherPlayers)
-  console.log('otherPlayer lookup test: '), this.otherPlayers[playerId]
 }
-
