@@ -14,8 +14,8 @@ let mastCellLimiter = 0
 
 export function update(time) {
   //  And this camera is 400px wide, so -200
-  console.log("math: ", Phaser.Math)
-  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 800, 2000);
+  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
+  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
 
   // const boundFire = throttledFire.bind(this)
 
