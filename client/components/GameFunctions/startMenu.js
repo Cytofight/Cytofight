@@ -6,7 +6,7 @@ export default class startMenu extends Phaser.Scene {
     this.team = ''
   }
   preload() {
-    this.load.image('ship', 'assets/PNG/b_cell.png')
+    this.load.image('ship', 'assets/PNG/b-cell-transparent.png')
     this.load.image('click', 'assets/PNG/play.png')
   }
 
