@@ -94,9 +94,6 @@ export function update(time) {
     } = this.ship
     if (
       previous &&
-      // (x !== this.ship.body.positionPrev.x ||
-      //   y !== this.ship.body.positionPrev.y ||
-      //   r !== this.ship.oldPosition.rotation)
       (previous.angle !== angle ||
         previous.angularVelocity !== angularVelocity ||
         previous.velocity.x !== velocity.x ||
@@ -105,9 +102,6 @@ export function update(time) {
         previous.position.y !== position.y)
     ) {
       this.socket.emit('playerMovement', {
-        // x: this.ship.x,
-        // y: this.ship.y,
-        // rotation: this.ship.rotation
         angle,
         velocity,
         angularVelocity,
@@ -154,7 +148,6 @@ export function update(time) {
 
   mastCellLimiter = (mastCellLimiter + 1) % 7
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
-    // console.log('updating mast cells!')
     const cellData = {}
     for (let id in this.mastCells) {
       const cell = this.mastCells[id]

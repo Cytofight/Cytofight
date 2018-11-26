@@ -45,7 +45,7 @@ export function create() {
   keyboardControls.call(this)
   // scoreAndStars.call(this)
   NPCCells.call(this)
-  console.log(this.antibodies)
+  // console.log(this.antibodies)
   //antibodies.children.entries
   //antibodies.getChildren()
 }

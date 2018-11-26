@@ -25,13 +25,10 @@ const config = {
 export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
-    console.log('in the constructor')
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
-    // console.log(this)
     this.speed = Phaser.Math.GetSpeed(575, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
-    // console.log(this, scene.ship)
   }
   
   fire(x, y, direction) {
@@ -39,9 +36,7 @@ export class Antibody extends Phaser.GameObjects.Image {
       .setActive(true)
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
-    console.log(direction)
     Phaser.Math.Rotate(this.velocity, direction)
-    console.log(this.velocity)
   }
   
   update(time, delta) {
@@ -49,7 +44,6 @@ export class Antibody extends Phaser.GameObjects.Image {
     this.x -= this.velocity.x * delta;
     
     if (this.y < -50 || this.x < -50 || this.y > worldSize.y + 50 || this.x > worldSize.x + 50) {
-      console.log('gone awaaay')
       // this.setActive(false);
       // this.setVisible(false);
       this.destroy()

@@ -51,6 +51,7 @@ module.exports = io => {
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
+    // LAG WHEN NEW PLAYER JOINS
 
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
@@ -60,7 +61,6 @@ module.exports = io => {
       // passing on of "ownerships" (but only if there are any more players to begin with)
       if (Object.keys(players).length > 0) {
         // Pass "their" T cells onto the player with the lowest number
-        // const lowestCellPlayerId = findLowestCellPlayerId(players)
         io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
@@ -116,27 +116,10 @@ module.exports = io => {
     })
 
     socket.on('requestNewTCells', cellData => { //CELLDATA RECEIVED IS AN ARRAY BECAUSE IT HAS NO IDS YET
-      // const playerIds = Object.keys(players)
-      // let lowestCellPlayerId
-      // if (playerIds.length === 0) return // dunno how this would happen, but whatever
-      // else if (playerIds.length === 1) lowestCellPlayerId = playerIds[0]
-      // else {
-      //   lowestCellPlayerId = playerIds.reduce((currLowestPlayer, id) => {
-      //     const currAmount = Object.keys(players[id].clientDormantTCells).length
-      //     if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
-      //     else return currLowestPlayer
-      //   }, {id: null, amount: Infinity}).id
-      // }
       const lowestCellPlayerId = findLowestCellPlayerId(players)
       if (lowestCellPlayerId === null) return
       // The next available globalId, determined by the server to ensure consistency
       let nextId = Math.max(...Object.keys(dormantTCells)) + 1
-      // const cellDataObj = {}
-      // cellData.forEach(cell => {
-      //   cell.globalId = nextId
-      //   cellDataObj[nextId] = cell
-      //   nextId++
-      // })
       const cellDataObj = cellData.reduce((obj, currCell) => {
         // Please humor my code golf here, I'm bored; assigns currCell to nextId, and nextId to currCell's globalId
         return {...obj, [nextId]: {...currCell, globalId: nextId++}}

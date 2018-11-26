@@ -35,13 +35,11 @@ export function throttle(func, milliseconds) {
 }
 
 export function fire ({x, y, angle}) {
-  console.log("FIRE!!! But working now! I swear!")
   let antibody = this.antibodies.get();
   if(antibody) {
     antibody.fire(x, y, angle);
   }
 }
-// export const throttledFire = throttle(fire, 200)
 
 export function updateForce(cellsObj) {
   for (let key in cellsObj) {
@@ -60,7 +58,6 @@ export function limitNumber(num, lowerLimit, higherLimit) {
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {
-  console.log('largeBody in overlapCollision: ', largeBody)
   if (largeBody.getBounds().contains(coords.x, coords.y)) {
     callback.call(this, ...args)
   }
