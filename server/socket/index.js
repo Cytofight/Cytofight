@@ -39,7 +39,7 @@ module.exports = io => {
     // send the players object to the new player
     socket.emit('currentPlayers', players)
     // send the star object to the new player
-    socket.emit('starLocation', star)
+    // socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
@@ -88,17 +88,17 @@ module.exports = io => {
       }
     })
 
-    socket.on('starCollected', function () {
-      if (players[socket.id].team === 'red') {
-        scores.red += 10
-      } else {
-        scores.blue += 10
-      }
-      star.x = Math.floor(Math.random() * 900) + 50
-      star.y = Math.floor(Math.random() * 900) + 50
-      io.emit('starLocation', star)
-      io.emit('scoreUpdate', scores)
-    })
+    // socket.on('starCollected', function () {
+    //   if (players[socket.id].team === 'red') {
+    //     scores.red += 10
+    //   } else {
+    //     scores.blue += 10
+    //   }
+    //   star.x = Math.floor(Math.random() * 900) + 50
+    //   star.y = Math.floor(Math.random() * 900) + 50
+    //   io.emit('starLocation', star)
+    //   io.emit('scoreUpdate', scores)
+    // })
 
     socket.on('newEpithelialCells', (newCells) => {
       Object.assign(epithelialCells, newCells)
