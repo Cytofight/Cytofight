@@ -39,23 +39,15 @@ export function create() {
   this.matter.world.setBounds(0, 0, worldSize.x, worldSize.y)
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y)
   players.call(this)
-  // const test = new Bullet(this)
   this.antibodies = this.add.group({
     classType: Antibody,
-    maxSize: 30,
+    maxSize: 100,
     runChildUpdate: true
   })
   keyboardControls.call(this)
   // scoreAndStars.call(this)
   NPCCells.call(this)
-  // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-  //   // console.log('collision detected, emitting bodies:', bodyA)
-  //   // console.log('ship id: ', this.ship.body.id)
-  //   // console.log(this.epithelialCells)
-  //   const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
-  //   if (this.ship && matchingCell && (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) && (this.ship.tintBottomLeft === 214)) {
-  //     matchingCell.setTint(0xd60000)
-  //   }
-  //   // this.socket.emit('anyCollision', bodyA, bodyB)
-  // })
+  console.log(this.antibodies)
+  //antibodies.children.entries
+  //antibodies.getChildren()
 }

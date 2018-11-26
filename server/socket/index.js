@@ -1,5 +1,6 @@
 // const Message = require('./db/models/GameChat/message')
 // const Channel = require('./db/models/GameChat/channel')
+// const { fire } = require('../util')
 
 module.exports = io => {
   let players = {}
@@ -43,9 +44,9 @@ module.exports = io => {
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
-    // send the mast cells to the new players
-    socket.emit('mastCell', mastCells)
+    // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
+    socket.emit('mastCell', mastCells)
     // send the current scores
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
@@ -54,17 +55,17 @@ module.exports = io => {
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
-      // Pass "their" T cells onto the player with the lowest number
-      // (Only if there are multiple players to begin with)
-      if (Object.keys(players).length > 1) {
-        // passing on of "ownerships"
-        const lowestCellPlayerId = findLowestCellPlayerId(players)
-        io.to(`${lowestCellPlayerId}`).emit('passDormantTCells', Object.keys(players[socket.id].clientDormantTCells))
+      const passingCellIds = Object.keys(players[socket.id].clientDormantTCells)
+      delete players[socket.id]
+      // passing on of "ownerships" (but only if there are any more players to begin with)
+      if (Object.keys(players).length > 0) {
+        // Pass "their" T cells onto the player with the lowest number
+        // const lowestCellPlayerId = findLowestCellPlayerId(players)
+        io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
       }
       // remove this player from our players object
-      delete players[socket.id]
       // emit a message to all players to remove this player
       io.emit('disconnect', socket.id)
     })
@@ -106,22 +107,23 @@ module.exports = io => {
     socket.on('myNewTCells', (newCells) => {
       Object.assign(dormantTCells, newCells)
       Object.assign(players[socket.id].clientDormantTCells, newCells)
-      console.log('CLIENT AND SERVER T CELLS: ', players[socket.id].clientDormantTCells, dormantTCells)
       socket.broadcast.emit('addDormantTCells', newCells)
     })
 
     socket.on('requestNewTCells', cellData => { //CELLDATA RECEIVED IS AN ARRAY BECAUSE IT HAS NO IDS YET
-      const playerIds = Object.keys(players)
-      let lowestCellPlayerId
-      if (playerIds.length === 0) return // dunno how this would happen, but whatever
-      else if (playerIds.length === 1) lowestCellPlayerId = playerIds[0]
-      else {
-        lowestCellPlayerId = playerIds.reduce((currLowestPlayer, id) => {
-          const currAmount = Object.keys(players[id].clientDormantTCells).length
-          if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
-          else return currLowestPlayer
-        }, {id: null, amount: Infinity}).id
-      }
+      // const playerIds = Object.keys(players)
+      // let lowestCellPlayerId
+      // if (playerIds.length === 0) return // dunno how this would happen, but whatever
+      // else if (playerIds.length === 1) lowestCellPlayerId = playerIds[0]
+      // else {
+      //   lowestCellPlayerId = playerIds.reduce((currLowestPlayer, id) => {
+      //     const currAmount = Object.keys(players[id].clientDormantTCells).length
+      //     if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
+      //     else return currLowestPlayer
+      //   }, {id: null, amount: Infinity}).id
+      // }
+      const lowestCellPlayerId = findLowestCellPlayerId(players)
+      if (lowestCellPlayerId === null) return
       // The next available globalId, determined by the server to ensure consistency
       let nextId = Math.max(...Object.keys(dormantTCells)) + 1
       // const cellDataObj = {}
@@ -156,6 +158,16 @@ module.exports = io => {
         mastCells[id] = cellData[id]
       }
       socket.broadcast.emit('updateMastCellsClient', cellData)
+    })
+
+    socket.on('firedAntibody', (firingInfo) => {
+      // fire.call(this, x, y, angle)
+      if (firingInfo.type === 'tCell') {
+        dormantTCells[firingInfo.id].angle = firingInfo.angle
+      } else if (firingInfo.type === 'player') {
+        players[firingInfo.id].angle = firingInfo.angle
+      }
+      socket.broadcast.emit('otherFiredAntibody', firingInfo)
     })
 
     socket.on('new-message', message => {
