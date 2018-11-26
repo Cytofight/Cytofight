@@ -51,8 +51,9 @@ export class Antibody extends Phaser.GameObjects.Image {
     
     if (this.y < -50 || this.x < -50 || this.y > worldSize.y + 50 || this.x > worldSize.x + 50) {
       console.log('gone awaaay')
-      this.setActive(false);
-      this.setVisible(false);
+      // this.setActive(false);
+      // this.setVisible(false);
+      this.destroy()
     }
   }
 }

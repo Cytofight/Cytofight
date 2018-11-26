@@ -11,7 +11,8 @@ export function keyboardControls() {
   // Need to replace spacebar with left mouse click control 
   this.keyFire = this.input.keyboard.addKey(32) // Spacebar
   
-  this.keyDebug = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B) // B
+  this.keyDebug = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P) // P
   this.keyCreateCell = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C) // C
-
+  this.keyRed = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R) // R
+  this.keyBlue = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.B) // B
 }
