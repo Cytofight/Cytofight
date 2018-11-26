@@ -5,7 +5,6 @@ export function mastCells(amount) {
     this.mastCells = {}
     if (!cells || !Object.keys(cells).length) {
       const cellData = {}
-      console.log('creating mast cells for the first time!!!')
       for (let i = 0; i < amount; i++) {
         const positionX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
         const positionY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
@@ -17,7 +16,6 @@ export function mastCells(amount) {
       }
       this.socket.emit('newMastCells', cellData)
     } else {
-      console.log('copying existing mast cells from server...')
       for (let id in cells) {
         this.mastCells[id] = makeMastCell.call(this, cells[id])
       }
@@ -33,11 +31,9 @@ export function mastCells(amount) {
 
   this.socket.on('disownMastCells', () => {
     this.ownsMastCells = false
-    console.log('disowned my mast cells!')
   })
   this.socket.on('passMastCells', () => {
     this.ownsMastCells = true
-    console.log('received ownership of mast cells!')
   })
 }
 
@@ -76,7 +72,6 @@ export function makeMastCell(cellDatum) {
 
 export function activate(cell) {
   cell.setVelocity(0, 0) //PLACEHOLDER
-  console.log("I'm a good guy now!")
   cell.setTint(0x01c0ff)
   this.goodGuys.push(cell)
   cell.activated = true

@@ -15,7 +15,6 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    // console.log('current velocity capped out at: ', obj.body.velocity)
     const angle = Math.abs(Math.atan(velY / velX))
     const newX = Math.cos(angle)
     const newY = Math.sin(angle)
@@ -35,13 +34,11 @@ export function throttle(func, milliseconds) {
 }
 
 export function fire ({x, y, angle}) {
-  console.log("FIRE!!! But working now! I swear!")
   let antibody = this.antibodies.get();
   if(antibody) {
     antibody.fire(x, y, angle);
   }
 }
-// export const throttledFire = throttle(fire, 200)
 
 export function updateForce(cellsObj) {
   for (let key in cellsObj) {
@@ -60,7 +57,6 @@ export function limitNumber(num, lowerLimit, higherLimit) {
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {
-  console.log('largeBody in overlapCollision: ', largeBody)
   if (largeBody.getBounds().contains(coords.x, coords.y)) {
     callback.call(this, ...args)
   }
