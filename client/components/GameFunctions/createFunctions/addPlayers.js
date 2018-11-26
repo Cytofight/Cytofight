@@ -43,7 +43,6 @@ export function players() {
     //     this.otherPlayers.filter(() => playerId !== otherPlayer.playerId)
     //   }
     // })
-    console.log('destroy me: ', this.otherPlayers[playerId])
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
   })
@@ -64,7 +63,6 @@ export function players() {
     //   }
     // })
     const currPlayer = this.otherPlayers[playerId]
-    console.log('this player moved: ', currPlayer)
     if (currPlayer) {
       currPlayer.setPosition(position.x, position.y)
         .setVelocity(velocity.x, velocity.y)
@@ -280,7 +278,7 @@ function addOtherPlayers({ position, team, playerId }) {
   this.otherPlayers[playerId] = otherPlayer
   console.log('this player: ', otherPlayer)
   console.log('total players: ', this.otherPlayers)
-  console.log('otherPlayer lookup: '), this.otherPlayers[playerId]
+  console.log('otherPlayer lookup test: '), this.otherPlayers[playerId]
 }
 
 // function makeEpithelialCell({ x, y, tint, globalId }) {

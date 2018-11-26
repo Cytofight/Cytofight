@@ -7,6 +7,20 @@ let tCellLimiter = 0, mastCellLimiter = 0
 
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
+  const changeShipColorDebug = throttle((tint) => {
+    let prevAlignment, nextAlignment
+    this.ship.setTint(tint)
+    if (tint === 0x01c0ff) {
+      prevAlignment = this.badGuys
+      nextAlignment = this.goodGuys
+    } else if (tint === 0xd60000) {
+      prevAlignment = this.goodGuys
+      nextAlignment = this.badGuys
+    }
+    const currIndex = prevAlignment.indexOf(this.ship)
+    if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
+    nextAlignment.push(this.ship)
+  }, 500)
 
   if (this.ship) {
     // const maxSpeed = 10
@@ -51,6 +65,10 @@ export function update(time) {
         velocityX: 0, velocityY: 0, 
         angle: 0, angularVelocity: 1, 
         randomDirection: {x: 0, y: 0}}])
+    } if (this.keyBlue.isDown) {
+      changeShipColorDebug(0x01c0ff)
+    } if (this.keyRed.isDown) {
+      changeShipColorDebug(0xd60000) 
     }
     
     limitSpeed(this.ship, 10)
