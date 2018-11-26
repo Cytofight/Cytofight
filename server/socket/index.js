@@ -68,6 +68,11 @@ module.exports = io => {
       // remove this player from our players object
       // emit a message to all players to remove this player
       io.emit('disconnect', socket.id)
+      if (!Object.keys(players).length) {
+        epithelialCells = {}
+        dormantTCells = {}
+        mastCells = {}
+      }
     })
 
     // when a player moves, update the player data
