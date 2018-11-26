@@ -145,7 +145,6 @@ export function update(time) {
 
   this.antibodies.getChildren().forEach(antibody => {
     this.badGuys.forEach(badGuy => {
-      console.log(badGuy)
       overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {
         console.log('owie!')
         // antibody.setActive(false)
