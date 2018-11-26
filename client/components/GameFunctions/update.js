@@ -1,11 +1,16 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './util'
 
+
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
 let tCellLimiter = 0, mastCellLimiter = 0
 
 export function update(time) {
+  //  And this camera is 400px wide, so -200
+  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
+  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
+
   // const boundFire = throttledFire.bind(this)
   const changeShipColorDebug = throttle((tint) => {
     let prevAlignment, nextAlignment
@@ -29,9 +34,10 @@ export function update(time) {
     // const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
     // const velY = this.ship.body.velocity.y
     // const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
-    
+
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
       // console.log(this.ship.body)
+
       this.ship.applyForce({x: -0.005, y: 0})
       limitSpeed(this.ship, 8)
     } if (this.cursors.right.isDown || this.keyRight.isDown) {
@@ -58,6 +64,7 @@ export function update(time) {
     if (this.keyDebug.isDown) {
       console.log('ALL T CELLS: ', this.dormantTCells)
       console.log('MY T CELLS: ', this.clientDormantTCells)
+
       console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
     } if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
@@ -72,28 +79,39 @@ export function update(time) {
     }
     
     limitSpeed(this.ship, 10)
+
     // this.physics.world.wrap(this.ship, 5)
-    
+
     // emit player movement
-    const { angle, angularVelocity, velocity, position } = this.ship.body
-    const { previous } = this.ship
+    const {
+      angle,
+      angularVelocity,
+      velocity,
+      position
+    } = this.ship.body
+    const {
+      previous
+    } = this.ship
     if (
       previous &&
       // (x !== this.ship.body.positionPrev.x ||
       //   y !== this.ship.body.positionPrev.y ||
       //   r !== this.ship.oldPosition.rotation)
       (previous.angle !== angle ||
-      previous.angularVelocity !== angularVelocity ||
-      previous.velocity.x !== velocity.x ||
-      previous.velocity.y !== velocity.y ||
-      previous.position.x !== position.x ||
-      previous.position.y !== position.y)
+        previous.angularVelocity !== angularVelocity ||
+        previous.velocity.x !== velocity.x ||
+        previous.velocity.y !== velocity.y ||
+        previous.position.x !== position.x ||
+        previous.position.y !== position.y)
     ) {
       this.socket.emit('playerMovement', {
         // x: this.ship.x,
         // y: this.ship.y,
         // rotation: this.ship.rotation
-        angle, velocity, angularVelocity, position
+        angle,
+        velocity,
+        angularVelocity,
+        position
       })
     }
 
@@ -102,23 +120,29 @@ export function update(time) {
       // x: this.ship.x,
       // y: this.ship.y,
       // rotation: this.ship.rotation
-      velocity, angularVelocity
+      velocity,
+      angularVelocity
     }
   }
 
+
   tCellLimiter = (tCellLimiter + 1) % 3
   if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter){
+
     throttledUpdateForce.call(this, this.clientDormantTCells)
     const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 4)
-      if (this.clientDormantTCells[id])  {
+      if (this.clientDormantTCells[id]) {
         cellData[id] = {
-          positionX: cell.body.position.x, positionY: cell.body.position.y,
-          velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-          angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
+          positionX: cell.body.position.x,
+          positionY: cell.body.position.y,
+          velocityX: cell.body.velocity.x,
+          velocityY: cell.body.velocity.y,
+          angle: cell.body.angle,
+          angularVelocity: cell.body.angularVelocity,
           randomDirection: cell.randomDirection,
           globalId: cell.globalId
         }
@@ -135,9 +159,12 @@ export function update(time) {
     for (let id in this.mastCells) {
       const cell = this.mastCells[id]
       cellData[id] = {
-        positionX: cell.body.position.x, positionY: cell.body.position.y,
-        velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-        angularVelocity: cell.body.angularVelocity, globalId: cell.globalId
+        positionX: cell.body.position.x,
+        positionY: cell.body.position.y,
+        velocityX: cell.body.velocity.x,
+        velocityY: cell.body.velocity.y,
+        angularVelocity: cell.body.angularVelocity,
+        globalId: cell.globalId
       }
     }
     this.socket.emit('updateMastCells', cellData)
