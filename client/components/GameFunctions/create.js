@@ -2,7 +2,6 @@ import {
   players,
   keyboardControls,
   scoreAndStars,
-  NPCCells
 } from './createFunctions'
 import {Antibody} from '../phaser-game'
 import {worldSize} from './util'
@@ -42,5 +41,4 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
-  NPCCells.call(this)
 }

@@ -1,18 +1,20 @@
-import { NPCCells } from './createFunctions';
-import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './util'
-<<<<<<< HEAD
-=======
-
->>>>>>> e27759a61d13d76982f35d49832569c656209d54
+import {
+  NPCCells
+} from './createFunctions';
+import {
+  limitSpeed,
+  throttle,
+  fire,
+  updateForce,
+  overlapCollision
+} from './util'
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
-let tCellLimiter = 0, mastCellLimiter = 0
+let tCellLimiter = 0,
+  mastCellLimiter = 0
 
 export function update(time) {
-  //  And this camera is 400px wide, so -200
-  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
-  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
 
   // const boundFire = throttledFire.bind(this)
   const changeShipColorDebug = throttle((tint) => {
@@ -32,18 +34,33 @@ export function update(time) {
 
   if (this.ship) {
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
-      this.ship.applyForce({x: -0.005, y: 0})
+      this.ship.applyForce({
+        x: -0.005,
+        y: 0
+      })
       limitSpeed(this.ship, 8)
-    } if (this.cursors.right.isDown || this.keyRight.isDown) {
-      this.ship.applyForce({x: 0.005, y: 0})
+    }
+    if (this.cursors.right.isDown || this.keyRight.isDown) {
+      this.ship.applyForce({
+        x: 0.005,
+        y: 0
+      })
       limitSpeed(this.ship, 8)
-    } if (this.cursors.up.isDown || this.keyUp.isDown) {
-      this.ship.applyForce({x: 0, y: -0.005})
+    }
+    if (this.cursors.up.isDown || this.keyUp.isDown) {
+      this.ship.applyForce({
+        x: 0,
+        y: -0.005
+      })
       limitSpeed(this.ship, 8)
-    } if (this.cursors.down.isDown || this.keyDown.isDown) {
-      this.ship.applyForce({x: 0, y: 0.005})
+    }
+    if (this.cursors.down.isDown || this.keyDown.isDown) {
+      this.ship.applyForce({
+        x: 0,
+        y: 0.005
+      })
       limitSpeed(this.ship, 8)
-    } 
+    }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
       const firingInfo = {
         x: this.ship.body.position.x,
@@ -60,18 +77,28 @@ export function update(time) {
       // console.log('MY T CELLS: ', this.clientDormantTCells)
 
       // console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
-    } if (this.keyCreateCell.isDown) {
-      this.socket.emit('requestNewTCells', [{
-        positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, 
-        velocityX: 0, velocityY: 0, 
-        angle: 0, angularVelocity: 1, 
-        randomDirection: {x: 0, y: 0}}])
-    } if (this.keyBlue.isDown) {
-      changeShipColorDebug(0x01c0ff)
-    } if (this.keyRed.isDown) {
-      changeShipColorDebug(0xd60000) 
     }
-    
+    if (this.keyCreateCell.isDown) {
+      this.socket.emit('requestNewTCells', [{
+        positionX: this.ship.body.position.x,
+        positionY: this.ship.body.position.y,
+        velocityX: 0,
+        velocityY: 0,
+        angle: 0,
+        angularVelocity: 1,
+        randomDirection: {
+          x: 0,
+          y: 0
+        }
+      }])
+    }
+    if (this.keyBlue.isDown) {
+      changeShipColorDebug(0x01c0ff)
+    }
+    if (this.keyRed.isDown) {
+      changeShipColorDebug(0xd60000)
+    }
+
     limitSpeed(this.ship, 10)
     const {
       angle,
@@ -107,7 +134,7 @@ export function update(time) {
 
 
   tCellLimiter = (tCellLimiter + 1) % 3
-  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter){
+  if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter) {
 
     throttledUpdateForce.call(this, this.clientDormantTCells)
     const cellData = {}
@@ -151,9 +178,15 @@ export function update(time) {
 
   this.antibodies.getChildren().forEach(antibody => {
     this.badGuys.forEach(badGuy => {
-      overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {
+      overlapCollision.call(this, {
+        x: antibody.x,
+        y: antibody.y
+      }, badGuy, () => {
         antibody.destroy()
       })
     })
   })
+  //  And this camera is 400px wide, so -200
+  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
+  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
 }

@@ -10,16 +10,13 @@ export function epithelialCells(amount) {
         let checkingOverlap = true
         let randomX, randomY
         while (checkingOverlap) {
-          console.log('checking overlap of new epi cell...')
           randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
           randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
           if (Object.keys(this.epithelialCells).every(id => 
           !this.epithelialCells[id].getBounds().contains(randomX, randomY))) {
-            console.log('no overlap! wheeoo!')
             checkingOverlap = false
             }
         }
-        console.log('finalizing coordinates!')
         cellData[i] = {x: randomX, y: randomY, tint: null, globalId: i}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
