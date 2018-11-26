@@ -29,7 +29,6 @@ export function create() {
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y).setName('main');
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
-  console.log("CAMERA:", this.cameras)
   this.minimap = this.cameras.add(640, 490, 150, 100).setZoom(0.1).setName('mini');
   this.minimap.setBackgroundColor(0x002244);
   this.minimap.scrollX = 2000;
@@ -45,9 +44,5 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
-  // scoreAndStars.call(this)
   NPCCells.call(this)
-  console.log(this.antibodies)
-  //antibodies.children.entries
-  //antibodies.getChildren()
 }

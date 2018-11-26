@@ -27,15 +27,7 @@ export function update(time) {
   }, 500)
 
   if (this.ship) {
-    // const maxSpeed = 10
-    // // const accel = 0.005
-    // const velX = this.ship.body.velocity.x
-    // const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
-    // const velY = this.ship.body.velocity.y
-    // const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
-
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
-      // console.log(this.ship.body)
       this.ship.applyForce({x: -0.005, y: 0})
       limitSpeed(this.ship, 8)
     } if (this.cursors.right.isDown || this.keyRight.isDown) {
@@ -59,11 +51,7 @@ export function update(time) {
       throttledFire.call(this, firingInfo)
       this.socket.emit('firedAntibody', firingInfo)
     }
-    if (this.keyDebug.isDown) {
-      console.log('ALL T CELLS: ', this.dormantTCells)
-      console.log('MY T CELLS: ', this.clientDormantTCells)
-      console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
-    } if (this.keyCreateCell.isDown) {
+    if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
         positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, 
         velocityX: 0, velocityY: 0, 
@@ -76,9 +64,6 @@ export function update(time) {
     }
     
     limitSpeed(this.ship, 10)
-    // this.physics.world.wrap(this.ship, 5)
-
-    // emit player movement
     const {
       angle,
       angularVelocity,
@@ -90,9 +75,6 @@ export function update(time) {
     } = this.ship
     if (
       previous &&
-      // (x !== this.ship.body.positionPrev.x ||
-      //   y !== this.ship.body.positionPrev.y ||
-      //   r !== this.ship.oldPosition.rotation)
       (previous.angle !== angle ||
         previous.angularVelocity !== angularVelocity ||
         previous.velocity.x !== velocity.x ||
@@ -101,9 +83,6 @@ export function update(time) {
         previous.position.y !== position.y)
     ) {
       this.socket.emit('playerMovement', {
-        // x: this.ship.x,
-        // y: this.ship.y,
-        // rotation: this.ship.rotation
         angle,
         velocity,
         angularVelocity,
@@ -111,11 +90,7 @@ export function update(time) {
       })
     }
 
-    // save old position data
     this.ship.previous = {
-      // x: this.ship.x,
-      // y: this.ship.y,
-      // rotation: this.ship.rotation
       velocity,
       angularVelocity
     }
@@ -148,7 +123,6 @@ export function update(time) {
 
   mastCellLimiter = (mastCellLimiter + 1) % 7
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
-    // console.log('updating mast cells!')
     const cellData = {}
     for (let id in this.mastCells) {
       const cell = this.mastCells[id]
@@ -167,9 +141,6 @@ export function update(time) {
   this.antibodies.getChildren().forEach(antibody => {
     this.badGuys.forEach(badGuy => {
       overlapCollision.call(this, {x: antibody.x, y: antibody.y}, badGuy, () => {
-        console.log('owie!')
-        // antibody.setActive(false)
-        // antibody.setVisible(false)
         antibody.destroy()
       })
     })
