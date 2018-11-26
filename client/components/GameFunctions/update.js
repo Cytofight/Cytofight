@@ -1,5 +1,9 @@
 import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce, overlapCollision } from './util'
+<<<<<<< HEAD
+=======
+
+>>>>>>> e27759a61d13d76982f35d49832569c656209d54
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
@@ -51,7 +55,12 @@ export function update(time) {
       throttledFire.call(this, firingInfo)
       this.socket.emit('firedAntibody', firingInfo)
     }
-    if (this.keyCreateCell.isDown) {
+    if (this.keyDebug.isDown) {
+      // console.log('ALL T CELLS: ', this.dormantTCells)
+      // console.log('MY T CELLS: ', this.clientDormantTCells)
+
+      // console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
+    } if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
         positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, 
         velocityX: 0, velocityY: 0, 
@@ -96,8 +105,10 @@ export function update(time) {
     }
   }
 
+
   tCellLimiter = (tCellLimiter + 1) % 3
   if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter){
+
     throttledUpdateForce.call(this, this.clientDormantTCells)
     const cellData = {}
     for (let id in this.dormantTCells) {
