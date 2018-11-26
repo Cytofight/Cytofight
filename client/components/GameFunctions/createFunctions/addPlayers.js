@@ -4,6 +4,7 @@ const throttledFire = throttle(fire, 200)
 
 const numberOfEpithelialCells = 20
 const numberOfTCells = 15
+const numberOfMastCells = 4
 const defaultCellParams = {
   restitution: 1,
   friction: 0,
@@ -59,14 +60,6 @@ export function players() {
     const cellData = {}
     this.epithelialCells = {}
     if (!cells || !cells.length) {
-      // this.epithelialCells = new Array(numberOfEpithelialCells).fill(null).map(() => {
-        // const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-        // const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) = 50
-      //   const newCell = makeEpithelialCell.call(this, randomEpithelialX, randomEpithelialY)
-      //   newCell.globalId = newCell.body.id
-      //   cellData.push({x: randomEpithelialX, y: randomEpithelialY, tint: null, globalId: newCell.globalId})
-      //   return newCell
-      // })
       for (let i = 0; i < numberOfEpithelialCells; i++) {
         const randomEpithelialX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
         const randomEpithelialY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
@@ -82,49 +75,18 @@ export function players() {
         this.epithelialCells[id] = makeEpithelialCell.call(this, cells[id])
       }
     }
-    this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-      // const matchingCell = this.epithelialCells.find(cell => (cell.body.id === bodyA.id || cell.body.id === bodyB.id))
-      // if (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) console.log('there was a collision! matching cell: ', matchingCell)
-      // if (this.ship && this.ship.tintBottomLeft === 214 && 
-      //   matchingCell &&
-      //   (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id)) {
-      //     console.log('something happened!')
-      //   matchingCell.setTint(0xd60000)
-      //   this.socket.emit('changedEpithelialCell', matchingCell.globalId)
-      // }
+  })
 
-      // Moved to helper function
-      epithelialCellCollision.call(this, bodyA, bodyB)
-    })
+  this.socket.on('changedEpithelialCellClient', globalId => {
+    this.epithelialCells[globalId].setTint(0xd60000)
   })
 
   this.socket.on('dormantTCell', (cells) => {
     this.dormantTCells = {}
     if(!Object.keys(cells).length) {
       console.log("I WAS CREATED FOR THE FIRST TIME!!!")
-      // this.dormantTCells = new Array(numberOfTCells).fill(null).map((_, index) => {
-      //   const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-      //   const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-      //   const randomVelocityX = Math.floor(Math.random() * 8 - 4)
-      //   const randomVelocityY = Math.floor(Math.random() * 8 - 4)
-      //   const randomAngularVelocity = Math.random() * 0.5 - 0.25
-      //   return makeTCell.call(this, {
-      //     positionX: randomTCellX, positionY: randomTCellY, 
-      //     velocityX: randomVelocityX, velocityY: randomVelocityY, 
-      //     angle: 0, angularVelocity: randomAngularVelocity,
-      //     globalId: index
-      //   })
-      // })
-      // this.clientDormantTCells = [...this.dormantTCells] // the list of cells for whose behavior the player is responsible
-      // this.socket.emit('newTCells', this.dormantTCells.map(cell => 
-      //   ({positionX: cell.body.position.x, positionY: cell.body.position.y, 
-      //     velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y, 
-      //     angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-      //     globalId: cell.globalId})
-      // ))
-
-      // CHANGED CELL DATA STORAGE TO OBJECT W/ GLOBAL IDS
-      this.cellData = {}
+      // CELL DATA STORAGE IS OBJECT W/ GLOBAL IDS
+      const cellData = {}
       for (let i = 0; i < numberOfTCells; i++) {
         const randomTCellX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
         const randomTCellY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
@@ -132,42 +94,27 @@ export function players() {
         const randomVelocityY = Math.floor(Math.random() * 8 - 4)
         const randomAngularVelocity = Math.random() * 0.5 - 0.25
         // Again, since these are the first cells, the client can handle the IDs with no need for server guidance
-        this.cellData[i] = {
+        cellData[i] = {
           positionX: randomTCellX, positionY: randomTCellY, 
           velocityX: randomVelocityX, velocityY: randomVelocityY, 
           angle: 0, angularVelocity: randomAngularVelocity,
-          globalId: i
+          randomDirection: {x: 0, y: 0}, globalId: i
         }
-        this.dormantTCells[i] = makeTCell.call(this, this.cellData[i])
+        this.dormantTCells[i] = makeTCell.call(this, cellData[i])
       }
       this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical
-      this.socket.emit('newTCells', this.cellData)
+      this.socket.emit('myNewTCells', cellData)
     } else {
       console.log("I was not. I was created by someone else who came before you")
-      // this.dormantTCells = cells.map(cell => makeTCell.call(this, cell))
-      // this.clientDormantTCells = []
       for (let id in cells) {
         this.dormantTCells[id] = makeTCell.call(this, cells[id])
       }
       this.clientDormantTCells = {}
-      //TESTING
-      // const testingCellParams = {'999': {positionX: 50, positionY: 50, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 0, globalId: 999}}
-      // const testingCell = makeTCell.call(this, testingCellParams)
-      // console.log(testingCell)
-      // this.dormantTCells[999] = testingCell
-      // this.clientDormantTCells[999] = testingCell
-      // this.socket.emit('newTCells', testingCellParams)
     }
   })
 
   // Mid-game generation of any new T cells
   this.socket.on('addDormantTCells', (newCells, ownerId) => {
-    // const newCells = newCellData.map(cell => makeTCell.call(this, cell))
-    // console.log('T CELLS BEFORE ADDITION: ', this.dormantTCells)
-    // this.dormantTCells.push(...newCells)
-    // console.log('T CELLS AFTER ADDITION: ', this.dormantTCells)
-    // if (ownerId === this.socket.id) this.clientDormantTCells.push(...newCells)
-
     for (let id in newCells) {
       const newCell = makeTCell.call(this, newCells[id])
       this.dormantTCells[id] = newCell
@@ -178,17 +125,6 @@ export function players() {
 
   // When a player disconnects and the server decides you should get responsibility for their cells
   this.socket.on('passDormantTCells', passedCellIds => { // AN ARRAY
-    // // for each cell passed on from the disconnecting player, find its corresponding cell in the game...
-    // const cellsToTransfer = passedCells.map(inputCell => 
-    //   this.dormantTCells.find(cell => 
-    //     !clientDormantTCells.includes(cell) && 
-    //     (cell.body.position.x >= inputCell.positionX - 4 || cell.body.position.x <= inputCell.positionX + 4) && 
-    //     (cell.body.position.y >= inputCell.positionY - 4 || cell.body.position.y <= inputCell.positionY + 4)
-    //   )
-    // )
-    // // and add it to the list of cells that the player is responsible for monitoring
-    // this.clientDormantTCells.push(...cellsToTransfer)
-
     passedCellIds.forEach(id => {if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]})
     console.log('passed cells, new total client cells: ', this.clientDormantTCells)
   })
@@ -196,18 +132,59 @@ export function players() {
   this.socket.on('changedDormantTCells', cellData => {
     for (let id in cellData) {
       const currCell = this.dormantTCells[id]
-      setTCellParams(currCell, cellData[id])
+      setCellParams(currCell, cellData[id])
     }
   })
 
-  this.socket.on('changedEpithelialCellClient', globalId => {
-    // const correspondingCell = this.epithelialCells.find(cell => cell.globalId === globalId)
-    // console.log('found corresponding cell: ', correspondingCell)
-    // correspondingCell.setTint(0xd60000)
-    this.epithelialCells[globalId].setTint(0xd60000)
+  this.socket.on('mastCell', cells => {
+    this.mastCells = {}
+    if (!cells || !Object.keys(cells).length) {
+      const cellData = {}
+      console.log('creating mast cells for the first time!!!')
+      for (let i = 0; i < numberOfMastCells; i++) {
+        const positionX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+        const positionY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+        const velocityX = Math.floor(Math.random() * 12 - 6)
+        const velocityY = Math.floor(Math.random() * 12 - 6)
+        const angularVelocity = Math.random() * 0.3 - 0.15
+        cellData[i] = {positionX, positionY, velocityX, velocityY, angularVelocity, globalId: i}
+        this.mastCells[i] = makeMastCell.call(this, cellData[i])
+      }
+      this.socket.emit('newMastCells', cellData)
+    } else {
+      console.log('copying existing mast cells from server...')
+      for (let id in cells) {
+        this.mastCells[id] = makeMastCell.call(this, cells[id])
+      }
+    }
+    this.ownsMastCells = true
   })
 
+  this.socket.on('updateMastCellsClient', cells => {
+    for (let id in cells) {
+      setCellParams.call(this, this.mastCells[id], cells[id])
+    }
+  })
+
+  this.socket.on('disownMastCells', () => {
+    this.ownsMastCells = false
+  })
+  this.socket.on('passMastCells', () => {
+    this.ownsMastCells = true
+  })
+
+
+  this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+    // for various collision events
+    epithelialCellCollision.call(this, bodyA, bodyB)
+  })
 }
+
+
+
+
+
+
 
 const shipParams = {
   restitution: 0.9,
@@ -238,9 +215,6 @@ function addPlayer(playerInfo) {
     var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
     this.ship.angle = angle;
   }, this)
-  // this.input.on("pointerdown", (event) => {
-  //   throttledFire.call(this)
-  // })
 }
 
 function addOtherPlayers(playerInfo) {
@@ -259,12 +233,8 @@ function addOtherPlayers(playerInfo) {
 }
 
 function makeEpithelialCell({ x, y, tint, globalId }) {
-  const cell = this.matter.add.image(
-    x,
-    y,
-    'epithelialCell'
-  )
-  cell.setRectangle(cell.width, cell.height, {
+  const cell = this.matter.add.image(x, y, 'epithelialCell')
+  cell.setRectangle(cell.width / 2, cell.height / 2, {
     isStatic: true,
     ...defaultCellParams
   })
@@ -274,14 +244,9 @@ function makeEpithelialCell({ x, y, tint, globalId }) {
 }
 
 function makeTCell(cellDatum){
-  const cell = this.matter.add.image(
-    cellDatum.positionX,
-    cellDatum.positionY,
-    'dormantTCell'
-  )
+  const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
   cell.setCircle(cell.width / 2, defaultCellParams)
-  setTCellParams(cell, cellDatum)
-  cell.globalId = cellDatum.globalId
+  setCellParams(cell, cellDatum)
   cell.activate = function() {
       this.setVelocity(0, 0) //PLACEHOLDER
       console.log("I'm a good guy now!")
@@ -291,13 +256,52 @@ function makeTCell(cellDatum){
   return cell
 }
 
-function setTCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint }) {
+function makeMastCell(cellDatum) {
+  
+  const boundContains = cellContains.bind(this)
+  const histamines = this.add.particles('histamines')
+  const secretor = histamines.createEmitter({
+    x: 1,
+    y: 1,
+    speed: Math.floor(Math.random() * 150) + 150,
+    scale: {
+      start: 1,
+      end: 0
+    },
+    blendMode: 'ADD',
+    deathZone: {
+      type: 'onEnter',
+      source: { contains: boundContains }
+    }
+  })
+  const mastCell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'mastCell')
+  mastCell.setCircle(mastCell.width / 2, defaultCellParams)
+  setCellParams(mastCell, cellDatum)
+  secretor.startFollow(mastCell)
+  return mastCell
+}
+
+function cellContains(x, y) {
+  for (let id in this.dormantTCells) {
+    const currCell = this.dormantTCells[id]
+    if (currCell.getBounds().contains(x, y)) {
+      if (!currCell.activated) {
+        currCell.activate()
+      }
+      return true
+    }
+  }
+  return false
+}
+
+function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
   cell.setPosition(positionX, positionY)
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
   cell.setAngularVelocity(angularVelocity)
   if(tint) cell.setTint(tint)
-  cell.randomDirection = randomDirection || {x: 0, y: 0}
+  if (randomDirection) cell.randomDirection = randomDirection
+  cell.globalId = globalId
 }
 
 function epithelialCellCollision(bodyA, bodyB) {
@@ -309,15 +313,3 @@ function epithelialCellCollision(bodyA, bodyB) {
     this.socket.emit('changedEpithelialCell', matchingCellId)
   }
 }
-
-// function tCellCollision(bodyA, bodyB) {
-//   const matchingCells = this.clientDormantTCells.filter(currCell => currCell.body.id === bodyA.id || currCell.body.id === bodyB.id)
-//   if (matchingCells.length) {
-//     this.socket.emit('changedTCells', matchingCells.map(cell => ({
-//       positionX: cell.body.position.x, positionY: cell.body.position.y,
-//       velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
-//       angle: cell.body.angle, angularVelocity: cell.body.angularVelocity,
-//       globalId: cell.globalId
-//     })))
-//   }
-// }

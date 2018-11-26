@@ -70,64 +70,54 @@ export function NPCCells() {
   // let circle = new Phaser.Geom.Circle(400, 300, 150)
   // Randomly position the dormantTCells within the circle
   // Phaser.Actions.RandomCircle(this.dormantTCells.getChildren(), circle)
-  const boundContains = (x, y) => {
-    for (let id in this.dormantTCells) {
-      const currCell = this.dormantTCells[id]
-      if (currCell.getBounds().contains(x, y)) {
-        if (!currCell.activated) {
-          currCell.activate()
-        }
-        return true
-      }
-    }
-    return false
-  }
+  // const boundContains = (x, y) => {
+  //   for (let id in this.dormantTCells) {
+  //     const currCell = this.dormantTCells[id]
+  //     if (currCell.getBounds().contains(x, y)) {
+  //       if (!currCell.activated) {
+  //         currCell.activate()
+  //       }
+  //       return true
+  //     }
+  //   }
+  //   return false
+  // }
 
-  const changeCell = {
-    contains: boundContains
-  }
+  // const changeCell = {
+  //   contains: boundContains
+  // }
 
-  //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
+  // //These dormant cells need to be dispersed randomly throughout the arena, have random speeds, and be able to interact with the histomines (particles) emitted by the mast cells
 
-  const particles = new Array(numberOfMastCells).fill(
-    this.add.particles('histamines')
-  )
-  particles.forEach(particle => {
-    const randomParticleSpeed = Math.floor(Math.random() * 200) + 100
-    const secretors = particle.createEmitter({
-      x: 1,
-      y: 1,
-      speed: randomParticleSpeed,
-      scale: {
-        start: 1,
-        end: 0
-      },
-      blendMode: 'ADD',
-      deathZone: {
-        type: 'onEnter',
-        source: changeCell
-      }
-    })
-    // const mastCells = []
-    const randomMastCellSpeedX = Math.floor(Math.random() * 12 - 6)
-    const randomMastCellSpeedY = Math.floor(Math.random() * 12 - 6)
-    const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
-    const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-    particle.mastCell = this.matter.add.image(randomX, randomY, 'mastCell')
-    particle.mastCell.setCircle(particle.mastCell.width / 2, defaultCellParams)
-    particle.mastCell.setVelocity(randomMastCellSpeedX, randomMastCellSpeedY)
-    secretors.startFollow(particle.mastCell)
-    // //   mastCells.forEach(mastCell => {
-    // //     const randomCellLocationX = Math.floor(Math.random() * 500)
-    // //     const randomCellLocationY = Math.floor(Math.random() * 500)
-    // //     mastCell.setBounce(1, 1)
-    // //     mastCell.setCollideWorldBounds(true)
-    // //     mastCell.x = randomCellLocationX
-    // //     mastCell.y = randomCellLocationY
-    // //     console.log("Cell: ", mastCell)
-    // //   })
-    // // })
-  })
+  // const particles = new Array(numberOfMastCells).fill(
+  //   this.add.particles('histamines')
+  // )
+  // particles.forEach(particle => {
+  //   const randomParticleSpeed = Math.floor(Math.random() * 200) + 100
+  //   const secretors = particle.createEmitter({
+  //     x: 1,
+  //     y: 1,
+  //     speed: randomParticleSpeed,
+  //     scale: {
+  //       start: 1,
+  //       end: 0
+  //     },
+  //     blendMode: 'ADD',
+  //     deathZone: {
+  //       type: 'onEnter',
+  //       source: changeCell
+  //     }
+  //   })
+  //   // const mastCells = []
+  //   const randomMastCellSpeedX = Math.floor(Math.random() * 12 - 6)
+  //   const randomMastCellSpeedY = Math.floor(Math.random() * 12 - 6)
+  //   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
+  //   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
+  //   particle.mastCell = this.matter.add.image(randomX, randomY, 'mastCell')
+  //   particle.mastCell.setCircle(particle.mastCell.width / 2, defaultCellParams)
+  //   particle.mastCell.setVelocity(randomMastCellSpeedX, randomMastCellSpeedY)
+  //   secretors.startFollow(particle.mastCell)
+  // })
 
   // this.epithelialCells = new Array(numberOfEpithelialCells)
   //   .fill(null)
