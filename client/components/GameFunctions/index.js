@@ -8,4 +8,9 @@ export default class gamePlay extends Phaser.Scene {
   preload = preload
   create = create
   update = update
+  extend = {
+    minimap: null,
+    player: null,
+    cursors: null,
+  }
 }
