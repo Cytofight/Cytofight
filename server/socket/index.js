@@ -8,10 +8,10 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
-  let star = {
-    x: Math.floor(Math.random() * 900) + 50,
-    y: Math.floor(Math.random() * 900) + 50
-  };
+  // let star = {
+  //   x: Math.floor(Math.random() * 900) + 50,
+  //   y: Math.floor(Math.random() * 900) + 50
+  // };
   let scores = {
     blue: 0,
     red: 0
