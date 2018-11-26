@@ -6,6 +6,7 @@ module.exports = io => {
   // CELL STORAGE NOW OBJECTS, LIKE PLAYER STORAGE
   let epithelialCells = {}
   let dormantTCells = {}
+  let mastCells = {}
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
     y: Math.floor(Math.random() * 900) + 50
@@ -42,6 +43,9 @@ module.exports = io => {
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
+    // send the mast cells to the new players
+    socket.emit('mastCell', mastCells)
+    socket.broadcast.emit('disownMastCells')
     // send the current scores
     socket.emit('scoreUpdate', scores)
     // update all other players of the new player
@@ -53,12 +57,11 @@ module.exports = io => {
       // Pass "their" T cells onto the player with the lowest number
       // (Only if there are multiple players to begin with)
       if (Object.keys(players).length > 1) {
-        const lowestCellPlayerId = Object.keys(players).reduce((currLowestPlayer, id) => {
-          const currAmount = Object.keys(players[id].clientDormantTCells).length
-          if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
-          else return currLowestPlayer
-        }, {id: null}).id
+        // passing on of "ownerships"
+        const lowestCellPlayerId = findLowestCellPlayerId(players)
         io.to(`${lowestCellPlayerId}`).emit('passDormantTCells', Object.keys(players[socket.id].clientDormantTCells))
+        const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
+        io.to(`${randomPlayerId}`).emit('passMastCells')
       }
       // remove this player from our players object
       delete players[socket.id]
@@ -79,12 +82,6 @@ module.exports = io => {
       }
     })
 
-    // socket.on('anyCollision', (bodyA, bodyB) => {
-    //   // console.log('received anyCollision with', bodyA, bodyB)
-    //   //receive and broadcast four-datas of both bodies
-    //   // socket.broadcast.emit('collided', bodyA, bodyB)
-    // })
-
     socket.on('starCollected', function () {
       if (players[socket.id].team === 'red') {
         scores.red += 10
@@ -98,29 +95,15 @@ module.exports = io => {
     })
 
     socket.on('newEpithelialCells', (newCells) => {
-      // newCells.forEach(cell => {
-      //   epithelialCells[cell.globalId] = cell
-      // })
-      // epithelialCells = {...epithelialCells, ...newCells}
-
-      // Basically like pushing newCells into epithelialCells, but for an object
       Object.assign(epithelialCells, newCells)
     })
 
     socket.on('changedEpithelialCell', globalId => {
-      // epithelialCells.forEach(cell => {
-      //   if (cell.globalId === globalId) cell.tint = 0xd60000
-      // })
       epithelialCells[globalId].tint = 0xd60000
       socket.broadcast.emit('changedEpithelialCellClient', globalId)
     })
 
-    socket.on('newTCells', (newCells) => {
-      // console.log('EXAMPLE OF NEW T CELLS ON SERVER: ', newCells[0])
-      // dormantTCells.push(...newCells)
-      // players[socket.id].clientDormantTCells.push(...newCells)
-      // dormantTCells = {...dormantTCells, ...newCells}
-      // players[socket.id].clientDormantTCells = {...players[socket.id].clientDormantTCells, newCells}
+    socket.on('myNewTCells', (newCells) => {
       Object.assign(dormantTCells, newCells)
       Object.assign(players[socket.id].clientDormantTCells, newCells)
       console.log('CLIENT AND SERVER T CELLS: ', players[socket.id].clientDormantTCells, dormantTCells)
@@ -157,20 +140,22 @@ module.exports = io => {
     })
 
     socket.on('changedTCells', cellData => { //NOW AN OBJECT
-      // const Ids = cellData.map(datum => datum.globalId)
-
-      // dormantTCells.forEach(cell => {
-      //   const currIdIndex = Ids.indexOf(cell.globalId)
-      //   if (currIdIndex > -1) 
-      // })
-      // cellData.forEach(datum => {
-      //   const relevantCell = dormantTCells.find(cell => cell.globalId === datum.globalId)
-      //   relevantCell = datum
-      // })
+      // Object.assign doesn't work right for some reason?
       for (let id in cellData) {
         dormantTCells[id] = cellData[id]
       }
       socket.broadcast.emit('changedDormantTCells', cellData)
+    })
+
+    socket.on('newMastCells', newCells => {
+      Object.assign(mastCells, newCells)
+    })
+
+    socket.on('updateMastCells', cellData => {
+      for (let id in cellData) {
+        mastCells[id] = cellData[id]
+      }
+      socket.broadcast.emit('updateMastCellsClient', cellData)
     })
 
     socket.on('new-message', message => {
@@ -181,4 +166,12 @@ module.exports = io => {
       socket.broadcast.emit('new-channel', channel)
     })
   })
+}
+
+function findLowestCellPlayerId(players) {
+  return Object.keys(players).reduce((currLowestPlayer, id) => {
+    const currAmount = Object.keys(players[id].clientDormantTCells).length
+    if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
+    else return currLowestPlayer
+  }, {id: null}).id
 }

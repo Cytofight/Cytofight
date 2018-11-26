@@ -2,9 +2,8 @@ import { NPCCells } from './createFunctions';
 import { limitSpeed, throttle, fire, updateForce } from './util'
 
 const throttledUpdateForce = throttle(updateForce, 2000)
-
-  
 const throttledFire = throttle(fire, 200)
+let mastCellLimiter = 0
 
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
@@ -34,7 +33,11 @@ export function update(time) {
       console.log('ALL T CELLS: ', this.dormantTCells)
       console.log('MY T CELLS: ', this.clientDormantTCells)
     } if (this.keyCreateCell.isDown) {
-      this.socket.emit('requestNewTCells', [{positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, velocityX: 0, velocityY: 0, angle: 0, angularVelocity: 1, globalId: 555}])
+      this.socket.emit('requestNewTCells', [{
+        positionX: this.ship.body.position.x, positionY: this.ship.body.position.y, 
+        velocityX: 0, velocityY: 0, 
+        angle: 0, angularVelocity: 1, 
+        randomDirection: {x: 0, y: 0}, globalId: 555}])
     }
     
     limitSpeed(this.ship, 8)
@@ -74,27 +77,6 @@ export function update(time) {
 
   if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length){
     throttledUpdateForce.call(this, this.clientDormantTCells)
-    //   this.dormantTCells.forEach(cell => {
-    //   // console.log('RANDOMDIRECTION: ', cell.randomDirection)
-    //   cell.applyForce(cell.randomDirection)
-    //   // console.log(cell)
-    //   limitSpeed(cell, 5)
-    // })
-
-    // const cellData = Object.keys(objObj).reduce((obj, id) => {
-    //   const currCell = objObj[id]
-    //   obj[id] = {
-    //     positionX: currCell.body.position.x, positionY: currCell.body.position.y,
-    //     velocityX: currCell.body.velocity.x, velocityY: currCell.body.velocity.y,
-    //     angle: currCell.body.angle, angularVelocity: currCell.body.angularVelocity,
-    //     randomDirection: currCell.randomDirection,
-    //     globalId: currCell.globalId
-    //   }
-    //   console.log('random dir being sent: ', currCell.randomDirection)
-    //   return obj
-    // }, {})
-    // this.socket.emit('changedTCells', cellData)
-
     const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
@@ -112,5 +94,19 @@ export function update(time) {
       }
     }
     this.socket.emit('changedTCells', cellData)
+  }
+
+  mastCellLimiter = (mastCellLimiter + 1) % 3
+  if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
+    const cellData = {}
+    for (let id in this.mastCells) {
+      const cell = this.mastCells[id]
+      cellData[id] = {
+        positionX: cell.body.position.x, positionY: cell.body.position.y,
+        velocityX: cell.body.velocity.x, velocityY: cell.body.velocity.y,
+        angularVelocity: cell.body.angularVelocity, globalId: cell.globalId
+      }
+    }
+    this.socket.emit('updateMastCells', cellData)
   }
 }
