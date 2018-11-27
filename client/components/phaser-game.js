@@ -26,7 +26,6 @@ export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
-
     this.speed = Phaser.Math.GetSpeed(575, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)

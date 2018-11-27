@@ -73,6 +73,6 @@ export function makeMastCell(cellDatum) {
 export function activate(cell) {
   cell.setVelocity(0, 0) //PLACEHOLDER
   cell.setTint(0x01c0ff)
-  this.goodGuys.push(cell)
+  this.goodGuys.tCells[cell.globalId] = cell
   cell.activated = true
 }

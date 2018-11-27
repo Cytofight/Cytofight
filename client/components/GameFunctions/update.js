@@ -6,31 +6,20 @@ import {
   throttle,
   fire,
   updateForce,
-  overlapCollision
+  overlapCollision,
+  changeShipColorDebug
 } from './util'
+import { killEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
+const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
 
 export function update(time) {
 
   // const boundFire = throttledFire.bind(this)
-  const changeShipColorDebug = throttle((tint) => {
-    let prevAlignment, nextAlignment
-    this.ship.setTint(tint)
-    if (tint === 0x01c0ff) {
-      prevAlignment = this.badGuys
-      nextAlignment = this.goodGuys
-    } else if (tint === 0xd60000) {
-      prevAlignment = this.goodGuys
-      nextAlignment = this.badGuys
-    }
-    const currIndex = prevAlignment.indexOf(this.ship)
-    if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
-    nextAlignment.push(this.ship)
-  }, 500)
 
   if (this.ship) {
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
@@ -92,12 +81,12 @@ export function update(time) {
         }
       }])
     }
-    if (this.keyBlue.isDown) {
-      changeShipColorDebug(0x01c0ff)
-    }
-    if (this.keyRed.isDown) {
-      changeShipColorDebug(0xd60000)
-    }
+    // if (this.keyBlue.isDown) {
+    //   throttledChangeShipColorDebug.call(this, 0x01c0ff)
+    // }
+    // if (this.keyRed.isDown) {
+    //   throttledChangeShipColorDebug.call(this, 0xd60000)
+    // }
 
     limitSpeed(this.ship, 10)
     const {
@@ -177,16 +166,28 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
-    this.badGuys.forEach(badGuy => {
-      overlapCollision.call(this, {
-        x: antibody.x,
-        y: antibody.y
-      }, badGuy, () => {
-        antibody.destroy()
-      })
-    })
+    for (let id in this.badGuys.epithelialCells) {
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], killEpithelialCell)
+    }
+    for (let id in this.badGuys.players) {
+      badGuyCollision.call(this, antibody, this.badGuys.players[id], () => console.log('beep'))
+    }
   })
   //  And this camera is 400px wide, so -200
-  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
-  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
+  if (this.ship) this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
+  if (this.ship) this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
+}
+
+function badGuyCollision(antibody, badGuy, killFunction) {
+  overlapCollision.call(this, {
+    x: antibody.x,
+    y: antibody.y
+  }, badGuy, () => {
+    const randomHealthLoss = Math.floor(Math.random() * 10) + 10
+    badGuy.health -= randomHealthLoss
+    antibody.destroy()
+    if (badGuy.health <= 0) {
+      killFunction.call(this, badGuy.globalId)
+    }
+  })
 }
