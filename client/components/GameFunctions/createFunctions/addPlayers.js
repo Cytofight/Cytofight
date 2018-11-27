@@ -15,8 +15,14 @@ export function players() {
   // const self = this
   this.socket = io()
   this.otherPlayers = {}
-  this.badGuys = []
-  this.goodGuys = []
+  this.badGuys = {
+    players: {},
+    epithelialCells: {}
+  }
+  this.goodGuys = {
+    players: {},
+    tCells: {}
+  }
   this.socket.on('currentPlayers', (players) => {
     for (let id in players) {
       if (id === this.socket.id) {
@@ -54,7 +60,6 @@ export function players() {
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
 
-
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
     if (firingInfo.type === 'tCell') {
@@ -89,10 +94,10 @@ function addPlayer(playerInfo) {
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
     this.ship.setTint(0xd60000)
-    this.badGuys.push(this.ship)
+    this.badGuys.players[this.socket.id] = this.ship
   } else {
     this.ship.setTint(0x01c0ff)
-    this.goodGuys.push(this.ship)
+    this.goodGuys.players[this.socket.id] = this.ship
   }
 
   this.input.on("pointermove", function(pointer) {
@@ -110,10 +115,10 @@ function addOtherPlayers({ position, team, playerId }) {
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (team === 'blue') {
     otherPlayer.setTint(0xd60000)
-    this.badGuys.push(otherPlayer)
+    this.badGuys.players[playerId] = otherPlayer
   } else {
     otherPlayer.setTint(0x01c0ff)
-    this.goodGuys.push(otherPlayer)
+    this.goodGuys.players[playerId] = otherPlayer
   }
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
