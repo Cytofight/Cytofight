@@ -6,7 +6,7 @@ import {
   overlapCollision,
   changeShipColorDebug
 } from './util'
-import { killEpithelialCell } from './createFunctions/epithelialCells';
+import { killEpithelialCell, epithelialCellContains } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 100)
@@ -175,6 +175,23 @@ export function update(time) {
       badGuyCollision.call(this, antibody, this.badGuys.players[id], () => console.log('beep'))
     }
   })
+
+  for (let cellId in this.epithelialCells) {
+    if (!this.badGuys.epithelialCells[cellId] && this.badGuys.players[this.socket.id]) {
+      const currCell = this.epithelialCells[cellId]
+      if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
+        if (!currCell.timer) currCell.timer = setTimeout(() => {
+          console.log('time donnnne!')
+          currCell.setTint(0xd60000)
+          this.badGuys.epithelialCells[cellId] = currCell
+          this.socket.emit('changedEpithelialCell', cellId)
+        }, 3000)
+      } else {
+        clearTimeout(currCell.timer)
+        currCell.timer = null
+      }
+    }
+  }
   //  And this camera is 400px wide, so -200
   if (this.ship) this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
   if (this.ship) this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
