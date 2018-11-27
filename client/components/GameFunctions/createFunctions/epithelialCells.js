@@ -47,6 +47,7 @@ export function makeEpithelialCell({ x, y, tint, globalId }) {
     this.badGuys.push(cell)
   }
   cell.globalId = globalId
+  cell.health = 200
   return cell
 }
 
