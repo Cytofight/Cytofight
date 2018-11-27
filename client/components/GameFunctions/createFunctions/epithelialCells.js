@@ -50,13 +50,13 @@ export function epithelialCells(amount) {
     }
   })
 
-  this.socket.on('deletedEpithelialCell'), globalId => {
+  this.socket.on('deletedEpithelialCell', globalId => {
     this.epithelialCells[globalId].destroy()
     delete this.epithelialCells[globalId]
     delete this.badGuys.epithelialCells[globalId]
     // console.log('RECEIVED DELETION: ', this.badGuys.indexOf(this.epithelialCells[globalId]))
     // this.badGuys.splice(this.badGuys.indexOf(this.epithelialCells[globalId]), 1)
-  }
+  })
 }
 
 export function makeEpithelialCell({x, y, tint, globalId}) {
