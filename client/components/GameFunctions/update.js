@@ -51,14 +51,14 @@ export function update(time) {
       limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
-      // const randomColor = )
+      // const randomColor = 
       const firingInfo = {
         x: this.ship.body.position.x,
         y: this.ship.body.position.y,
         angle: this.ship.body.angle,
         globalId: this.socket.id,
         type: 'ship',
-        color: (this.secretColor.found) ? this.secretColor.value : Math.floor(Math.random() * 16777215
+        color: (this.secretColor.found) ? this.secretColor.value : Math.floor(Math.random() * 16777215)
       }
       throttledFire.call(this, firingInfo)
       this.socket.emit('firedAntibody', firingInfo)
