@@ -23,6 +23,7 @@ export function players() {
     players: {},
     tCells: {}
   }
+
   this.socket.on('currentPlayers', (players) => {
     for (let id in players) {
       if (id === this.socket.id) {

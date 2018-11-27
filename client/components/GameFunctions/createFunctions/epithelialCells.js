@@ -48,6 +48,9 @@ export function epithelialCells(amount) {
     if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
       console.log('Game Over')
     }
+    this.blueScoreText.setText('Epithelial Cells: ' + (Object.keys(this.epithelialCells).length - Object.keys(this.badGuys.epithelialCells).length))
+    this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)
+
   })
 
   this.socket.on('deletedEpithelialCell'), globalId => {
@@ -91,6 +94,8 @@ export function epithelialCellCollision(bodyA, bodyB) {
     this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
     this.redEpithelialCells++
     console.log(this.redEpithelialCells)
+    this.blueScoreText.setText('Epithelial Cells: ' + (Object.keys(this.epithelialCells).length - Object.keys(this.badGuys.epithelialCells).length))
+    this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)
     this.socket.emit('changedEpithelialCell', matchingCellId)
     if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
       console.log('Game Over, BITCH')
@@ -102,5 +107,6 @@ export function killEpithelialCell(globalId) {
   this.epithelialCells[globalId].destroy()
   delete this.epithelialCells[globalId]
   delete this.badGuys.epithelialCells[globalId]
+  this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)
   this.socket.emit('deleteEpithelialCell')
 }

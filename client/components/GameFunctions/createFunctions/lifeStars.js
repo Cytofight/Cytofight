@@ -9,8 +9,8 @@ export function scoreAndStars() {
   })
 
   this.socket.on('epithelialCount', function (scores) {
-    self.blueScoreText.setText('Blue: ' + Object.keys(self.epithelialCells).length)
-    // self.redScoreText.setText('Red: ' + self.redEpithelialCells)
+    self.blueScoreText.setText('Epithelial Cells: ' + (Object.keys(self.epithelialCells).length - Object.keys(self.badGuys.epithelialCells).length))
+    self.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(self.badGuys.epithelialCells).length)
   })
 
   this.socket.on('starLocation', function (starLocation) {

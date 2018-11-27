@@ -13,8 +13,8 @@ module.exports = io => {
     y: Math.floor(Math.random() * 900) + 50
   };
   let scores = {
-    // epithelialCells: Object.keys(epithelialCells).length,
-    // infectedCells: Object.keys(this.badguys.epithelialCells).length
+    blue: 0,
+    red: 0
   }
 
   io.on('connection', socket => {
@@ -104,6 +104,7 @@ module.exports = io => {
 
     socket.on('newEpithelialCells', (newCells) => {
       Object.assign(epithelialCells, newCells)
+      scores.blue = Object.keys(newCells).length
     })
 
     socket.on('changedEpithelialCell', globalId => {
