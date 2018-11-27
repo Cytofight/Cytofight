@@ -72,7 +72,7 @@ export function players() {
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
     // for various collision events
-    epithelialCellCollision.call(this, bodyA, bodyB)
+    // epithelialCellCollision.call(this, bodyA, bodyB)
   })
 }
 

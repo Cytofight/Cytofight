@@ -41,7 +41,7 @@ export function epithelialCells(amount) {
   this.socket.on('changedEpithelialCellClient', globalId => {
     if (!this.badGuys.epithelialCells[globalId]) {
       this.epithelialCells[globalId].setTint(0xd60000)
-      this.badGuys[globalId] = this.epithelialCells[globalId]
+      this.badGuys.epithelialCells[globalId] = this.epithelialCells[globalId]
       this.redEpithelialCells++
     }
     console.log('red cells socket:', this.redEpithelialCells)
@@ -69,9 +69,14 @@ export function makeEpithelialCell({x, y, tint, globalId}) {
     cell.setTint(tint)
     this.badGuys.epithelialCells[globalId] = cell
   }
+  cell.infectionRange = new Phaser.Geom.Circle(x, y, 100)
   cell.globalId = globalId
   cell.health = 200
   return cell
+}
+
+export function epithelialCellContains(x, y, cell) {
+  if (cell.infectionRange.contains(x, y)) console.log('beep')
 }
 
 export function epithelialCellCollision(bodyA, bodyB) {
