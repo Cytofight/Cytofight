@@ -16,9 +16,17 @@ export function preload() {
   this.load.image('antibody', 'assets/PNG/antibody-game-transparent.png')
   this.load.image('dormantTCell', 'assets/PNG/White_blood_cell_transparent.png')
   this.load.image('epithelialCell', 'assets/PNG/epithelial_transparent.png')
+  // this.load.image('CANVAS BACKGROUND IMAGE NAME GOES HERE', 'FILE PATH GOES HERE')
 }
 
 export function create() {
+//*************************************************************** */
+  // This code is for rendering an image to the canvas background
+  // Problem: any image large enough to cover the world canvas size is too large to be pushed to github;
+  // Phaser 3.0 seems to only be able to load images from a local assets folder and is restricted to using PNG images
+  // this.add.image((worldSize.x/2), (worldSize.y/2), 'CANVAS BACKGROUND IMAGE NAME GOES HERE')
+//*************************************************************** */
+
   //  The world is 3200 x 600 in size
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y).setName('main')
 

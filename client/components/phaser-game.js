@@ -5,6 +5,12 @@ import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
 import { worldSize } from './GameFunctions/util'
 
+let myCustomCanvas = document.createElement('canvas')
+myCustomCanvas.id = 'myCustomCanvas'
+myCustomCanvas.sytle = 'border: 8px solid red'
+
+document.body.appendChild(myCustomCanvas)
+
 const config = {
   type: Phaser.AUTO,
   parent: 'container',
