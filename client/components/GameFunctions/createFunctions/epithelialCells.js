@@ -1,10 +1,16 @@
 import {worldSize, defaultCellParams} from '../util'
 
+function resetCells() {
+  this.badGuys = {}
+  this.goodGuys = {}
+  this.dormantTCells = {}
+  this.mastCells = {}
+}
+
 export function epithelialCells(amount) {
   this.socket.on('epithelialCell', cells => {
     const cellData = {}
     this.epithelialCells = {}
-    this.redEpithelialCells = 0
     if (!cells || !cells.length) {
       for (let i = 0; i < amount; i++) {
         // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
@@ -31,9 +37,6 @@ export function epithelialCells(amount) {
       // this.epithelialCells = cells.map(cell => makeEpithelialCell.call(this, cell.x, cell.y, cell.tint, cell.globalId))
       for (let id in cells) {
         this.epithelialCells[id] = makeEpithelialCell.call(this, cells[id])
-        if (this.epithelialCells[id].tintBottomLeft === 0xd60000) {
-          this.redEpithelialCells++
-        }
       }
     }
   })
@@ -42,12 +45,22 @@ export function epithelialCells(amount) {
     if (!this.badGuys.epithelialCells[globalId]) {
       this.epithelialCells[globalId].setTint(0xd60000)
       this.badGuys.epithelialCells[globalId] = this.epithelialCells[globalId]
-      this.redEpithelialCells++
     }
-    console.log('red cells socket:', this.redEpithelialCells)
-    if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
-      console.log('Game Over')
-    }
+    console.log(
+      'red cells socket:',
+      Object.keys(this.badGuys.epithelialCells).length
+    )
+    if (
+      Object.keys(this.badGuys.epithelialCells).length ===
+      Object.keys(this.epithelialCells).length
+    )
+      if (this.badGuys.players[this.socket.id]) {
+        resetCells.call(this)
+        this.scene.start('Winner')
+      } else if (this.goodGuys.players[this.socket.id]) {
+        resetCells.call(this)
+        this.scene.start('Loser')
+      }
   })
 
   this.socket.on('deletedEpithelialCell', globalId => {
@@ -93,12 +106,18 @@ export function epithelialCellCollision(bodyA, bodyB) {
     !this.badGuys.epithelialCells[matchingCellId]
   ) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
-    this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
-    this.redEpithelialCells++
-    console.log(this.redEpithelialCells)
+    this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[
+      matchingCellId
+    ]
     this.socket.emit('changedEpithelialCell', matchingCellId)
-    if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
-      console.log('Game Over, BITCH')
+    console.log('Bad Guys: ', this.badGuys.players)
+    if (
+      Object.keys(this.badGuys.epithelialCells).length ===
+        Object.keys(this.epithelialCells).length &&
+      this.badGuys.players[this.socket.id]
+    ) {
+      resetCells.call(this)
+      this.scene.start('Winner')
     }
   }
 }

@@ -1,7 +1,4 @@
 import {
-  NPCCells
-} from './createFunctions';
-import {
   limitSpeed,
   throttle,
   fire,
