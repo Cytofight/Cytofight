@@ -45,7 +45,8 @@ export function players() {
     angle,
     position,
     velocity,
-    angularVelocity
+    angularVelocity,
+    nameText
   }) => {
     const currPlayer = this.otherPlayers[playerId]
     if (currPlayer) {
@@ -53,6 +54,8 @@ export function players() {
         .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
+        currPlayer.nameText.x = nameText.x
+        currPlayer.nameText.y = nameText.y
       currPlayer.body.angle = angle
     }
   })
@@ -125,6 +128,7 @@ function addOtherPlayers({ position, team, playerId }) {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
+  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50 , `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
 }

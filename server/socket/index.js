@@ -33,7 +33,8 @@ module.exports = io => {
       angularVelocity: 0,
       playerId: socket.id,
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
-      clientDormantTCells: {}
+      clientDormantTCells: {},
+      nameText: ''
     }
     
     // send the players object to the new player
@@ -76,12 +77,13 @@ module.exports = io => {
     })
 
     // when a player moves, update the player data
-    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity }) {
+    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity, nameText }) {
       if (players[socket.id]) {
       players[socket.id].angle = angle
       players[socket.id].position = position
       players[socket.id].velocity = velocity
       players[socket.id].angularVelocity = angularVelocity
+      players[socket.id].nameText = nameText
       // players[socket.id].rotation = movementData.rotation
       // emit a message to all players about the player that moved
       socket.broadcast.emit('playerMoved', players[socket.id])
