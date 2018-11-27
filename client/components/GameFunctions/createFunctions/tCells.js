@@ -4,7 +4,6 @@ export function tCells(amount) {
   this.socket.on('dormantTCell', (cells) => {
     this.dormantTCells = {}
     if(!Object.keys(cells).length) {
-      console.log("I WAS CREATED FOR THE FIRST TIME!!!")
       // CELL DATA STORAGE IS OBJECT W/ GLOBAL IDS
       const cellData = {}
       for (let i = 0; i < amount; i++) {
@@ -25,7 +24,6 @@ export function tCells(amount) {
       this.clientDormantTCells = {...this.dormantTCells} // must make copy b/c otherwise client list will always be identical
       this.socket.emit('myNewTCells', cellData)
     } else {
-      console.log("I was not. I was created by someone else who came before you")
       for (let id in cells) {
         this.dormantTCells[id] = makeTCell.call(this, cells[id])
       }
@@ -48,13 +46,12 @@ export function tCells(amount) {
     passedCellIds.forEach(id => {
       if (this.dormantTCells[id]) this.clientDormantTCells[id] = this.dormantTCells[id]
     })
-    console.log('passed cells, new total client cells: ', this.clientDormantTCells)
   })
 
   this.socket.on('changedDormantTCells', cellData => {
     for (let id in cellData) {
-      const currCell = this.dormantTCells[id]
-      setCellParams(currCell, cellData[id])
+      setCellParams(this.dormantTCells[id], cellData[id])
+      if (cellData[id].tint) this.goodGuys.tCells[id] = this.dormantTCells[id]
     }
   })
 }
@@ -63,12 +60,5 @@ export function makeTCell(cellDatum){
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
   cell.setCircle(cell.width / 2, defaultCellParams)
   setCellParams(cell, cellDatum)
-  // cell.activate = function() {
-  //     this.setVelocity(0, 0) //PLACEHOLDER
-  //     console.log("I'm a good guy now!")
-  //     cell.setTint(0x01c0ff)
-
-  //     cell.activated = true
-  //   }
   return cell
 }

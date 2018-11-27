@@ -65,7 +65,6 @@ class Heroes extends Component {
     this.props.populateHeroes()
   }
   render() {
-    console.log(this.props)
     return (
       <div id="heroPage">
         <h1>The Heroes</h1>

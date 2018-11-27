@@ -15,7 +15,6 @@ export function limitSpeed(obj, maxSpeed) {
   const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
 
   if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    // console.log('current velocity capped out at: ', obj.body.velocity)
     const angle = Math.abs(Math.atan(velY / velX))
     const newX = Math.cos(angle)
     const newY = Math.sin(angle)
@@ -35,13 +34,11 @@ export function throttle(func, milliseconds) {
 }
 
 export function fire ({x, y, angle}) {
-  console.log("FIRE!!! But working now! I swear!")
   let antibody = this.antibodies.get();
   if(antibody) {
     antibody.fire(x, y, angle);
   }
 }
-// export const throttledFire = throttle(fire, 200)
 
 export function updateForce(cellsObj) {
   for (let key in cellsObj) {
@@ -60,7 +57,6 @@ export function limitNumber(num, lowerLimit, higherLimit) {
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {
-  console.log('largeBody in overlapCollision: ', largeBody)
   if (largeBody.getBounds().contains(coords.x, coords.y)) {
     callback.call(this, ...args)
   }
@@ -73,9 +69,28 @@ export function setCellParams(cell, { positionX, positionY, velocityX, velocityY
   cell.setAngularVelocity(angularVelocity)
   if(tint && tint !== cell.tintBottomLeft) {
     cell.setTint(tint)
-    if (tint === 0x01c0ff) this.goodGuys.push(cell)
-    if (tint === 0xd60000) this.badGuys.push(cell)
+    // if (tint === 0x01c0ff) this.goodGuys.push(cell)
+    // if (tint === 0xd60000) this.badGuys.push(cell)
   }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId
+}
+
+export function changeShipColorDebug(tint) {
+  let prevAlignment, nextAlignment
+  const currShipTint = this.ship.tintBottomLeft
+  this.ship.setTint(tint)
+  if (tint === 0x01c0ff && currShipTint === 214) {
+    prevAlignment = this.badGuys
+    nextAlignment = this.goodGuys
+  } else if (tint === 0xd60000 && currShipTint === 16760833) {
+    prevAlignment = this.goodGuys
+    nextAlignment = this.badGuys
+  }
+  console.log('previous and next alignments: ', prevAlignment, nextAlignment)
+  const currIndex = prevAlignment.indexOf(this.ship)
+  console.log(currIndex)
+  if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
+  nextAlignment.push(this.ship)
+  console.log('ship tint is blue: ', this.ship.tintBottomLeft === 16760833, 'ship tint is red: ', this.ship.tintBottomLeft === 214, 'arrays now: ', this.badGuys, this.goodGuys)
 }
