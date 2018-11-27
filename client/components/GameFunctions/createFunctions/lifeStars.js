@@ -15,10 +15,10 @@ export function scoreAndStars() {
       self.socket.emit('starCollected')
     }
   })
-  this.socket.on('scoreUpdate', function (scores) {
-    self.blueScoreText.setText('Blue: ' + scores.blue)
-    self.redScoreText.setText('Red: ' + scores.red)
-  })
+  // this.socket.on('scoreUpdate', function (scores) {
+  //   self.blueScoreText.setText('Blue: ' + scores.blue)
+  //   self.redScoreText.setText('Red: ' + scores.red)
+  // })
 
   this.socket.on('starLocation', function (starLocation) {
     if (self.star) self.star.destroy()

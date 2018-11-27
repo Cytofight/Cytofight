@@ -47,4 +47,5 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
+  scoreAndStars.call(this)
 }
