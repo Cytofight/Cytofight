@@ -27,8 +27,8 @@ const config = {
 export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, 'antibody')
-    this.speed = Phaser.Math.GetSpeed(575, 1)
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
+    this.speed = Phaser.Math.GetSpeed(800, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
   }
@@ -39,6 +39,7 @@ export class Antibody extends Phaser.GameObjects.Image {
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
     Phaser.Math.Rotate(this.velocity, direction)
+    setTimeout(() => this.destroy(), 820)
   }
 
   update(time, delta) {
