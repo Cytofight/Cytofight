@@ -8,10 +8,10 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
-  // let star = {
-  //   x: Math.floor(Math.random() * 900) + 50,
-  //   y: Math.floor(Math.random() * 900) + 50
-  // };
+  let star = {
+    x: Math.floor(Math.random() * 900) + 50,
+    y: Math.floor(Math.random() * 900) + 50
+  };
   let scores = {
     blue: 0,
     red: 0
@@ -39,7 +39,7 @@ module.exports = io => {
     // send the players object to the new player
     socket.emit('currentPlayers', players)
     // send the star object to the new player
-    // socket.emit('starLocation', star)
+    socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
@@ -47,8 +47,6 @@ module.exports = io => {
     // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
     socket.emit('mastCell', mastCells)
-    // send the current scores
-    socket.emit('scoreUpdate', scores)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
     // LAG WHEN NEW PLAYER JOINS
@@ -88,17 +86,18 @@ module.exports = io => {
       }
     })
 
-    // socket.on('starCollected', function () {
-    //   if (players[socket.id].team === 'red') {
-    //     scores.red += 10
-    //   } else {
-    //     scores.blue += 10
-    //   }
-    //   star.x = Math.floor(Math.random() * 900) + 50
-    //   star.y = Math.floor(Math.random() * 900) + 50
-    //   io.emit('starLocation', star)
-    //   io.emit('scoreUpdate', scores)
-    // })
+    socket.on('starCollected', function () {
+      if (players[socket.id].team === 'red') {
+        // scores.red += 10
+      } else {
+        // scores.blue += 10
+      }
+      star.x = Math.floor(Math.random() * 900) + 50
+      star.y = Math.floor(Math.random() * 900) + 50
+      // destroys stars
+      socket.emit('starDestroy')
+      setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
+    })
 
     socket.on('newEpithelialCells', (newCells) => {
       Object.assign(epithelialCells, newCells)
@@ -111,7 +110,7 @@ module.exports = io => {
 
     socket.on('deleteEpithelialCell', globalId => {
       delete epithelialCells[globalId]
-      socket.broadcast.emit('deletedEpithelialCell')
+      socket.broadcast.emit('deletedEpithelialCell', globalId)
     })
 
     socket.on('myNewTCells', (newCells) => {
