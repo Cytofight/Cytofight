@@ -8,6 +8,11 @@ export function scoreAndStars() {
     }
   })
 
+  this.socket.on('epithelialCount', function (scores) {
+    self.blueScoreText.setText('Blue: ' + Object.keys(self.epithelialCells).length)
+    // self.redScoreText.setText('Red: ' + self.redEpithelialCells)
+  })
+
   this.socket.on('starLocation', function (starLocation) {
     // if (self.star) self.star.destroy()
     self.star = self.matter.add.image(starLocation.x, starLocation.y, 'star', null, {label: 'star'}).setStatic(true).setSensor(true)

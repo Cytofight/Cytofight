@@ -13,8 +13,8 @@ module.exports = io => {
     y: Math.floor(Math.random() * 900) + 50
   };
   let scores = {
-    blue: 0,
-    red: 0
+    // epithelialCells: Object.keys(epithelialCells).length,
+    // infectedCells: Object.keys(this.badguys.epithelialCells).length
   }
 
   io.on('connection', socket => {
@@ -46,6 +46,8 @@ module.exports = io => {
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
+    // send how many epithelial cells are in the game and how many have been infected
+    socket.emit('epithelialCount', scores)
     socket.emit('mastCell', mastCells)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
@@ -94,8 +96,9 @@ module.exports = io => {
       }
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
-      // destroys stars
+      // destroys stars: NEEDS TO BE EDITED, DOESN'T UPDATE ALL PLAYERS
       socket.emit('starDestroy')
+      // sets a delay before new stars spawn
       setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
     })
 
