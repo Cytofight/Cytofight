@@ -1,5 +1,12 @@
 import {worldSize, defaultCellParams} from '../util'
 
+function resetCells() {
+  this.badGuys = {}
+  this.goodGuys = {}
+  this.dormantTCells = {}
+  this.mastCells = {}
+}
+
 export function epithelialCells(amount) {
   this.socket.on('epithelialCell', cells => {
     const cellData = {}
@@ -48,8 +55,10 @@ export function epithelialCells(amount) {
       Object.keys(this.epithelialCells).length
     )
       if (this.badGuys.players[this.socket.id]) {
+        resetCells.call(this)
         this.scene.start('Winner')
       } else if (this.goodGuys.players[this.socket.id]) {
+        resetCells.call(this)
         this.scene.start('Loser')
       }
   })
@@ -73,9 +82,14 @@ export function makeEpithelialCell({x, y, tint, globalId}) {
     cell.setTint(tint)
     this.badGuys.epithelialCells[globalId] = cell
   }
+  cell.infectionRange = new Phaser.Geom.Circle(x, y, 100)
   cell.globalId = globalId
   cell.health = 200
   return cell
+}
+
+export function epithelialCellContains(x, y, cell) {
+  if (cell.infectionRange.contains(x, y)) console.log('beep')
 }
 
 export function epithelialCellCollision(bodyA, bodyB) {
@@ -102,6 +116,7 @@ export function epithelialCellCollision(bodyA, bodyB) {
         Object.keys(this.epithelialCells).length &&
       this.badGuys.players[this.socket.id]
     ) {
+      resetCells.call(this)
       this.scene.start('Winner')
     }
   }
