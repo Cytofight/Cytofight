@@ -1,12 +1,23 @@
-import { throttle, fire, limitNumber, worldSize, defaultCellParams, setCellParams } from '../util'
-import { epithelialCells, epithelialCellCollision, tCells, mastCells } from './index'
+import {
+  throttle,
+  fire,
+  limitNumber,
+  worldSize,
+  defaultCellParams,
+  setCellParams
+} from '../util'
+import {
+  epithelialCells,
+  epithelialCellCollision,
+  tCells,
+  mastCells
+} from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 40
+const numberOfEpithelialCells = 1
 const numberOfTCells = 15
 const numberOfMastCells = 4
-
 
 //Initialize the players in the game
 //change name of function to init()
@@ -23,7 +34,7 @@ export function players() {
     players: {},
     tCells: {}
   }
-  this.socket.on('currentPlayers', (players) => {
+  this.socket.on('currentPlayers', players => {
     for (let id in players) {
       if (id === this.socket.id) {
         addPlayer.call(this, players[id])
@@ -32,29 +43,27 @@ export function players() {
       }
     }
   })
-  this.socket.on('newPlayer', (playerInfo) => {
+  this.socket.on('newPlayer', playerInfo => {
     addOtherPlayers.call(this, playerInfo)
   })
-  this.socket.on('disconnect', (playerId) => {
+  this.socket.on('disconnect', playerId => {
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
   })
-  this.socket.on('playerMoved', ({
-    playerId,
-    angle,
-    position,
-    velocity,
-    angularVelocity
-  }) => {
-    const currPlayer = this.otherPlayers[playerId]
-    if (currPlayer) {
-      currPlayer.setPosition(position.x, position.y)
-        .setVelocity(velocity.x, velocity.y)
+  this.socket.on(
+    'playerMoved',
+    ({playerId, angle, position, velocity, angularVelocity}) => {
+      const currPlayer = this.otherPlayers[playerId]
+      if (currPlayer) {
+        currPlayer
+          .setPosition(position.x, position.y)
+          .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
-      currPlayer.body.angle = angle
+        currPlayer.body.angle = angle
+      }
     }
-  })
+  )
 
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
@@ -68,7 +77,6 @@ export function players() {
       this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
     }
   })
-
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
     // for various collision events
@@ -100,18 +108,36 @@ function addPlayer(playerInfo) {
     this.goodGuys.players[this.socket.id] = this.ship
   }
 
-  this.input.on("pointermove", function(pointer) {
-    // VIEWPORT: 800x, 600y
-    const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + worldSize.x - 800)
-    const adjustedPointerY = limitNumber(pointer.y + this.ship.y - 300, pointer.y, pointer.y + worldSize.y - 600)
-    var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
-    this.ship.angle = angle;
-  }, this)
+  this.input.on(
+    'pointermove',
+    function(pointer) {
+      // VIEWPORT: 800x, 600y
+      const adjustedPointerX = limitNumber(
+        pointer.x + this.ship.x - 400,
+        pointer.x,
+        pointer.x + worldSize.x - 800
+      )
+      const adjustedPointerY = limitNumber(
+        pointer.y + this.ship.y - 300,
+        pointer.y,
+        pointer.y + worldSize.y - 600
+      )
+      var angle =
+        -Math.atan2(
+          adjustedPointerX - this.ship.x,
+          adjustedPointerY - this.ship.y
+        ) *
+        180 /
+        Math.PI
+      this.ship.angle = angle
+    },
+    this
+  )
 }
 
-function addOtherPlayers({ position, team, playerId }) {
+function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
-  otherPlayer.setScale(0.5);
+  otherPlayer.setScale(0.5)
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (team === 'blue') {
     otherPlayer.setTint(0xd60000)
