@@ -47,8 +47,6 @@ module.exports = io => {
     // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
     socket.emit('mastCell', mastCells)
-    // send the current scores
-    // socket.emit('scoreUpdate', scores)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
     // LAG WHEN NEW PLAYER JOINS
@@ -96,8 +94,9 @@ module.exports = io => {
       }
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
-      io.emit('starLocation', star)
-      io.emit('scoreUpdate', scores)
+      // destroys stars
+      socket.emit('starDestroy')
+      setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
     })
 
     socket.on('newEpithelialCells', (newCells) => {
