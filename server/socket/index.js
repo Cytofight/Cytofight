@@ -97,7 +97,7 @@ module.exports = io => {
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
       // destroys stars: NEEDS TO BE EDITED, DOESN'T UPDATE ALL PLAYERS
-      socket.emit('starDestroy')
+      io.emit('starDestroy')
       // sets a delay before new stars spawn
       setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
     })
