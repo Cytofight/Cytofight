@@ -9,7 +9,7 @@ import {
 import { killEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
-const throttledFire = throttle(fire, 200)
+const throttledFire = throttle(fire, 100)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
@@ -19,6 +19,8 @@ export function update(time) {
   // const boundFire = throttledFire.bind(this)
 
   if (this.ship) {
+    this.ship.nameText.x = this.ship.body.position.x - 125
+    this.ship.nameText.y = this.ship.body.position.y - 50
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
       this.ship.applyForce({
         x: -0.005,
