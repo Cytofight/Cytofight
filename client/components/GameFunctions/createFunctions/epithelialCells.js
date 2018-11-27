@@ -41,7 +41,7 @@ export function epithelialCells(amount) {
   this.socket.on('changedEpithelialCellClient', globalId => {
     if (!this.badGuys.epithelialCells[globalId]) {
       this.epithelialCells[globalId].setTint(0xd60000)
-      this.badGuys[globalId] = this.epithelialCells[globalId]
+      this.badGuys.epithelialCells[globalId] = this.epithelialCells[globalId]
       this.redEpithelialCells++
     }
     console.log('red cells socket:', this.redEpithelialCells)

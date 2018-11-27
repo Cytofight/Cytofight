@@ -111,7 +111,7 @@ module.exports = io => {
 
     socket.on('deleteEpithelialCell', globalId => {
       delete epithelialCells[globalId]
-      socket.broadcast.emit('deletedEpithelialCell')
+      socket.broadcast.emit('deletedEpithelialCell', globalId)
     })
 
     socket.on('myNewTCells', (newCells) => {
