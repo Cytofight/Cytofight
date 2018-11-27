@@ -51,12 +51,14 @@ export function update(time) {
       limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
+      // const randomColor = )
       const firingInfo = {
         x: this.ship.body.position.x,
         y: this.ship.body.position.y,
         angle: this.ship.body.angle,
         globalId: this.socket.id,
-        type: 'ship'
+        type: 'ship',
+        color: (this.secretColor.found) ? this.secretColor.value : Math.floor(Math.random() * 16777215
       }
       throttledFire.call(this, firingInfo)
       this.socket.emit('firedAntibody', firingInfo)
@@ -200,11 +202,15 @@ function badGuyCollision(antibody, badGuy, killFunction) {
     x: antibody.x,
     y: antibody.y
   }, badGuy, () => {
-    const randomHealthLoss = Math.floor(Math.random() * 10) + 10
-    badGuy.health -= randomHealthLoss
-    antibody.destroy()
-    if (badGuy.health <= 0) {
-      killFunction.call(this, badGuy.globalId)
+    const isBetween = (antibody.color <= secretColor.value + 262000 || antibody.color >= secretColor.value - 262000)
+    if (secretColor.found || isBetween) {
+      if (!secretColor.found) secretColor.found = true
+      const randomHealthLoss = Math.floor(Math.random() * 10) + 10
+      badGuy.health -= randomHealthLoss
+      antibody.destroy()
+      if (badGuy.health <= 0) {
+        killFunction.call(this, badGuy.globalId)
+      }
     }
   })
 }

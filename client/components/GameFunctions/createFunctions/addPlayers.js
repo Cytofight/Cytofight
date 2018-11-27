@@ -17,7 +17,11 @@ export function players() {
   this.otherPlayers = {}
   this.badGuys = {
     players: {},
-    epithelialCells: {}
+    epithelialCells: {},
+    secretColor: {
+      value: null,
+      found: false
+    }
   }
   this.goodGuys = {
     players: {},
@@ -54,6 +58,10 @@ export function players() {
         // .setAngle(angle)
       currPlayer.body.angle = angle
     }
+  })
+
+  this.socket.on('secretColor', (color) => {
+    this.badGuys.secretColor.value = color
   })
 
   epithelialCells.call(this, numberOfEpithelialCells)

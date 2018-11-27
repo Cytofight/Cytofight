@@ -1,4 +1,5 @@
 export const worldSize = {x: 2000, y: 2000}
+export const colorNumber = 64
 
 export const defaultCellParams = {
   restitution: 1,
@@ -33,9 +34,10 @@ export function throttle(func, milliseconds) {
   }
 }
 
-export function fire ({x, y, angle}) {
+export function fire ({x, y, angle, color}) {
   let antibody = this.antibodies.get();
   if(antibody) {
+    antibody.setTint(color)
     antibody.fire(x, y, angle);
   }
 }

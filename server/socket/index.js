@@ -8,6 +8,7 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
+  let secretColor = null
   // let star = {
   //   x: Math.floor(Math.random() * 900) + 50,
   //   y: Math.floor(Math.random() * 900) + 50
@@ -49,6 +50,12 @@ module.exports = io => {
     socket.emit('mastCell', mastCells)
     // send the current scores
     socket.emit('scoreUpdate', scores)
+    // set the secret color if the player is first to join
+    if (Object.keys(players).length <= 1) {
+      secretColor.value = Math.floor(Math.random() * 16777215)
+    }
+    // send the secret color
+    socket.emit('secretColor', secretColor.value)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
     // LAG WHEN NEW PLAYER JOINS
