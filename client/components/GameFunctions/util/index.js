@@ -69,8 +69,8 @@ export function setCellParams(cell, { positionX, positionY, velocityX, velocityY
   cell.setAngularVelocity(angularVelocity)
   if(tint && tint !== cell.tintBottomLeft) {
     cell.setTint(tint)
-    if (tint === 0x01c0ff) this.goodGuys.push(cell)
-    if (tint === 0xd60000) this.badGuys.push(cell)
+    // if (tint === 0x01c0ff) this.goodGuys.push(cell)
+    // if (tint === 0xd60000) this.badGuys.push(cell)
   }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId

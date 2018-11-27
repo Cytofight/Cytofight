@@ -109,6 +109,11 @@ module.exports = io => {
       socket.broadcast.emit('changedEpithelialCellClient', globalId)
     })
 
+    socket.on('deleteEpithelialCell', globalId => {
+      delete epithelialCells[globalId]
+      socket.broadcast.emit('deletedEpithelialCell')
+    })
+
     socket.on('myNewTCells', (newCells) => {
       Object.assign(dormantTCells, newCells)
       Object.assign(players[socket.id].clientDormantTCells, newCells)

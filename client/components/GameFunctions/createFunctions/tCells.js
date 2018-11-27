@@ -50,8 +50,8 @@ export function tCells(amount) {
 
   this.socket.on('changedDormantTCells', cellData => {
     for (let id in cellData) {
-      const currCell = this.dormantTCells[id]
-      setCellParams(currCell, cellData[id])
+      setCellParams(this.dormantTCells[id], cellData[id])
+      if (cellData[id].tint) this.goodGuys.tCells[id] = this.dormantTCells[id]
     }
   })
 }

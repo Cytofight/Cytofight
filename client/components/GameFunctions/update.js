@@ -9,6 +9,7 @@ import {
   overlapCollision,
   changeShipColorDebug
 } from './util'
+import { killEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
@@ -165,16 +166,28 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
-    this.badGuys.forEach(badGuy => {
-      overlapCollision.call(this, {
-        x: antibody.x,
-        y: antibody.y
-      }, badGuy, () => {
-        antibody.destroy()
-      })
-    })
+    for (let id in this.badGuys.epithelialCells) {
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], killEpithelialCell)
+    }
+    for (let id in this.badGuys.players) {
+      badGuyCollision.call(this, antibody, this.badGuys.players[id], () => console.log('beep'))
+    }
   })
   //  And this camera is 400px wide, so -200
-  this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
-  this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
+  if (this.ship) this.minimap.scrollX = Phaser.Math.Clamp(this.ship.x - 200, 650, 1175);
+  if (this.ship) this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
+}
+
+function badGuyCollision(antibody, badGuy, killFunction) {
+  overlapCollision.call(this, {
+    x: antibody.x,
+    y: antibody.y
+  }, badGuy, () => {
+    const randomHealthLoss = Math.floor(Math.random() * 10) + 10
+    badGuy.health -= randomHealthLoss
+    antibody.destroy()
+    if (badGuy.health <= 0) {
+      killFunction.call(this, badGuy.globalId)
+    }
+  })
 }
