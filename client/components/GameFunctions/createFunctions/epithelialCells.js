@@ -44,7 +44,7 @@ export function epithelialCells(amount) {
       this.badGuys.push(this.epithelialCells[globalId])
       this.redEpithelialCells++
     }
-    console.log('red cells:', this.redEpithelialCells)
+    console.log('red cells socket:', this.redEpithelialCells)
     if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
       console.log('Game Over')
     }
@@ -76,12 +76,15 @@ export function epithelialCellCollision(bodyA, bodyB) {
     this.ship.tintBottomLeft === 214 &&
     this.epithelialCells[matchingCellId] &&
     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) &&
-    !this.badGuys.includes(this.epithilialCells[matchingCellId])
+    !this.badGuys.includes(this.epithelialCells[matchingCellId])
   ) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
     this.badGuys.push(this.epithelialCells[matchingCellId])
     this.redEpithelialCells++
     console.log(this.redEpithelialCells)
     this.socket.emit('changedEpithelialCell', matchingCellId)
+    if (this.redEpithelialCells === Object.keys(this.epithelialCells).length) {
+      console.log('Game Over, BITCH')
+    }
   }
 }
