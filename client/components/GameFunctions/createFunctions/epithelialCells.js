@@ -50,13 +50,13 @@ export function epithelialCells(amount) {
     }
   })
 
-  this.socket.on('deletedEpithelialCell'), globalId => {
+  this.socket.on('deletedEpithelialCell', globalId => {
     this.epithelialCells[globalId].destroy()
     delete this.epithelialCells[globalId]
     delete this.badGuys.epithelialCells[globalId]
     // console.log('RECEIVED DELETION: ', this.badGuys.indexOf(this.epithelialCells[globalId]))
     // this.badGuys.splice(this.badGuys.indexOf(this.epithelialCells[globalId]), 1)
-  }
+  })
 }
 
 export function makeEpithelialCell({x, y, tint, globalId}) {
@@ -88,7 +88,9 @@ export function epithelialCellCollision(bodyA, bodyB) {
     !this.badGuys.epithelialCells[matchingCellId]
   ) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
-    this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
+    this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[
+      matchingCellId
+    ]
     this.redEpithelialCells++
     console.log(this.redEpithelialCells)
     this.socket.emit('changedEpithelialCell', matchingCellId)
