@@ -8,6 +8,7 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
+  let redBloodCells = []
   let secretColor = {}
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
@@ -44,6 +45,10 @@ module.exports = io => {
     socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
+    // send the red blood cells
+    socket.emit('redBloodCells', redBloodCells)
+    // send the red blood cells to the new players, transfer ownership
+    socket.broadcast.emit('disownRedBloodCells')
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership
@@ -73,6 +78,7 @@ module.exports = io => {
         io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
+        io.to(`${findLowestCellPlayerId(players)}`).emit('passRedBloodCells', passingCellIds)
       }
       // remove this player from our players object
       // emit a message to all players to remove this player
@@ -81,6 +87,7 @@ module.exports = io => {
         epithelialCells = {}
         dormantTCells = {}
         mastCells = {}
+        redBloodCells = []
         secretColor = {}
       }
     })
@@ -103,7 +110,22 @@ module.exports = io => {
       if (players[socket.id].team === 'red') {
         // scores.red += 10
       } else {
-        // scores.blue += 10
+        let randomNumber = Math.ceil(Math.random() * 5)
+        while (randomNumber){
+          io.emit('addDormantTCells', [{
+            positionX: players[socket.id].position.x,
+            positionY: players[socket.id].position.y,
+            velocityX: 0,
+            velocityY: 0,
+            angle: 0,
+            angularVelocity: 1,
+            randomDirection: {
+              x: 0,
+              y: 0
+            }
+          }])
+          randomNumber--
+        }
       }
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
@@ -168,6 +190,17 @@ module.exports = io => {
         mastCells[id] = cellData[id]
       }
       socket.broadcast.emit('updateMastCellsClient', cellData)
+    })
+
+    socket.on('newRedBloodCells', newCells => {
+      Object.assign(redBloodCells, newCells)
+    })
+
+    socket.on('updateRedBloodCells', cellData => {
+      for (let id in cellData) {
+        redBloodCells[id] = cellData[id]
+      }
+      socket.broadcast.emit('updateRedBloodCellsClient', cellData)
     })
 
     socket.on('firedAntibody', (firingInfo) => {

@@ -18,7 +18,7 @@ const throttledFire = throttle(fire, 200)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
-
+let redBloodCellsLimiter = 0
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
 
@@ -162,6 +162,23 @@ export function update(time) {
       }
     }
     this.socket.emit('updateMastCells', cellData)
+  }
+
+  redBloodCellsLimiter = (redBloodCellsLimiter + 1) % 3
+  if (this.ownsRedBloodCells && this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
+    const cellData = {}
+    for (let i = 0;  i < this.redBloodCells.length; i++) {
+      const cell = this.redBloodCells[i]
+      cellData[i] = {
+        positionX: cell.body.position.x,
+        positionY: cell.body.position.y,
+        velocityX: cell.body.velocity.x,
+        velocityY: cell.body.velocity.y,
+        angularVelocity: cell.body.angularVelocity,
+        globalId: cell.globalId
+      }
+    }
+    this.socket.emit('updateRedBloodCells', cellData)
   }
 
   this.antibodies.getChildren().forEach(antibody => {

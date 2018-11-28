@@ -86,8 +86,8 @@ export function epithelialCells(amount) {
 }
 
 export function makeEpithelialCell({x, y, tint, globalId, health}) {
-  const cell = this.matter.add.image(x, y, 'epithelialCell')
-  cell.setRectangle(cell.width / 2, cell.height / 2, {
+  const cell = this.matter.add.image(x, y, 'epithelialCell').setScale(1.2)
+  cell.setRectangle(cell.width / 2, cell.height - 20, {
     isStatic: true,
     ...defaultCellParams
   })
@@ -95,7 +95,7 @@ export function makeEpithelialCell({x, y, tint, globalId, health}) {
     cell.setTint(tint)
     this.badGuys.epithelialCells[globalId] = cell
   }
-  cell.infectionRange = new Phaser.Geom.Circle(x, y, 80)
+  cell.infectionRange = new Phaser.Geom.Circle(x, y, 100)
   cell.infectedness = 0
   cell.infectionText = this.add
     .text(x - 13, y, '', {fontSize: '14px', fill: '#ffffff'})

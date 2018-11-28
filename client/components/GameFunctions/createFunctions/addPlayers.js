@@ -10,7 +10,8 @@ import {
   epithelialCells,
   epithelialCellCollision,
   tCells,
-  mastCells
+  mastCells,
+  redBloodCells
 } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
@@ -18,6 +19,7 @@ const throttledFire = throttle(fire, 200)
 const numberOfEpithelialCells = 40
 const numberOfTCells = 15
 const numberOfMastCells = 4
+const numberOfRedBloodCells = 50
 
 //Initialize the players in the game
 //change name of function to init()
@@ -80,7 +82,9 @@ export function players() {
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
+  redBloodCells.call(this, numberOfRedBloodCells)
 
+  //create events related to antibodies being fired from B cells
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
     if (firingInfo.type === 'tCell') {
@@ -122,11 +126,11 @@ function addPlayer(playerInfo) {
 
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
-    this.ship.setTint(0xd60000)
-    this.badGuys.players[this.socket.id] = this.ship
-  } else {
     this.ship.setTint(0x01c0ff)
     this.goodGuys.players[this.socket.id] = this.ship
+  } else {
+    this.ship.setTint(0xd60000)
+    this.badGuys.players[this.socket.id] = this.ship
   }
 
   this.input.on(
@@ -160,7 +164,7 @@ function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5)
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
-  if (team === 'blue') {
+  if (team === 'red') {
     otherPlayer.setTint(0xd60000)
     this.badGuys.players[playerId] = otherPlayer
   } else {
