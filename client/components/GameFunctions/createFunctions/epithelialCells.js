@@ -160,6 +160,8 @@ export function killEpithelialCell(globalId) {
 }
 
 export function damageEpithelialCell(newHealth, cell) {
+  cell.setTint(0xFFFF33)
+  setTimeout(() => cell.setTint(0xd60000), 100)
   cell.health = newHealth
   if (cell.health <= 0) killEpithelialCell.call(this, cell.globalId)
 }
