@@ -47,6 +47,8 @@ module.exports = io => {
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the red blood cells
     socket.emit('redBloodCells', redBloodCells)
+    // send the red blood cells to the new players, transfer ownership
+    socket.broadcast.emit('disownRedBloodCells')
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership
@@ -76,6 +78,7 @@ module.exports = io => {
         io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
+        io.to(`${findLowestCellPlayerId(players)}`).emit('passRedBloodCells', passingCellIds)
       }
       // remove this player from our players object
       // emit a message to all players to remove this player

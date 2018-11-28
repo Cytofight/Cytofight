@@ -37,12 +37,20 @@ export function redBloodCells(amount) {
         this.redBloodCells.push(makeRedBloodCell.call(this, cells[id]))
       }
     }
+    this.ownsRedBloodCells = true
   })
 
   this.socket.on('updateRedBloodCellsClient', cells => {
     for (let id in cells) {
       setCellParams.call(this, this.redBloodCells[id], cells[id])
     }
+  })
+
+  this.socket.on('disownRedBloodCells', () => {
+    this.ownsRedBloodCells = false
+  })
+  this.socket.on('passRedBloodCells', () => {
+    this.ownsRedBloodCells = true
   })
 }
 

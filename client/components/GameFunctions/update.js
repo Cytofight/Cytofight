@@ -156,7 +156,7 @@ export function update(time) {
   }
 
   redBloodCellsLimiter = (redBloodCellsLimiter + 1) % 3
-  if (this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
+  if (this.ownsRedBloodCells && this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
     const cellData = {}
     for (let i = 0;  i < this.redBloodCells.length; i++) {
       const cell = this.redBloodCells[i]
