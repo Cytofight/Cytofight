@@ -21,7 +21,7 @@ export function epithelialCells(amount) {
             checkingOverlap = false
           }
         }
-        cellData[i] = {x: randomX, y: randomY, tint: null, globalId: i}
+        cellData[i] = {x: randomX, y: randomY, tint: null, globalId: i, health: 200}
         this.epithelialCells[i] = makeEpithelialCell.call(this, cellData[i])
       }
       //emit new cells
@@ -36,10 +36,14 @@ export function epithelialCells(amount) {
     }
   })
 
-  this.socket.on('changedEpithelialCellClient', globalId => {
-    if (!this.badGuys.epithelialCells[globalId]) {
-      this.epithelialCells[globalId].setTint(0xd60000)
-      this.badGuys.epithelialCells[globalId] = this.epithelialCells[globalId]
+  this.socket.on('changedEpithelialCellClient', (globalId, params) => {
+    const currCell = this.epithelialCells[globalId]
+    if (params.tint && !this.badGuys.epithelialCells[globalId]) {
+      currCell.setTint(params.tint)
+      this.badGuys.epithelialCells[globalId] = currCell
+    }
+    if (params.health) {
+      damageEpithelialCell(currCell.health)
     }
   })
 
@@ -50,7 +54,7 @@ export function epithelialCells(amount) {
   })
 }
 
-export function makeEpithelialCell({x, y, tint, globalId}) {
+export function makeEpithelialCell({x, y, tint, globalId, health}) {
   const cell = this.matter.add.image(x, y, 'epithelialCell')
   cell.setRectangle(cell.width / 2, cell.height / 2, {
     isStatic: true,
@@ -62,7 +66,7 @@ export function makeEpithelialCell({x, y, tint, globalId}) {
   }
   cell.infectionRange = new Phaser.Geom.Circle(x, y, 80)
   cell.globalId = globalId
-  cell.health = 200
+  cell.health = health
   return cell
 }
 
@@ -85,7 +89,7 @@ export function epithelialCellCollision(bodyA, bodyB) {
   ) {
     this.epithelialCells[matchingCellId].setTint(0xd60000)
     this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
-    this.socket.emit('changedEpithelialCell', matchingCellId)
+    this.socket.emit('changedEpithelialCell', matchingCellId, {tint: 0xd60000})
   }
 }
 
@@ -93,5 +97,10 @@ export function killEpithelialCell(globalId) {
   this.epithelialCells[globalId].destroy()
   delete this.epithelialCells[globalId]
   delete this.badGuys.epithelialCells[globalId]
-  this.socket.emit('deleteEpithelialCell')
+  // this.socket.emit('deleteEpithelialCell')
+}
+
+export function damageEpithelialCell(cell) {
+  cell.health -= damage
+  if (cell.health <= 0) killEpithelialCell(cell.globalId)
 }

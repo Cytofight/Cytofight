@@ -180,7 +180,7 @@ export function update(time) {
           console.log('time donnnne!')
           currCell.setTint(0xd60000)
           this.badGuys.epithelialCells[cellId] = currCell
-          this.socket.emit('changedEpithelialCell', cellId)
+          this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
         }, 3000)
       } else {
         clearTimeout(currCell.timer)
@@ -194,6 +194,7 @@ export function update(time) {
 }
 
 function badGuyCollision(antibody, badGuy, killFunction) {
+  console.log(badGuy)
   overlapCollision.call(this, {
     x: antibody.x,
     y: antibody.y
@@ -203,12 +204,14 @@ function badGuyCollision(antibody, badGuy, killFunction) {
       if (!this.secretColor.found) {
         this.secretColor.found = true
       }
-      const randomHealthLoss = Math.floor(Math.random() * 10) + 10
-      badGuy.health -= randomHealthLoss
+      const newHealth = badGuy.health - Math.floor(Math.random() * 10) + 10
+      // badGuy.health -= randomHealthLoss
+      damageEpithelialCell.call(this, newHealth, badGuy)
       antibody.destroy()
-      if (badGuy.health <= 0) {
-        killFunction.call(this, badGuy.globalId)
-      }
+      // if (badGuy.health <= 0) {
+      //   killFunction.call(this, badGuy.globalId)
+      // }
+      this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })
 }

@@ -42,6 +42,8 @@ export function players() {
   this.socket.on('disconnect', (playerId) => {
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
+    if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
+    else delete this.goodGuys.players[playerId]
   })
   this.socket.on('playerMoved', ({
     playerId,

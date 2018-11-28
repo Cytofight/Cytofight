@@ -79,6 +79,7 @@ module.exports = io => {
         epithelialCells = {}
         dormantTCells = {}
         mastCells = {}
+        secretColor = {}
       }
     })
 
@@ -111,9 +112,12 @@ module.exports = io => {
       Object.assign(epithelialCells, newCells)
     })
 
-    socket.on('changedEpithelialCell', globalId => {
-      epithelialCells[globalId].tint = 0xd60000
-      socket.broadcast.emit('changedEpithelialCellClient', globalId)
+    socket.on('changedEpithelialCell', (globalId, cellData) => {
+      // epithelialCells[globalId].tint = 0xd60000
+      for (let param in cellData) {
+        epithelialCells[globalId][param] = cellData[param]
+      }
+      socket.broadcast.emit('changedEpithelialCellClient', globalId, cellData)
     })
 
     socket.on('deleteEpithelialCell', globalId => {
