@@ -119,9 +119,9 @@ function addPlayer(playerInfo) {
     label: 'me',
     ...shipParams
   })
-  
+
   // Create a player name on top of the ship based on socketId
-  this.ship.nameText = this.add.text(this.ship.body.position.x - 125, this.ship.body.position.y - 50 , `${playerInfo.playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+  this.ship.nameText = this.add.text(this.ship.body.position.x + 125, this.ship.body.position.y + 50, `${playerInfo.playerId}`, { fontSize: '20wapx', fill: '#01c0ff' })
 
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
@@ -170,7 +170,7 @@ function addOtherPlayers({position, team, playerId}) {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
-  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50 , `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50, `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
 }

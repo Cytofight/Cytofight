@@ -122,36 +122,16 @@ module.exports = io => {
         //  } 
       } else {
         let randomNumber = Math.ceil(Math.random() * 2)
-        if (randomNumber === 1) {
-          io.emit('addDormantTCells', [{
-            positionX: players[socket.id].position.x,
-            positionY: players[socket.id].position.y,
-            velocityX: 0,
-            velocityY: 0,
-            angle: 0,
-            angularVelocity: 1,
-            randomDirection: {
-              x: 0,
-              y: 0
-            }
-          }])
-        } else {
-          const velocityX = Math.floor(Math.random() * 12 - 6)
-          const velocityY = Math.floor(Math.random() * 12 - 6)
-          io.emit('addMastCells', [{
-            positionX: players[socket.id].position.x,
-            positionY: players[socket.id].position.y,
-            velocityX: velocityX,
-            velocityY: velocityY,
-            angle: 0,
-            angularVelocity: 1,
-            randomDirection: {
-              x: 0,
-              y: 0
-            }
-          }])
+        switch (randomNumber) {
+          case 1:
+            spawnTCells(socket)
+            break
+          case 2:
+            spawnMastCell(socket)
+            break
         }
       }
+
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
       // broadcast star collection to all players
@@ -252,7 +232,46 @@ module.exports = io => {
       socket.broadcast.emit('new-channel', channel)
     })
   })
+
+  function spawnTCells(socket) {
+    let randomNumber = Math.ceil(Math.random() * 3)
+    while (randomNumber) {
+      io.emit('addDormantTCells', [{
+        positionX: players[socket.id].position.x,
+        positionY: players[socket.id].position.y,
+        velocityX: 0,
+        velocityY: 0,
+        angle: 0,
+        angularVelocity: 1,
+        randomDirection: {
+          x: 0,
+          y: 0
+        }
+      }])
+      randomNumber--
+    }
+  }
+
+  function spawnMastCell(socket) {
+    const velocityX = Math.floor(Math.random() * 12 - 6)
+    const velocityY = Math.floor(Math.random() * 12 - 6)
+    io.emit('addMastCells', [{
+      positionX: players[socket.id].position.x,
+      positionY: players[socket.id].position.y,
+      velocityX: velocityX,
+      velocityY: velocityY,
+      angle: 0,
+      angularVelocity: 1,
+      randomDirection: {
+        x: 0,
+        y: 0
+      }
+    }])
+  }
 }
+
+
+
 
 function findLowestCellPlayerId(players) {
   return Object.keys(players).reduce((currLowestPlayer, id) => {
