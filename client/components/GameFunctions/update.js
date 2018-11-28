@@ -14,7 +14,7 @@ const throttledFire = throttle(fire, 200)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
-
+let redBloodCellsLimiter = 0
 export function update(time) {
 
   // const boundFire = throttledFire.bind(this)
@@ -55,8 +55,6 @@ export function update(time) {
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
       throttledFire.call(this)
       
-    }
-    if (this.keyDebug.isDown) {
     }
     if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
@@ -140,7 +138,7 @@ export function update(time) {
     this.socket.emit('changedTCells', cellData)
   }
 
-  mastCellLimiter = (mastCellLimiter + 1) % 7
+  mastCellLimiter = (mastCellLimiter + 1) % 3
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
     const cellData = {}
     for (let id in this.mastCells) {
@@ -155,6 +153,23 @@ export function update(time) {
       }
     }
     this.socket.emit('updateMastCells', cellData)
+  }
+
+  redBloodCellsLimiter = (redBloodCellsLimiter + 1) % 3
+  if (this.ownsRedBloodCells && this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
+    const cellData = {}
+    for (let i = 0;  i < this.redBloodCells.length; i++) {
+      const cell = this.redBloodCells[i]
+      cellData[i] = {
+        positionX: cell.body.position.x,
+        positionY: cell.body.position.y,
+        velocityX: cell.body.velocity.x,
+        velocityY: cell.body.velocity.y,
+        angularVelocity: cell.body.angularVelocity,
+        globalId: cell.globalId
+      }
+    }
+    this.socket.emit('updateRedBloodCells', cellData)
   }
 
   this.antibodies.getChildren().forEach(antibody => {
@@ -214,7 +229,6 @@ function badGuyCollision(antibody, badGuy, killFunction) {
       const newHealth = badGuy.health - antibody.damage
       damageEpithelialCell.call(this, newHealth, badGuy)
       antibody.destroy()
-      this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })
 }
