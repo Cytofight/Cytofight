@@ -53,22 +53,6 @@ export function update(time) {
       limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
-      // let randomDamage = Math.floor(Math.random() * 10) + 10
-      // let randomColor = Math.floor(Math.random() * 16777215)
-      // if (this.secretColor.found) {
-      //   // console.log('firing while found (in the click)')
-      //   randomColor = this.secretColor.value
-      // }
-      // console.log('made random color: ', randomColor)
-      // const firingInfo = {
-      //   x: this.ship.body.position.x,
-      //   y: this.ship.body.position.y,
-      //   angle: this.ship.body.angle,
-      //   // globalId: this.socket.id,
-      //   // type: 'ship',
-      //   // color: randomColor,
-      //   // damage: randomDamage
-      // }
       throttledFire.call(this)
       
     }
@@ -187,17 +171,8 @@ export function update(time) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
         if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
-          // if (!currCell.timer) currCell.timer = setTimeout(() => {
-          //   console.log('time donnnne!')
-          //   currCell.setTint(0xd60000)
-          //   this.badGuys.epithelialCells[cellId] = currCell
-          //   this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
-          // }, 3000)
           currCell.infectedness++
           currCell.infectionText.setText(`${Math.ceil(currCell.infectedness / 1.8)}%`)
-          // if (curCell.infectedness >= 40) currCell.tintTopLeft = 0xd60000
-          // if (currCell.infectedness === 40) currCell.tintTopLeft = 0xd60000
-          // currCell.tintBottomRight = 0xd60000
           switch(currCell.infectedness) {
             case 1:
               currCell.tintTopLeft = 0xd60000
@@ -210,7 +185,6 @@ export function update(time) {
               break
           }
           if (currCell.infectedness >= 180) {
-            console.log('time donnnne!', currCell.infectedness)
             currCell.setTint(0xd60000)
             this.badGuys.epithelialCells[cellId] = currCell
             this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
@@ -236,9 +210,7 @@ function badGuyCollision(antibody, badGuy, killFunction) {
     x: antibody.x,
     y: antibody.y
   }, badGuy, () => {
-    console.log('in badGuyCollision with random color: ', antibody.color)
   if (this.secretColor.found || updateSecretColor.call(this, antibody.color)) {
-    // console.log('is currently found (in badGuyCollision')
       const newHealth = badGuy.health - antibody.damage
       damageEpithelialCell.call(this, newHealth, badGuy)
       antibody.destroy()

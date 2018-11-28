@@ -40,7 +40,6 @@ export function fire (prevInfo) {
     let randomDamage = Math.floor(Math.random() * 10) + 10
     let randomColor = Math.floor(Math.random() * 16777215)
     if (this.secretColor.found) {
-      // console.log('firing while found (in the click)')
       randomColor = this.secretColor.value
     }
     firingInfo = {
@@ -55,7 +54,6 @@ export function fire (prevInfo) {
   } else {
     firingInfo = prevInfo
   }
-  // console.log('in fire, made random color: ', color)
   let antibody = this.antibodies.get();
   if(antibody) {
     antibody.setTint(firingInfo.color)
@@ -93,13 +91,12 @@ export function setCellParams(cell, { positionX, positionY, velocityX, velocityY
   cell.setAngularVelocity(angularVelocity)
   if(tint && tint !== cell.tintBottomLeft) {
     cell.setTint(tint)
-    // if (tint === 0x01c0ff) this.goodGuys.push(cell)
-    // if (tint === 0xd60000) this.badGuys.push(cell)
   }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId
 }
 
+// CURRENTLY BROKEN, DO NOT USE
 export function changeShipColorDebug(tint) {
   let prevAlignment, nextAlignment
   const currShipTint = this.ship.tintBottomLeft
@@ -120,7 +117,6 @@ export function changeShipColorDebug(tint) {
 }
 
 export function updateSecretColor(color) {
-  console.log(color)
   if (color - this.secretColor.value <= 262000 && color - this.secretColor.value >= -262000) {
     this.secretColor.found = true
     return true
