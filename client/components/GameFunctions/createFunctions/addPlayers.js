@@ -94,6 +94,11 @@ export function players() {
     }
   })
 
+  this.socket.on('deleteOtherPlayer', playerId => {
+    this.badGuys.players[playerId].destroy()
+    delete this.badGuys.players[playerId]
+  })
+
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
     // for various collision events
     // epithelialCellCollision.call(this, bodyA, bodyB)
@@ -130,6 +135,7 @@ function addPlayer(playerInfo) {
     this.goodGuys.players[this.socket.id] = this.ship
   } else {
     this.ship.setTint(0xd60000)
+    this.ship.health = 200
     this.badGuys.players[this.socket.id] = this.ship
   }
 
@@ -166,6 +172,7 @@ function addOtherPlayers({position, team, playerId}) {
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (team === 'red') {
     otherPlayer.setTint(0xd60000)
+    otherPlayer.health = 200
     this.badGuys.players[playerId] = otherPlayer
   } else {
     otherPlayer.setTint(0x01c0ff)
@@ -179,4 +186,17 @@ function addOtherPlayers({position, team, playerId}) {
   )
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
+}
+
+export function damageBadPlayer(newHealth, cell) {
+  cell.health = newHealth
+  console.log(newHealth)
+  if (cell.health <= 0) killBadPlayer.call(this, cell.playerId)
+}
+
+export function killBadPlayer(playerId) {
+  this.badGuys.players[playerId].destroy()
+  delete this.badGuys.players[playerId]
+  delete this.otherPlayers[playerId]
+  this.socket.emit('deletePlayer', playerId)
 }

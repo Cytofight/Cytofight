@@ -12,6 +12,7 @@ import {
   damageEpithelialCell,
   resetCells
 } from './createFunctions/epithelialCells'
+import {damageBadPlayer, killBadPlayer} from './createFunctions/addPlayers'
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
@@ -165,9 +166,14 @@ export function update(time) {
   }
 
   redBloodCellsLimiter = (redBloodCellsLimiter + 1) % 3
-  if (this.ownsRedBloodCells && this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
+  if (
+    this.ownsRedBloodCells &&
+    this.redBloodCells &&
+    this.redBloodCells.length &&
+    !redBloodCellsLimiter
+  ) {
     const cellData = {}
-    for (let i = 0;  i < this.redBloodCells.length; i++) {
+    for (let i = 0; i < this.redBloodCells.length; i++) {
       const cell = this.redBloodCells[i]
       cellData[i] = {
         positionX: cell.body.position.x,
@@ -183,12 +189,7 @@ export function update(time) {
 
   this.antibodies.getChildren().forEach(antibody => {
     for (let id in this.badGuys.epithelialCells) {
-      badGuyCollision.call(
-        this,
-        antibody,
-        this.badGuys.epithelialCells[id],
-        killEpithelialCell
-      )
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id])
     }
     for (let id in this.badGuys.players) {
       badGuyCollision.call(this, antibody, this.badGuys.players[id], () =>
@@ -285,7 +286,11 @@ function badGuyCollision(antibody, badGuy, killFunction) {
         updateSecretColor.call(this, antibody.color)
       ) {
         const newHealth = badGuy.health - antibody.damage
-        damageEpithelialCell.call(this, newHealth, badGuy)
+        if (badGuy.globalId) {
+          damageEpithelialCell.call(this, newHealth, badGuy)
+        } else if (badGuy.playerId) {
+          damageBadPlayer.call(this, newHealth, badGuy)
+        }
         antibody.destroy()
       }
     }
