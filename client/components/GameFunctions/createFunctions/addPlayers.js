@@ -163,7 +163,7 @@ function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5)
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
-  if (team === 'blue') {
+  if (team === 'red') {
     otherPlayer.setTint(0xd60000)
     this.badGuys.players[playerId] = otherPlayer
   } else {

@@ -212,7 +212,6 @@ function badGuyCollision(antibody, badGuy, killFunction) {
       const newHealth = badGuy.health - antibody.damage
       damageEpithelialCell.call(this, newHealth, badGuy)
       antibody.destroy()
-      this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })
 }
