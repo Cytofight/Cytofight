@@ -4,48 +4,38 @@ import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {logout} from '../store'
 import {withStyles, CssBaseline, Toolbar} from '@material-ui/core'
-import AppBar from '@material-ui/core/AppBar'
+import Button from '@material-ui/core/Button'
+import List from '@material-ui/core/List'
+import Drawer from '@material-ui/core/Drawer'
+import ListItem from '@material-ui/core/ListItem'
 
-const styles = theme => ({
-  text: {
-    paddingTop: theme.spacing.unit * 2,
-    paddingLeft: theme.spacing.unit * 2,
-    paddingRight: theme.spacing.unit * 2
-  },
-  paper: {
-    paddingBottom: 50
-  },
+const styles = {
   list: {
-    marginBottom: theme.spacing.unit * 2
+    width: 250
   },
-  subHeader: {
-    backgroundColor: theme.palette.background.paper
-  },
-  appBar: {
-    top: 'auto',
-    bottom: 0
-  },
-  toolbar: {
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  fabButton: {
-    position: 'absolute',
-    zIndex: 1,
-    top: -30,
-    left: 0,
-    right: 0,
-    margin: '0 auto'
+  fullList: {
+    width: 'auto'
   }
-})
+}
 
-const Navbar = ({handleClick, isLoggedIn, classes}) => (
-  <div>
-    <CssBaseline />
-    <AppBar position="fixed" className={classes.appBar}>
-      <Toolbar className={classes.toolbar}>
+class Navbar extends React.Component {
+  state = {
+    left: false
+  }
+
+  toggleDrawer = (side, open) => () => {
+    this.setState({
+      [side]: open
+    })
+  }
+
+  render() {
+    const {handleClick, isLoggedIn, classes} = this.props
+
+    const sideList = (
+      <div className={classes.list}>
         {isLoggedIn ? (
-          <div>
+          <List>
             {/* The navbar will show these links after you log in */}
             <Link to="/home">Home</Link>
             <Link to="/game">Play!</Link>
@@ -54,23 +44,50 @@ const Navbar = ({handleClick, isLoggedIn, classes}) => (
             <a href="#" onClick={handleClick}>
               Logout
             </a>
-          </div>
+          </List>
         ) : (
-          <div>
-            {/* The navbar will show these links before you log in */}
-            <Link to="/login">Login</Link>
-            <Link to="/signup">Sign Up</Link>
-            <Link to="/game">Play!</Link>
-            <Link to="/heroes">Meet the Heroes</Link>
-            <Link to="/villains">Meet the Villains</Link>
-            <Link to="/messages">Messages</Link>
-          </div>
+          <List>
+            <ListItem>{<Link to="/login">Login</Link>}</ListItem>
+            <ListItem>{<Link to="/signup">Sign Up</Link>}</ListItem>
+            <ListItem>{<Link to="/game">Play!</Link>}</ListItem>
+            <ListItem>{<Link to="/heroes">Meet the Heroes</Link>}</ListItem>
+            <ListItem>{<Link to="/villains">Meet the Villains</Link>}</ListItem>
+            <ListItem>{<Link to="/messages">Messages</Link>}</ListItem>
+          </List>
         )}
-      </Toolbar>
-      <hr />
-    </AppBar>
-  </div>
-)
+      </div>
+    )
+
+    return (
+      <div position="fixed">
+        <Button onClick={this.toggleDrawer('left', true)}>MENU</Button>
+        <Drawer
+          open={this.state.left}
+          onClose={this.toggleDrawer('left', false)}
+        >
+          <div
+            tabIndex={0}
+            role="button"
+            onClick={this.toggleDrawer('left', false)}
+            onKeyDown={this.toggleDrawer('left', false)}
+          >
+            {sideList}
+          </div>
+        </Drawer>
+      </div>
+    )
+  }
+}
+
+// const Navbar = ({handleClick, isLoggedIn, classes}) => (
+//   <div>
+//     <CssBaseline />
+//     <AppBar className={classes.appBar}>
+//       <Toolbar className={classes.toolbar} />
+//       <hr />
+//     </AppBar>
+//   </div>
+// )
 
 /**
  * CONTAINER

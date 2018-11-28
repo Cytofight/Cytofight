@@ -50,6 +50,9 @@ export function create() {
     .text(16, 16, '', {fontSize: '16px', fill: '#01c0ff'})
     .setDepth(1)
     .setScrollFactor(0)
+    .setShadow(3, 3, 'black', 3, true, true)
+    .setStroke('yellow', 4)
+
   this.redScoreText = this.add
     .text(window.innerWidth - 300, 16, '', {
       fontSize: '16px',
@@ -57,6 +60,8 @@ export function create() {
     })
     .setDepth(1)
     .setScrollFactor(0)
+    .setShadow(3, 3, 'black', 3, true, true)
+    .setStroke('yellow', 4)
 
   scoreAndStars.call(this)
 }
