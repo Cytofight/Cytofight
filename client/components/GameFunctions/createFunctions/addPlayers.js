@@ -1,12 +1,23 @@
-import { throttle, fire, limitNumber, worldSize, defaultCellParams, setCellParams } from '../util'
-import { epithelialCells, epithelialCellCollision, tCells, mastCells } from './index'
+import {
+  throttle,
+  fire,
+  limitNumber,
+  worldSize,
+  defaultCellParams,
+  setCellParams
+} from '../util'
+import {
+  epithelialCells,
+  epithelialCellCollision,
+  tCells,
+  mastCells
+} from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 40
+const numberOfEpithelialCells = 1
 const numberOfTCells = 15
 const numberOfMastCells = 4
-
 
 //Initialize the players in the game
 //change name of function to init()
@@ -36,10 +47,10 @@ export function players() {
       }
     }
   })
-  this.socket.on('newPlayer', (playerInfo) => {
+  this.socket.on('newPlayer', playerInfo => {
     addOtherPlayers.call(this, playerInfo)
   })
-  this.socket.on('disconnect', (playerId) => {
+  this.socket.on('disconnect', playerId => {
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
     if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
@@ -50,7 +61,8 @@ export function players() {
     angle,
     position,
     velocity,
-    angularVelocity
+    angularVelocity,
+    nameText
   }) => {
     const currPlayer = this.otherPlayers[playerId]
     if (currPlayer) {
@@ -58,6 +70,8 @@ export function players() {
         .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
+        currPlayer.nameText.x = nameText.x
+        currPlayer.nameText.y = nameText.y
       currPlayer.body.angle = angle
     }
   })
@@ -78,7 +92,6 @@ export function players() {
       this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
     }
   })
-
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
     // for various collision events
@@ -101,6 +114,10 @@ function addPlayer(playerInfo) {
     label: 'me',
     ...shipParams
   })
+  
+  // Create a player name on top of the ship based on socketId
+  this.ship.nameText = this.add.text(this.ship.body.position.x - 125, this.ship.body.position.y - 50 , `${playerInfo.playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
     this.ship.setTint(0xd60000)
@@ -110,18 +127,36 @@ function addPlayer(playerInfo) {
     this.goodGuys.players[this.socket.id] = this.ship
   }
 
-  this.input.on("pointermove", function(pointer) {
-    // VIEWPORT: 800x, 600y
-    const adjustedPointerX = limitNumber(pointer.x + this.ship.x - 400, pointer.x, pointer.x + worldSize.x - 800)
-    const adjustedPointerY = limitNumber(pointer.y + this.ship.y - 300, pointer.y, pointer.y + worldSize.y - 600)
-    var angle = -Math.atan2(adjustedPointerX - this.ship.x, adjustedPointerY - this.ship.y) * 180 / Math.PI;
-    this.ship.angle = angle;
-  }, this)
+  this.input.on(
+    'pointermove',
+    function(pointer) {
+      // VIEWPORT: 800x, 600y
+      const adjustedPointerX = limitNumber(
+        pointer.x + this.ship.x - 400,
+        pointer.x,
+        pointer.x + worldSize.x - 800
+      )
+      const adjustedPointerY = limitNumber(
+        pointer.y + this.ship.y - 300,
+        pointer.y,
+        pointer.y + worldSize.y - 600
+      )
+      var angle =
+        -Math.atan2(
+          adjustedPointerX - this.ship.x,
+          adjustedPointerY - this.ship.y
+        ) *
+        180 /
+        Math.PI
+      this.ship.angle = angle
+    },
+    this
+  )
 }
 
-function addOtherPlayers({ position, team, playerId }) {
+function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
-  otherPlayer.setScale(0.5);
+  otherPlayer.setScale(0.5)
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (team === 'blue') {
     otherPlayer.setTint(0xd60000)
@@ -130,6 +165,7 @@ function addOtherPlayers({ position, team, playerId }) {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
+  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50 , `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
 }

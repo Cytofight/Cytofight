@@ -9,10 +9,10 @@ module.exports = io => {
   let dormantTCells = {}
   let mastCells = {}
   let secretColor = {}
-  // let star = {
-  //   x: Math.floor(Math.random() * 900) + 50,
-  //   y: Math.floor(Math.random() * 900) + 50
-  // };
+  let star = {
+    x: Math.floor(Math.random() * 900) + 50,
+    y: Math.floor(Math.random() * 900) + 50
+  };
   let scores = {
     blue: 0,
     red: 0
@@ -34,22 +34,23 @@ module.exports = io => {
       angularVelocity: 0,
       playerId: socket.id,
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
-      clientDormantTCells: {}
+      clientDormantTCells: {},
+      nameText: ''
     }
     
     // send the players object to the new player
     socket.emit('currentPlayers', players)
     // send the star object to the new player
-    // socket.emit('starLocation', star)
+    socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
+    // send how many epithelial cells are in the game and how many have been infected
+    socket.emit('epithelialCount', scores)
     socket.emit('mastCell', mastCells)
-    // send the current scores
-    socket.emit('scoreUpdate', scores)
     // set the secret color if the player is first to join
     if (Object.keys(players).length <= 1) {
       secretColor.value = Math.floor(Math.random() * 16777215)
@@ -85,32 +86,36 @@ module.exports = io => {
     })
 
     // when a player moves, update the player data
-    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity }) {
+    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity, nameText }) {
       if (players[socket.id]) {
       players[socket.id].angle = angle
       players[socket.id].position = position
       players[socket.id].velocity = velocity
       players[socket.id].angularVelocity = angularVelocity
+      players[socket.id].nameText = nameText
       // players[socket.id].rotation = movementData.rotation
       // emit a message to all players about the player that moved
       socket.broadcast.emit('playerMoved', players[socket.id])
       }
     })
 
-    // socket.on('starCollected', function () {
-    //   if (players[socket.id].team === 'red') {
-    //     scores.red += 10
-    //   } else {
-    //     scores.blue += 10
-    //   }
-    //   star.x = Math.floor(Math.random() * 900) + 50
-    //   star.y = Math.floor(Math.random() * 900) + 50
-    //   io.emit('starLocation', star)
-    //   io.emit('scoreUpdate', scores)
-    // })
+    socket.on('starCollected', function () {
+      if (players[socket.id].team === 'red') {
+        // scores.red += 10
+      } else {
+        // scores.blue += 10
+      }
+      star.x = Math.floor(Math.random() * 900) + 50
+      star.y = Math.floor(Math.random() * 900) + 50
+      // broadcast star collection to all players
+      io.emit('starDestroy')
+      // sets a delay before new stars spawn
+      setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
+    })
 
     socket.on('newEpithelialCells', (newCells) => {
       Object.assign(epithelialCells, newCells)
+      scores.blue = Object.keys(newCells).length
     })
 
     socket.on('changedEpithelialCell', (globalId, cellData) => {

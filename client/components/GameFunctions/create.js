@@ -16,12 +16,18 @@ export function preload() {
   this.load.image('antibody', 'assets/PNG/antibody-game-transparent.png')
   this.load.image('dormantTCell', 'assets/PNG/White_blood_cell_transparent.png')
   this.load.image('epithelialCell', 'assets/PNG/epithelial_transparent.png')
+
+  // Background image: make sure file is compressed using https://imagecompressor.com/
+  this.load.image('redback', 'assets/PNG/redback.png')
 }
 
 export function create() {
   //  The world is 3200 x 600 in size
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y).setName('main')
-
+  
+  // Create canvas background image
+  this.add.image((worldSize.x/2), (worldSize.y/2), 'redback').setScale(1.9)
+  
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
     .add(640, 490, 150, 100)
@@ -41,4 +47,10 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
+
+  console.log(this.cameras)
+  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#01c0ff' })
+  this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#d60000' })
+
+  scoreAndStars.call(this)
 }

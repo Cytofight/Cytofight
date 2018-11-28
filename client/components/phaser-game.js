@@ -3,7 +3,9 @@ import Phaser from 'phaser'
 import React, {Component} from 'react'
 import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
-import { worldSize } from './GameFunctions/util'
+import Winner from './GameFunctions/winner'
+import Loser from './GameFunctions/loser'
+import {worldSize} from './GameFunctions/util'
 
 const config = {
   type: Phaser.AUTO,
@@ -19,20 +21,19 @@ const config = {
       }
     }
   },
-  scene: [startMenu, gamePlay]
+  scene: [startMenu, gamePlay, Winner, Loser]
 }
 
 export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
     Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
-    this.speed = Phaser.Math.GetSpeed(575, 1)
+    this.speed = Phaser.Math.GetSpeed(1000, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
   }
   
   fire({ x, y, angle, color, damage }) {
-    console.log('firing method color: ', color)
     this.setPosition(x, y)
       .setActive(true)
       .setVisible(true)
@@ -40,13 +41,19 @@ export class Antibody extends Phaser.GameObjects.Image {
     this.color = color
     this.damage = damage || (Math.floor(Math.random() * 10) + 10)
     Phaser.Math.Rotate(this.velocity, angle)
+    setTimeout(() => this.destroy(), 820)
   }
-  
+
   update(time, delta) {
-    this.y -= this.velocity.y * delta;
-    this.x -= this.velocity.x * delta;
-    
-    if (this.y < -50 || this.x < -50 || this.y > worldSize.y + 50 || this.x > worldSize.x + 50) {
+    this.y -= this.velocity.y * delta
+    this.x -= this.velocity.x * delta
+
+    if (
+      this.y < -50 ||
+      this.x < -50 ||
+      this.y > worldSize.y + 50 ||
+      this.x > worldSize.x + 50
+    ) {
       // this.setActive(false);
       // this.setVisible(false);
       this.destroy()

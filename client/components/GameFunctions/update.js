@@ -1,7 +1,4 @@
 import {
-  NPCCells
-} from './createFunctions';
-import {
   limitSpeed,
   throttle,
   fire,
@@ -13,7 +10,7 @@ import {
 import { killEpithelialCell, damageEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
-const throttledFire = throttle(fire, 300)
+const throttledFire = throttle(fire, 200)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
@@ -23,6 +20,10 @@ export function update(time) {
   // const boundFire = throttledFire.bind(this)
 
   if (this.ship) {
+    // display name over your
+    this.ship.nameText.x = this.ship.body.position.x - 125
+    this.ship.nameText.y = this.ship.body.position.y - 50
+
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
       this.ship.applyForce({
         x: -0.005,
@@ -93,7 +94,7 @@ export function update(time) {
     // if (this.keyRed.isDown) {
     //   throttledChangeShipColorDebug.call(this, 0xd60000)
     // }
-
+    const nameText = this.ship.nameText
     limitSpeed(this.ship, 10)
     const {
       angle,
@@ -117,7 +118,8 @@ export function update(time) {
         angle,
         velocity,
         angularVelocity,
-        position
+        position,
+        nameText
       })
     }
 
