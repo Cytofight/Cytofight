@@ -10,8 +10,9 @@ import {worldSize} from './GameFunctions/util'
 const config = {
   type: Phaser.AUTO,
   parent: 'container',
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
+  autoResize: true,
   physics: {
     default: 'matter',
     matter: {
