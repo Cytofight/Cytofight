@@ -53,9 +53,10 @@ module.exports = io => {
     // set the secret color if the player is first to join
     if (Object.keys(players).length <= 1) {
       secretColor.value = Math.floor(Math.random() * 16777215)
+      secretColor.found = false
     }
     // send the secret color
-    socket.emit('secretColor', secretColor.value)
+    socket.emit('secretColor', secretColor)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
     // LAG WHEN NEW PLAYER JOINS

@@ -63,7 +63,7 @@ export function players() {
   })
 
   this.socket.on('secretColor', (color) => {
-    this.secretColor.value = color
+    this.secretColor = color
   })
 
   epithelialCells.call(this, numberOfEpithelialCells)

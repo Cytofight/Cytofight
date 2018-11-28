@@ -31,13 +31,15 @@ export class Antibody extends Phaser.GameObjects.Image {
     this.setScale(0.15)
   }
   
-  fire(x, y, direction, color) {
+  fire({ x, y, angle, color, damage }) {
+    console.log('firing method color: ', color)
     this.setPosition(x, y)
       .setActive(true)
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
     this.color = color
-    Phaser.Math.Rotate(this.velocity, direction)
+    this.damage = damage || (Math.floor(Math.random() * 10) + 10)
+    Phaser.Math.Rotate(this.velocity, angle)
   }
   
   update(time, delta) {

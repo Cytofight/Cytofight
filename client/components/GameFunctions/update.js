@@ -7,9 +7,10 @@ import {
   fire,
   updateForce,
   overlapCollision,
-  changeShipColorDebug
+  changeShipColorDebug,
+  updateSecretColor
 } from './util'
-import { killEpithelialCell, epithelialCellContains } from './createFunctions/epithelialCells';
+import { killEpithelialCell, damageEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 300)
@@ -51,17 +52,24 @@ export function update(time) {
       limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
-      const randomColor = (this.secretColor.found) ? this.secretColor.value : Math.floor(Math.random() * 16777215)
-      const firingInfo = {
-        x: this.ship.body.position.x,
-        y: this.ship.body.position.y,
-        angle: this.ship.body.angle,
-        globalId: this.socket.id,
-        type: 'ship',
-        color: randomColor
-      }
-      throttledFire.call(this, firingInfo)
-      this.socket.emit('firedAntibody', firingInfo)
+      // let randomDamage = Math.floor(Math.random() * 10) + 10
+      // let randomColor = Math.floor(Math.random() * 16777215)
+      // if (this.secretColor.found) {
+      //   // console.log('firing while found (in the click)')
+      //   randomColor = this.secretColor.value
+      // }
+      // console.log('made random color: ', randomColor)
+      // const firingInfo = {
+      //   x: this.ship.body.position.x,
+      //   y: this.ship.body.position.y,
+      //   angle: this.ship.body.angle,
+      //   // globalId: this.socket.id,
+      //   // type: 'ship',
+      //   // color: randomColor,
+      //   // damage: randomDamage
+      // }
+      throttledFire.call(this)
+      
     }
     if (this.keyDebug.isDown) {
     }
@@ -194,23 +202,16 @@ export function update(time) {
 }
 
 function badGuyCollision(antibody, badGuy, killFunction) {
-  console.log(badGuy)
   overlapCollision.call(this, {
     x: antibody.x,
     y: antibody.y
   }, badGuy, () => {
-    // const isBetween = ()
-    if (this.secretColor.found || (antibody.color - this.secretColor.value <= 262000 && antibody.color - this.secretColor.value >= -262000)) {
-      if (!this.secretColor.found) {
-        this.secretColor.found = true
-      }
-      const newHealth = badGuy.health - Math.floor(Math.random() * 10) + 10
-      // badGuy.health -= randomHealthLoss
+    console.log('in badGuyCollision with random color: ', antibody.color)
+  if (this.secretColor.found || updateSecretColor.call(this, antibody.color)) {
+    // console.log('is currently found (in badGuyCollision')
+      const newHealth = badGuy.health - antibody.damage
       damageEpithelialCell.call(this, newHealth, badGuy)
       antibody.destroy()
-      // if (badGuy.health <= 0) {
-      //   killFunction.call(this, badGuy.globalId)
-      // }
       this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })

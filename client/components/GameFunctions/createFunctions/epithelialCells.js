@@ -42,8 +42,8 @@ export function epithelialCells(amount) {
       currCell.setTint(params.tint)
       this.badGuys.epithelialCells[globalId] = currCell
     }
-    if (params.health) {
-      damageEpithelialCell(currCell.health)
+    if (params.health && currCell) {
+      damageEpithelialCell(currCell.health, currCell)
     }
   })
 
@@ -100,7 +100,7 @@ export function killEpithelialCell(globalId) {
   // this.socket.emit('deleteEpithelialCell')
 }
 
-export function damageEpithelialCell(cell) {
-  cell.health -= damage
-  if (cell.health <= 0) killEpithelialCell(cell.globalId)
+export function damageEpithelialCell(newHealth, cell) {
+  cell.health = newHealth
+  if (cell.health <= 0) killEpithelialCell.call(this, cell.globalId)
 }

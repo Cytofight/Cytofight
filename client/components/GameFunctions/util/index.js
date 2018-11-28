@@ -34,11 +34,33 @@ export function throttle(func, milliseconds) {
   }
 }
 
-export function fire ({x, y, angle, color}) {
+export function fire (prevInfo) {
+  let firingInfo
+  if (!prevInfo) {
+    let randomDamage = Math.floor(Math.random() * 10) + 10
+    let randomColor = Math.floor(Math.random() * 16777215)
+    if (this.secretColor.found) {
+      // console.log('firing while found (in the click)')
+      randomColor = this.secretColor.value
+    }
+    firingInfo = {
+      x: this.ship.body.position.x,
+      y: this.ship.body.position.y,
+      angle: this.ship.body.angle,
+      globalId: this.socket.id,
+      type: 'ship',
+      color: randomColor,
+      damage: randomDamage
+    }
+  } else {
+    firingInfo = prevInfo
+  }
+  // console.log('in fire, made random color: ', color)
   let antibody = this.antibodies.get();
   if(antibody) {
-    antibody.setTint(color)
-    antibody.fire(x, y, angle, color);
+    antibody.setTint(firingInfo.color)
+    antibody.fire(firingInfo);
+    if (!prevInfo) this.socket.emit('firedAntibody', firingInfo)
   }
 }
 
@@ -95,4 +117,13 @@ export function changeShipColorDebug(tint) {
   if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
   nextAlignment.push(this.ship)
   console.log('ship tint is blue: ', this.ship.tintBottomLeft === 16760833, 'ship tint is red: ', this.ship.tintBottomLeft === 214, 'arrays now: ', this.badGuys, this.goodGuys)
+}
+
+export function updateSecretColor(color) {
+  console.log(color)
+  if (color - this.secretColor.value <= 262000 && color - this.secretColor.value >= -262000) {
+    this.secretColor.found = true
+    return true
+  }
+  return false
 }
