@@ -94,7 +94,22 @@ module.exports = io => {
       if (players[socket.id].team === 'red') {
         // scores.red += 10
       } else {
-        // scores.blue += 10
+        let randomNumber = Math.ceil(Math.random() * 5)
+        while (randomNumber){
+          io.emit('addDormantTCells', [{
+            positionX: players[socket.id].position.x,
+            positionY: players[socket.id].position.y,
+            velocityX: 0,
+            velocityY: 0,
+            angle: 0,
+            angularVelocity: 1,
+            randomDirection: {
+              x: 0,
+              y: 0
+            }
+          }])
+          randomNumber--
+        }
       }
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50

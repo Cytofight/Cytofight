@@ -111,10 +111,10 @@ function addPlayer(playerInfo) {
 
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
-    this.ship.setTint(0xd60000)
+    this.ship.setTint(0x01c0ff)
     this.badGuys.players[this.socket.id] = this.ship
   } else {
-    this.ship.setTint(0x01c0ff)
+    this.ship.setTint(0xd60000)
     this.goodGuys.players[this.socket.id] = this.ship
   }
 
