@@ -12,15 +12,15 @@ export default class startMenu extends Phaser.Scene {
 
   create() {
     const teamBlue = this.add
-      .image(300, 300, 'ship')
+      .image(window.innerWidth / 2 + 200, window.innerHeight / 2, 'ship')
       .setTint(0x01c0ff)
       .setInteractive()
     const random = this.add
-      .image(400, 300, 'click')
+      .image(window.innerWidth / 2, window.innerHeight / 2, 'click')
       .setScale(0.25)
       .setInteractive()
     const teamRed = this.add
-      .image(500, 300, 'ship')
+      .image(window.innerWidth / 2 - 200, window.innerHeight / 2, 'ship')
       .setTint(0xd60000)
       .setInteractive()
 
