@@ -8,6 +8,7 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
+  let secretColor = {}
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
     y: Math.floor(Math.random() * 900) + 50
@@ -50,6 +51,13 @@ module.exports = io => {
     // send how many epithelial cells are in the game and how many have been infected
     socket.emit('epithelialCount', scores)
     socket.emit('mastCell', mastCells)
+    // set the secret color if the player is first to join
+    if (Object.keys(players).length <= 1) {
+      secretColor.value = Math.floor(Math.random() * 16777215)
+      secretColor.found = false
+    }
+    // send the secret color
+    socket.emit('secretColor', secretColor)
     // update all other players of the new player
     socket.broadcast.emit('newPlayer', players[socket.id])
     // LAG WHEN NEW PLAYER JOINS
@@ -73,6 +81,7 @@ module.exports = io => {
         epithelialCells = {}
         dormantTCells = {}
         mastCells = {}
+        secretColor = {}
       }
     })
 
@@ -109,9 +118,12 @@ module.exports = io => {
       scores.blue = Object.keys(newCells).length
     })
 
-    socket.on('changedEpithelialCell', globalId => {
-      epithelialCells[globalId].tint = 0xd60000
-      socket.broadcast.emit('changedEpithelialCellClient', globalId)
+    socket.on('changedEpithelialCell', (globalId, cellData) => {
+      // epithelialCells[globalId].tint = 0xd60000
+      for (let param in cellData) {
+        epithelialCells[globalId][param] = cellData[param]
+      }
+      socket.broadcast.emit('changedEpithelialCellClient', globalId, cellData)
     })
 
     socket.on('deleteEpithelialCell', globalId => {

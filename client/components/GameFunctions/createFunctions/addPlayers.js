@@ -15,7 +15,7 @@ import {
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 1
+const numberOfEpithelialCells = 40
 const numberOfTCells = 15
 const numberOfMastCells = 4
 
@@ -34,7 +34,10 @@ export function players() {
     players: {},
     tCells: {}
   }
-
+  this.secretColor = {
+    value: null,
+    found: false
+  }
   this.socket.on('currentPlayers', (players) => {
     for (let id in players) {
       if (id === this.socket.id) {
@@ -50,6 +53,8 @@ export function players() {
   this.socket.on('disconnect', playerId => {
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
+    if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
+    else delete this.goodGuys.players[playerId]
   })
   this.socket.on('playerMoved', ({
     playerId,
@@ -69,6 +74,10 @@ export function players() {
         currPlayer.nameText.y = nameText.y
       currPlayer.body.angle = angle
     }
+  })
+
+  this.socket.on('secretColor', (color) => {
+    this.secretColor = color
   })
 
   epithelialCells.call(this, numberOfEpithelialCells)
