@@ -8,47 +8,28 @@ export default class startMenu extends Phaser.Scene {
   preload() {
     this.load.image('ship', 'assets/PNG/b-cell-transparent.png')
     this.load.image('click', 'assets/PNG/play.png')
+    this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
   }
 
   create() {
-    const teamBlue = this.add
-      .image(window.innerWidth / 2 + 200, window.innerHeight / 2, 'ship')
-      .setTint(0x01c0ff)
-      .setInteractive()
-    const random = this.add
-      .image(window.innerWidth / 2, window.innerHeight / 2, 'click')
-      .setScale(0.25)
-      .setInteractive()
-    const teamRed = this.add
-      .image(window.innerWidth / 2 - 200, window.innerHeight / 2, 'ship')
-      .setTint(0xd60000)
-      .setInteractive()
+    const add = this.add
+    const input = this.input
+    const scene = this.scene
+    
+      WebFont.load({
+        google: {
+            families: [ 'Plaster']
+        },
+        active: function ()
+        {
+            add.text(window.innerWidth / 2, window.innerHeight / 2, 'CYTOFIGHT', { fontFamily: 'Plaster', fontSize: 80, color: 'blue' }).
+            setShadow(2, 2, "#333333", 2, false, true)
+            .setOrigin(0.5)
 
-    teamBlue.on(
-      'pointerdown',
-      function() {
-        console.log('Imma blue')
-        this.team = 'blue'
-        this.scene.start('gamePlay')
-      },
-      this
-    )
-    random.on(
-      'pointerdown',
-      function() {
-        console.log('I dunno')
-        this.scene.start('gamePlay')
-      },
-      this
-    )
-    teamRed.on(
-      'pointerdown',
-      function() {
-        console.log('Imma red')
-        this.team = 'red'
-        this.scene.start('gamePlay')
-      },
-      this
-    )
+            input.once('pointerdown', function () {
+              scene.start('gamePlay')
+            });
+        }
+    });
   }
 }

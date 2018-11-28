@@ -142,16 +142,16 @@ function addPlayer(playerInfo) {
   this.input.on(
     'pointermove',
     function(pointer) {
-      // VIEWPORT: 800x, 600y
+      // VIEWPORT: innerWidthx, innerHeighty
       const adjustedPointerX = limitNumber(
-        pointer.x + this.ship.x - 400,
+        pointer.x + this.ship.x - window.innerWidth/2,
         pointer.x,
-        pointer.x + worldSize.x - 800
+        pointer.x + worldSize.x - window.innerWidth
       )
       const adjustedPointerY = limitNumber(
-        pointer.y + this.ship.y - 300,
+        pointer.y + this.ship.y - window.innerHeight/2,
         pointer.y,
-        pointer.y + worldSize.y - 600
+        pointer.y + worldSize.y - window.innerHeight
       )
       var angle =
         -Math.atan2(

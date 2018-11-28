@@ -36,6 +36,7 @@ module.exports = io => {
       playerId: socket.id,
       team: Math.floor(Math.random() * 2) === 0 ? 'red' : 'blue',
       clientDormantTCells: {},
+      clientMastCells: {},
       nameText: ''
     }
 
@@ -124,27 +125,23 @@ module.exports = io => {
 
     socket.on('starCollected', function() {
       if (players[socket.id].team === 'red') {
-        // scores.red += 10
+        //  switch(randomNumber){
+        //   //increase player HP by +50
+        //   case 1:
+        //   players[socket.id].health += 50
+        //  }
       } else {
-        let randomNumber = Math.ceil(Math.random() * 5)
-        while (randomNumber) {
-          io.emit('addDormantTCells', [
-            {
-              positionX: players[socket.id].position.x,
-              positionY: players[socket.id].position.y,
-              velocityX: 0,
-              velocityY: 0,
-              angle: 0,
-              angularVelocity: 1,
-              randomDirection: {
-                x: 0,
-                y: 0
-              }
-            }
-          ])
-          randomNumber--
+        let randomNumber = Math.ceil(Math.random() * 2)
+        switch (randomNumber) {
+          case 1:
+            spawnTCells(socket)
+            break
+          case 2:
+            spawnMastCell(socket)
+            break
         }
       }
+
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
       // broadcast star collection to all players
@@ -188,7 +185,13 @@ module.exports = io => {
       let nextId = Math.max(...Object.keys(dormantTCells)) + 1
       const cellDataObj = cellData.reduce((obj, currCell) => {
         // Please humor my code golf here, I'm bored; assigns currCell to nextId, and nextId to currCell's globalId
-        return {...obj, [nextId]: {...currCell, globalId: nextId++}}
+        return {
+          ...obj,
+          [nextId]: {
+            ...currCell,
+            globalId: nextId++
+          }
+        }
       }, {})
       Object.assign(dormantTCells, cellDataObj)
       Object.assign(
@@ -209,6 +212,8 @@ module.exports = io => {
 
     socket.on('newMastCells', newCells => {
       Object.assign(mastCells, newCells)
+      Object.assign(players[socket.id].clientMastCells, newCells)
+      socket.broadcast.emit('addMastCells', newCells)
     })
 
     socket.on('updateMastCells', cellData => {
@@ -247,6 +252,46 @@ module.exports = io => {
       socket.broadcast.emit('new-channel', channel)
     })
   })
+
+  function spawnTCells(socket) {
+    let randomNumber = Math.ceil(Math.random() * 3)
+    while (randomNumber) {
+      io.emit('addDormantTCells', [
+        {
+          positionX: players[socket.id].position.x,
+          positionY: players[socket.id].position.y,
+          velocityX: 0,
+          velocityY: 0,
+          angle: 0,
+          angularVelocity: 1,
+          randomDirection: {
+            x: 0,
+            y: 0
+          }
+        }
+      ])
+      randomNumber--
+    }
+  }
+
+  function spawnMastCell(socket) {
+    const velocityX = Math.floor(Math.random() * 12 - 6)
+    const velocityY = Math.floor(Math.random() * 12 - 6)
+    io.emit('addMastCells', [
+      {
+        positionX: players[socket.id].position.x,
+        positionY: players[socket.id].position.y,
+        velocityX: velocityX,
+        velocityY: velocityY,
+        angle: 0,
+        angularVelocity: 1,
+        randomDirection: {
+          x: 0,
+          y: 0
+        }
+      }
+    ])
+  }
 }
 
 function findLowestCellPlayerId(players) {
@@ -254,9 +299,14 @@ function findLowestCellPlayerId(players) {
     (currLowestPlayer, id) => {
       const currAmount = Object.keys(players[id].clientDormantTCells).length
       if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount)
-        return {id, amount: currAmount}
+        return {
+          id,
+          amount: currAmount
+        }
       else return currLowestPlayer
     },
-    {id: null}
+    {
+      id: null
+    }
   ).id
 }
