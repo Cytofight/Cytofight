@@ -4,12 +4,13 @@ import {
   fire,
   updateForce,
   overlapCollision,
-  changeShipColorDebug
+  changeShipColorDebug,
+  updateSecretColor
 } from './util'
-import { killEpithelialCell, epithelialCellContains } from './createFunctions/epithelialCells';
+import { killEpithelialCell, damageEpithelialCell } from './createFunctions/epithelialCells';
 
 const throttledUpdateForce = throttle(updateForce, 1800)
-const throttledFire = throttle(fire, 100)
+const throttledFire = throttle(fire, 200)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
@@ -52,21 +53,8 @@ export function update(time) {
       limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
-      const firingInfo = {
-        x: this.ship.body.position.x,
-        y: this.ship.body.position.y,
-        angle: this.ship.body.angle,
-        globalId: this.socket.id,
-        type: 'ship'
-      }
-      throttledFire.call(this, firingInfo)
-      this.socket.emit('firedAntibody', firingInfo)
-    }
-    if (this.keyDebug.isDown) {
-      // console.log('ALL T CELLS: ', this.dormantTCells)
-      // console.log('MY T CELLS: ', this.clientDormantTCells)
-
-      // console.log(`I ${!this.ownsMastCells ? 'DO NOT ' : ''}own the mast cells right now!`)
+      throttledFire.call(this)
+      
     }
     if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
@@ -176,19 +164,37 @@ export function update(time) {
     }
   })
 
-  for (let cellId in this.epithelialCells) {
-    if (!this.badGuys.epithelialCells[cellId] && this.badGuys.players[this.socket.id]) {
-      const currCell = this.epithelialCells[cellId]
-      if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
-        if (!currCell.timer) currCell.timer = setTimeout(() => {
-          console.log('time donnnne!')
-          currCell.setTint(0xd60000)
-          this.badGuys.epithelialCells[cellId] = currCell
-          this.socket.emit('changedEpithelialCell', cellId)
-        }, 3000)
-      } else {
-        clearTimeout(currCell.timer)
-        currCell.timer = null
+  if (this.badGuys.players[this.socket.id]) {
+    for (let cellId in this.epithelialCells) {
+      if (!this.badGuys.epithelialCells[cellId]) {
+        const currCell = this.epithelialCells[cellId]
+        if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
+          currCell.infectedness++
+          currCell.infectionText.setText(`${Math.ceil(currCell.infectedness / 1.8)}%`)
+          switch(currCell.infectedness) {
+            case 1:
+              currCell.tintTopLeft = 0xd60000
+              break
+            case 60:
+              currCell.tintTopRight = 0xd60000
+              break
+            case 120:
+              currCell.tintBottomLeft = 0xd60000
+              break
+          }
+          if (currCell.infectedness >= 180) {
+            currCell.setTint(0xd60000)
+            this.badGuys.epithelialCells[cellId] = currCell
+            this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
+            currCell.infectionText.destroy()
+          }
+        } else if (currCell.infectedness) {
+          // clearTimeout(currCell.timer)
+          // currCell.timer = null
+          currCell.infectedness = 0
+          currCell.infectionText.setText('')
+          currCell.setTint(0xffffff)
+        }
       }
     }
   }
@@ -202,11 +208,11 @@ function badGuyCollision(antibody, badGuy, killFunction) {
     x: antibody.x,
     y: antibody.y
   }, badGuy, () => {
-    const randomHealthLoss = Math.floor(Math.random() * 10) + 10
-    badGuy.health -= randomHealthLoss
-    antibody.destroy()
-    if (badGuy.health <= 0) {
-      killFunction.call(this, badGuy.globalId)
+  if (this.secretColor.found || updateSecretColor.call(this, antibody.color)) {
+      const newHealth = badGuy.health - antibody.damage
+      damageEpithelialCell.call(this, newHealth, badGuy)
+      antibody.destroy()
+      this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })
 }
