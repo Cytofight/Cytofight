@@ -84,6 +84,7 @@ module.exports = io => {
         epithelialCells = {}
         dormantTCells = {}
         mastCells = {}
+        redBloodCells = []
         secretColor = {}
       }
     })
@@ -186,6 +187,17 @@ module.exports = io => {
         mastCells[id] = cellData[id]
       }
       socket.broadcast.emit('updateMastCellsClient', cellData)
+    })
+
+    socket.on('newRedBloodCells', newCells => {
+      Object.assign(redBloodCells, newCells)
+    })
+
+    socket.on('updateRedBloodCells', cellData => {
+      for (let id in cellData) {
+        redBloodCells[id] = cellData[id]
+      }
+      socket.broadcast.emit('updateRedBloodCellsClient', cellData)
     })
 
     socket.on('firedAntibody', (firingInfo) => {

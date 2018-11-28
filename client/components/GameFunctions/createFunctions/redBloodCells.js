@@ -31,12 +31,17 @@ export function redBloodCells(amount) {
         }
         this.redBloodCells.push(makeRedBloodCell.call(this, cellData[i]))
       }
-      this.clientRedBloodCells = { ...this.redBloodCells
-      } // must make copy b/c otherwise client list will always be identical
+      this.socket.emit('newRedBloodCells', cellData)
     } else {
       for (let id in cells) {
         this.redBloodCells.push(makeRedBloodCell.call(this, cells[id]))
       }
+    }
+  })
+
+  this.socket.on('updateRedBloodCellsClient', cells => {
+    for (let id in cells) {
+      setCellParams.call(this, this.redBloodCells[id], cells[id])
     }
   })
 }
