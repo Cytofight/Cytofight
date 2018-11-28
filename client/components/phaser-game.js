@@ -28,19 +28,19 @@ const config = {
 export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
-    Phaser.GameObjects.Image.call(this, scene, 0, 0, "antibody")
+    Phaser.GameObjects.Image.call(this, scene, 0, 0, 'antibody')
     this.speed = Phaser.Math.GetSpeed(1000, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
   }
-  
-  fire({ x, y, angle, color, damage }) {
+
+  fire({x, y, angle, color, damage}) {
     this.setPosition(x, y)
       .setActive(true)
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
     this.color = color
-    this.damage = damage || (Math.floor(Math.random() * 10) + 10)
+    this.damage = damage || Math.floor(Math.random() * 10) + 10
     Phaser.Math.Rotate(this.velocity, angle)
     setTimeout(() => this.destroy(), 820)
   }
@@ -73,10 +73,6 @@ export default class Game extends Component {
   }
 
   render() {
-    return (
-      <div id="container">
-        <h3> Prepare for Battle!</h3>
-      </div>
-    )
+    return <div id="container">{/* <h3> Prepare for Battle!</h3> */}</div>
   }
 }
