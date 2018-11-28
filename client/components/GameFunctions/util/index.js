@@ -1,4 +1,5 @@
 export const worldSize = {x: 2000, y: 2000}
+export const colorNumber = 64
 
 export const defaultCellParams = {
   restitution: 1,
@@ -33,10 +34,31 @@ export function throttle(func, milliseconds) {
   }
 }
 
-export function fire ({x, y, angle}) {
+export function fire (prevInfo) {
+  let firingInfo
+  if (!prevInfo) {
+    let randomDamage = Math.floor(Math.random() * 10) + 10
+    let randomColor = Math.floor(Math.random() * 16777215)
+    if (this.secretColor.found) {
+      randomColor = this.secretColor.value
+    }
+    firingInfo = {
+      x: this.ship.body.position.x,
+      y: this.ship.body.position.y,
+      angle: this.ship.body.angle,
+      globalId: this.socket.id,
+      type: 'ship',
+      color: randomColor,
+      damage: randomDamage
+    }
+  } else {
+    firingInfo = prevInfo
+  }
   let antibody = this.antibodies.get();
   if(antibody) {
-    antibody.fire(x, y, angle);
+    antibody.setTint(firingInfo.color)
+    antibody.fire(firingInfo);
+    if (!prevInfo) this.socket.emit('firedAntibody', firingInfo)
   }
 }
 
@@ -69,13 +91,12 @@ export function setCellParams(cell, { positionX, positionY, velocityX, velocityY
   cell.setAngularVelocity(angularVelocity)
   if(tint && tint !== cell.tintBottomLeft) {
     cell.setTint(tint)
-    // if (tint === 0x01c0ff) this.goodGuys.push(cell)
-    // if (tint === 0xd60000) this.badGuys.push(cell)
   }
   if (randomDirection) cell.randomDirection = randomDirection
   cell.globalId = globalId
 }
 
+// CURRENTLY BROKEN, DO NOT USE
 export function changeShipColorDebug(tint) {
   let prevAlignment, nextAlignment
   const currShipTint = this.ship.tintBottomLeft
@@ -93,4 +114,12 @@ export function changeShipColorDebug(tint) {
   if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
   nextAlignment.push(this.ship)
   console.log('ship tint is blue: ', this.ship.tintBottomLeft === 16760833, 'ship tint is red: ', this.ship.tintBottomLeft === 214, 'arrays now: ', this.badGuys, this.goodGuys)
+}
+
+export function updateSecretColor(color) {
+  if (color - this.secretColor.value <= 262000 && color - this.secretColor.value >= -262000) {
+    this.secretColor.found = true
+    return true
+  }
+  return false
 }
