@@ -34,7 +34,8 @@ export function players() {
     players: {},
     tCells: {}
   }
-  this.socket.on('currentPlayers', players => {
+
+  this.socket.on('currentPlayers', (players) => {
     for (let id in players) {
       if (id === this.socket.id) {
         addPlayer.call(this, players[id])
@@ -50,20 +51,25 @@ export function players() {
     this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
   })
-  this.socket.on(
-    'playerMoved',
-    ({playerId, angle, position, velocity, angularVelocity}) => {
-      const currPlayer = this.otherPlayers[playerId]
-      if (currPlayer) {
-        currPlayer
-          .setPosition(position.x, position.y)
-          .setVelocity(velocity.x, velocity.y)
+  this.socket.on('playerMoved', ({
+    playerId,
+    angle,
+    position,
+    velocity,
+    angularVelocity,
+    nameText
+  }) => {
+    const currPlayer = this.otherPlayers[playerId]
+    if (currPlayer) {
+      currPlayer.setPosition(position.x, position.y)
+        .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
-        currPlayer.body.angle = angle
-      }
+        currPlayer.nameText.x = nameText.x
+        currPlayer.nameText.y = nameText.y
+      currPlayer.body.angle = angle
     }
-  )
+  })
 
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
@@ -99,6 +105,10 @@ function addPlayer(playerInfo) {
     label: 'me',
     ...shipParams
   })
+  
+  // Create a player name on top of the ship based on socketId
+  this.ship.nameText = this.add.text(this.ship.body.position.x - 125, this.ship.body.position.y - 50 , `${playerInfo.playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
     this.ship.setTint(0xd60000)
@@ -146,6 +156,7 @@ function addOtherPlayers({position, team, playerId}) {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
+  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50 , `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
 }
