@@ -45,8 +45,8 @@ export function create() {
   keyboardControls.call(this)
 
   console.log(this.cameras)
-  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#01c0ff' })
-  this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#d60000' })
+  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#01c0ff' }).setDepth(1).setScrollFactor(0)
+  this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#d60000' }).setDepth(1).setScrollFactor(0)
 
   scoreAndStars.call(this)
 }
