@@ -17,15 +17,15 @@ export function players() {
   this.otherPlayers = {}
   this.badGuys = {
     players: {},
-    epithelialCells: {},
-    secretColor: {
-      value: null,
-      found: false
-    }
+    epithelialCells: {}
   }
   this.goodGuys = {
     players: {},
     tCells: {}
+  }
+  this.secretColor = {
+    value: null,
+    found: false
   }
   this.socket.on('currentPlayers', (players) => {
     for (let id in players) {
@@ -61,7 +61,7 @@ export function players() {
   })
 
   this.socket.on('secretColor', (color) => {
-    this.badGuys.secretColor.value = color
+    this.secretColor.value = color
   })
 
   epithelialCells.call(this, numberOfEpithelialCells)

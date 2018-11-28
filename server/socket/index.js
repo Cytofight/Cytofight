@@ -8,7 +8,7 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
-  let secretColor = null
+  let secretColor = {}
   // let star = {
   //   x: Math.floor(Math.random() * 900) + 50,
   //   y: Math.floor(Math.random() * 900) + 50

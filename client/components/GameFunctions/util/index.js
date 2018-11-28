@@ -38,7 +38,7 @@ export function fire ({x, y, angle, color}) {
   let antibody = this.antibodies.get();
   if(antibody) {
     antibody.setTint(color)
-    antibody.fire(x, y, angle);
+    antibody.fire(x, y, angle, color);
   }
 }
 
