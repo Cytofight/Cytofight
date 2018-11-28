@@ -1,7 +1,7 @@
 import { limitSpeed, updateForce, limitNumber, throttle } from './speed'
 import { fire } from './fireAntibodies'
 
-export const worldSize = {x: 2000, y: 2000}
+export const worldSize = {x: 3000, y: 3000}
 export const colorNumber = 64
 
 export const defaultCellParams = {
