@@ -23,7 +23,7 @@ export function create() {
   this.cameras.main.setBounds(0, 0, worldSize.x, worldSize.y).setName('main')
 
   // Create canvas background image
-  this.add.image(worldSize.x / 2, worldSize.y / 2, 'redback').setScale(1.9)
+  this.add.image(worldSize.x / 2, worldSize.y / 2, 'redback').setScale(2.9)
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
