@@ -182,19 +182,47 @@ export function update(time) {
     }
   })
 
-  for (let cellId in this.epithelialCells) {
-    if (!this.badGuys.epithelialCells[cellId] && this.badGuys.players[this.socket.id]) {
-      const currCell = this.epithelialCells[cellId]
-      if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
-        if (!currCell.timer) currCell.timer = setTimeout(() => {
-          console.log('time donnnne!')
-          currCell.setTint(0xd60000)
-          this.badGuys.epithelialCells[cellId] = currCell
-          this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
-        }, 3000)
-      } else {
-        clearTimeout(currCell.timer)
-        currCell.timer = null
+  if (this.badGuys.players[this.socket.id]) {
+    for (let cellId in this.epithelialCells) {
+      if (!this.badGuys.epithelialCells[cellId]) {
+        const currCell = this.epithelialCells[cellId]
+        if (currCell.infectionRange.contains(this.ship.body.position.x, this.ship.body.position.y)) {
+          // if (!currCell.timer) currCell.timer = setTimeout(() => {
+          //   console.log('time donnnne!')
+          //   currCell.setTint(0xd60000)
+          //   this.badGuys.epithelialCells[cellId] = currCell
+          //   this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
+          // }, 3000)
+          currCell.infectedness++
+          currCell.infectionText.setText(`${Math.ceil(currCell.infectedness / 1.8)}%`)
+          // if (curCell.infectedness >= 40) currCell.tintTopLeft = 0xd60000
+          // if (currCell.infectedness === 40) currCell.tintTopLeft = 0xd60000
+          // currCell.tintBottomRight = 0xd60000
+          switch(currCell.infectedness) {
+            case 1:
+              currCell.tintTopLeft = 0xd60000
+              break
+            case 60:
+              currCell.tintTopRight = 0xd60000
+              break
+            case 120:
+              currCell.tintBottomLeft = 0xd60000
+              break
+          }
+          if (currCell.infectedness >= 180) {
+            console.log('time donnnne!', currCell.infectedness)
+            currCell.setTint(0xd60000)
+            this.badGuys.epithelialCells[cellId] = currCell
+            this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
+            currCell.infectionText.destroy()
+          }
+        } else if (currCell.infectedness) {
+          // clearTimeout(currCell.timer)
+          // currCell.timer = null
+          currCell.infectedness = 0
+          currCell.infectionText.setText('')
+          currCell.setTint(0xffffff)
+        }
       }
     }
   }

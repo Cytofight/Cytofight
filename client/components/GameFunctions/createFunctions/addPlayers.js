@@ -15,7 +15,7 @@ import {
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 1
+const numberOfEpithelialCells = 40
 const numberOfTCells = 15
 const numberOfMastCells = 4
 

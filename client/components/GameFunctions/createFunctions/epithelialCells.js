@@ -86,6 +86,9 @@ export function makeEpithelialCell({x, y, tint, globalId, health}) {
     this.badGuys.epithelialCells[globalId] = cell
   }
   cell.infectionRange = new Phaser.Geom.Circle(x, y, 80)
+  cell.infectedness = 0
+  cell.infectionText = this.add.text(x - 13, y, '', { fontSize: '14px', fill: '#ffffff' }).setStroke('#000000', 2)
+  cell.infectionText.fontWeight = 'bold'
   cell.globalId = globalId
   cell.health = health
   return cell
