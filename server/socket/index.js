@@ -8,6 +8,7 @@ module.exports = io => {
   let epithelialCells = {}
   let dormantTCells = {}
   let mastCells = {}
+  let redBloodCells = []
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
     y: Math.floor(Math.random() * 900) + 50
@@ -43,6 +44,8 @@ module.exports = io => {
     socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
+    // send the red blood cells
+    socket.emit('redBloodCells', redBloodCells)
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership

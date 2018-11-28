@@ -16,6 +16,7 @@ export function preload() {
   this.load.image('antibody', 'assets/PNG/antibody-game-transparent.png')
   this.load.image('dormantTCell', 'assets/PNG/White_blood_cell_transparent.png')
   this.load.image('epithelialCell', 'assets/PNG/epithelial_transparent.png')
+  this.load.image('redBloodCell', 'assets/PNG/RedBloodCell.png')
 
   // Background image: make sure file is compressed using https://imagecompressor.com/
   this.load.image('redback', 'assets/PNG/redback.png')

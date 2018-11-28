@@ -10,7 +10,8 @@ import {
   epithelialCells,
   epithelialCellCollision,
   tCells,
-  mastCells
+  mastCells,
+  redBloodCells
 } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
@@ -18,6 +19,7 @@ const throttledFire = throttle(fire, 200)
 const numberOfEpithelialCells = 1
 const numberOfTCells = 15
 const numberOfMastCells = 4
+const numberOfRedBloodCells = 50
 
 //Initialize the players in the game
 //change name of function to init()
@@ -71,10 +73,13 @@ export function players() {
     }
   })
 
+  // assigns socket events for all the cells in the game
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
+  redBloodCells.call(this, numberOfRedBloodCells)
 
+  //create events related to antibodies being fired from B cells
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
     if (firingInfo.type === 'tCell') {
