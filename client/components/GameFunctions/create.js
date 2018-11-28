@@ -26,7 +26,7 @@ export function create() {
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
-    .add(window.innerWidth - 150, window.innerHeight - 100, 150, 100)
+    .add(window.innerWidth - 180, window.innerHeight - 100, 150, 100)
     .setZoom(0.1)
     .setName('mini')
   this.minimap.setBackgroundColor(0x002244)
