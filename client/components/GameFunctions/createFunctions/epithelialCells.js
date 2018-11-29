@@ -160,7 +160,11 @@ export function killEpithelialCell(globalId) {
 }
 
 export function damageEpithelialCell(newHealth, cell) {
+  const damagedSound = this.sound.add('hitCell', {
+    volume: 0.5
+  })
   cell.setTint(0xFFFF33)
+  damagedSound.play()
   setTimeout(() => cell.setTint(0xd60000), 100)
   cell.health = newHealth
   if (cell.health <= 0) killEpithelialCell.call(this, cell.globalId)

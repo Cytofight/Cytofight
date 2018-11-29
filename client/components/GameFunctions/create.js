@@ -17,6 +17,7 @@ export function preload() {
   this.load.image('redback', 'assets/PNG/redback.png')
   // Audio files
   this.load.audio('shoot', ['assets/PNG/FireSound.mp3'])
+  this.load.audio('hitCell', ['assets/PNG/hitCell.mp3'])
 }
 
 export function create() {
