@@ -229,6 +229,11 @@ export function update(time) {
           if (currCell.infectedness >= 180) {
             currCell.setTint(0xd60000)
             this.badGuys.epithelialCells[cellId] = currCell
+            currCell.spawn = setInterval(() => {
+              console.log('should be spawning')
+              spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y)
+            }, 5000)
+            this.clientSpawningCells[cellId] = currCell
             // currCell.spawnCell = setInterval(createBadGuy, 60000)
             this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
             currCell.infectionText.destroy()

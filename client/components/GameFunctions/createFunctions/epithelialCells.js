@@ -3,6 +3,8 @@ import {
   defaultCellParams
 } from '../util'
 
+import {spawnInfectedCell} from './index'
+
 function resetCells() {
   this.badGuys = {}
   this.goodGuys = {}
@@ -14,6 +16,7 @@ export function epithelialCells(amount) {
   this.socket.on('epithelialCell', cells => {
     const cellData = {}
     this.epithelialCells = {}
+    this.clientSpawningCells = {}
     if (!cells || !cells.length) {
       for (let i = 0; i < amount; i++) {
         // Since these are the first cells, the client can handle the ID generation, as there will be no conflicts with preexisting cells
@@ -66,6 +69,17 @@ export function epithelialCells(amount) {
       resetCells.call(this)
       this.scene.start('Loser')
     }
+    if (params.spawning) {
+      currCell.spawn = setInterval(() => spawnInfectedCell(currCell.body.position.x, currCell.body.position.y), 5000)
+    }
+  })
+
+  this.socket.on('passSpawningRedEpithelialCells', ids => {
+    console.log('about to pass ids: ', ids)
+    ids.forEach(id => {
+      const currCell = this.epithelialCells[id]
+      currCell.spawn = setInterval(() => spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y), 5000)
+    })
   })
 
   this.socket.on('deletedEpithelialCell', globalId => {
@@ -111,7 +125,12 @@ export function epithelialCellCollision(bodyA, bodyB) {
     (bodyA.id === this.ship.body.id || bodyB.id === this.ship.body.id) &&
     !this.badGuys.epithelialCells[matchingCellId]
   ) {
+    console.log('done!')
     this.epithelialCells[matchingCellId].setTint(0xd60000)
+    this.epithelialCells[matchingCellId].spawn = setInterval(() => {
+      console.log('should be spawning')
+      spawnInfectedCell(this.epithelialCells[matchingCellId].body.position.x, this.epithelialCells[matchingCellId].body.position.y), 5000
+    })
     this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
     this.blueScoreText.setText('Epithelial Cells: ' + (Object.keys(this.epithelialCells).length - Object.keys(this.badGuys.epithelialCells).length))
     this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)

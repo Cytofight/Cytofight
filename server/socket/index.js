@@ -37,6 +37,7 @@ module.exports = io => {
       team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
       clientDormantTCells: {},
       clientInfectedCells: {},
+      clientSpawningCells: {},
       nameText: ''
     }
     
@@ -69,6 +70,8 @@ module.exports = io => {
     socket.on('disconnect', () => {
       console.log(`Player ${socket.id} has left the game`)
       const passingCellIds = Object.keys(players[socket.id].clientDormantTCells)
+      const passingInfectedIds = Object.keys(players[socket.id].clientInfectedCells)
+      const passingSpawnIds = Object.keys(players[socket.id].clientSpawningCells)
       delete players[socket.id]
       // passing on of "ownerships" (but only if there are any more players to begin with)
       if (Object.keys(players).length > 0) {
@@ -76,6 +79,8 @@ module.exports = io => {
         io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
         const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
         io.to(`${randomPlayerId}`).emit('passMastCells')
+        io.to(`${randomPlayerId}`).emit('passInfectedCells', passingInfectedIds)
+        io.to(`${randomPlayerId}`).emit('passSpawningRedEpithelialCells', passingSpawnIds)
       }
       // remove this player from our players object
       // emit a message to all players to remove this player
@@ -127,6 +132,7 @@ module.exports = io => {
       for (let param in cellData) {
         epithelialCells[globalId][param] = cellData[param]
       }
+      if (cellData.tint) players[socket.id].clientSpawningCells[globalId] = epithelialCells[globalId]
       socket.broadcast.emit('changedEpithelialCellClient', globalId, cellData)
     })
 
