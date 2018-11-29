@@ -19,6 +19,8 @@ const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0
 let redBloodCellsLimiter = 0
+let soundLimiter = 0
+
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
 
@@ -210,8 +212,12 @@ export function update(time) {
       )
     }
   })
-
+  
+  soundLimiter = (soundLimiter + 1) % 13
   if (this.badGuys.players[this.socket.id]) {
+    const infectionSound = this.sound.add('infectionUnderWay', {
+      volume: 0.9
+    })
     for (let cellId in this.epithelialCells) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
@@ -219,8 +225,11 @@ export function update(time) {
           currCell.infectionRange.contains(
             this.ship.body.position.x,
             this.ship.body.position.y
-          )
-        ) {
+            )
+            ) {
+          if(!soundLimiter){
+            infectionSound.play()
+          }
           currCell.infectedness++
           currCell.infectionText.setText(
             `${Math.ceil(currCell.infectedness / 1.8)}%`

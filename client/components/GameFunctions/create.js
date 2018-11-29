@@ -19,6 +19,7 @@ export function preload() {
   this.load.audio('shoot', ['assets/PNG/FireSound.mp3'])
   this.load.audio('hitCell', ['assets/PNG/hitCell.mp3'])
   this.load.audio('smallexplosion', ['assets/PNG/smallexplosion.mp3'])
+  this.load.audio('infectionUnderWay', ['assets/PNG/infectionUnderway.mp3'])
 }
 
 export function create() {
