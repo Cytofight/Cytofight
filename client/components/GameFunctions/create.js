@@ -33,8 +33,6 @@ export function create() {
     .add(0, window.innerHeight - 100, 150, 100)
     .setZoom(0.1)
     .setName('mini')
-  // this.minimap.blueScoreText.setText('')
-  this.minimap.setBackgroundColor(0x002244)
   this.minimap.scrollX = worldSize.x
   this.minimap.scrollY = worldSize.y
 
@@ -51,7 +49,7 @@ export function create() {
 
   console.log(this)
   this.blueScoreText = this.add
-    .text(window.innerWidth - 440, 16, '', {
+    .text(window.innerWidth - 480, 16, '', {
       fontSize: '24px',
       fontStyle: 'bold',
       fill: 'blue'
@@ -61,7 +59,7 @@ export function create() {
     .setStroke('yellow', 2)
 
   this.redScoreText = this.add
-    .text(window.innerWidth - 440, 48, '', {
+    .text(window.innerWidth - 480, 48, '', {
       fontSize: '24px',
       fontStyle: 'bold',
       fill: '#d60000'
