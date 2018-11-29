@@ -13,9 +13,12 @@ export function preload() {
   this.load.image('dormantTCell', 'assets/PNG/White_blood_cell_transparent.png')
   this.load.image('epithelialCell', 'assets/PNG/epithelial_cell.png')
   this.load.image('redBloodCell', 'assets/PNG/RedBloodCell.png')
-
   // Background image: make sure file is compressed using https://imagecompressor.com/
   this.load.image('redback', 'assets/PNG/redback.png')
+  // Audio files
+  this.load.audio('shoot', ['assets/PNG/FireSound.mp3'])
+  this.load.audio('hitCell', ['assets/PNG/hitCell.mp3'])
+  this.load.audio('smallexplosion', ['assets/PNG/smallexplosion.mp3'])
 }
 
 export function create() {
@@ -46,7 +49,7 @@ export function create() {
   })
   keyboardControls.call(this)
 
-  console.log(this.cameras)
+  console.log(this)
   this.blueScoreText = this.add
     .text(window.innerWidth - 440, 16, '', {
       fontSize: '24px',

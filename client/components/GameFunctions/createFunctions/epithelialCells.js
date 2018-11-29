@@ -149,6 +149,10 @@ export function epithelialCellCollision(bodyA, bodyB) {
 }
 
 export function killEpithelialCell(globalId) {
+  const destroyedSound = this.sound.add('smallexplosion', {
+    volume: 0.5
+  })
+  destroyedSound.play()
   this.epithelialCells[globalId].destroy()
   delete this.epithelialCells[globalId]
   delete this.badGuys.epithelialCells[globalId]
@@ -160,8 +164,12 @@ export function killEpithelialCell(globalId) {
 }
 
 export function damageEpithelialCell(newHealth, cell) {
+  const damagedSound = this.sound.add('hitCell', {
+    volume: 0.5
+  })
   cell.setTint(0xFFFF33)
   setTimeout(() => cell.setTint(0xd60000), 100)
+  damagedSound.play()
   cell.health = newHealth
   if (cell.health <= 0) killEpithelialCell.call(this, cell.globalId)
 }

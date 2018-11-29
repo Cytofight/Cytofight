@@ -7,6 +7,13 @@ import Winner from './GameFunctions/winner'
 import Loser from './GameFunctions/loser'
 import {worldSize} from './GameFunctions/util'
 
+let audioContext;
+try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+} catch (e) {
+    console.error(e);
+}
+
 const config = {
   type: Phaser.AUTO,
   parent: 'container',
@@ -22,7 +29,10 @@ const config = {
       }
     }
   },
-  scene: [startMenu, gamePlay, Winner, Loser]
+  scene: [startMenu, gamePlay, Winner, Loser],
+  audio: {
+    context: audioContext
+  }
 }
 
 export class Antibody extends Phaser.GameObjects.Image {
@@ -40,9 +50,9 @@ export class Antibody extends Phaser.GameObjects.Image {
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
     this.color = color
-    this.damage = damage || Math.floor(Math.random() * 10) + 10
+    this.damage = damage || Math.fldsoor(Math.random() * 10) + 10
     Phaser.Math.Rotate(this.velocity, angle)
-    setTimeout(() => this.destroy(), 820)
+    setTimeout(() => this.destroy(), 700)
   }
 
   update(time, delta) {
