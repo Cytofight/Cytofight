@@ -246,13 +246,17 @@ export function update(time) {
     for(let id in this.dormantTCells){
       impact.call(this, antibody, this.dormantTCells[id])
     }
+
     for (let id in this.badGuys.epithelialCells) {
-      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id])
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], damageEpithelialCell)
     }
     for (let id in this.badGuys.players) {
       badGuyCollision.call(this, antibody, this.badGuys.players[id], () =>
         console.log('beep')
       )
+    }
+    for (let id in this.badGuys.infectedCells) {
+      badGuyCollision.call(this, antibody, this.badGuys.infectedCells[id], damageInfectedCell)
     }
   })
 
@@ -349,7 +353,7 @@ function impact(antibody, cell) {
   )
 }
 
-function badGuyCollision(antibody, badGuy, killFunction) {
+function badGuyCollision(antibody, badGuy, damageFunction) {
   overlapCollision.call(
     this,
     {
@@ -364,7 +368,7 @@ function badGuyCollision(antibody, badGuy, killFunction) {
         updateSecretColor.call(this, antibody.color)
       ) {
         const newHealth = badGuy.health - antibody.damage
-        damageEpithelialCell.call(this, newHealth, badGuy)
+        damageFunction.call(this, newHealth, badGuy)
       }
     }
   )

@@ -40,6 +40,12 @@ export function infectedCells(amount) {
       // if (cellData[id].tint) this.goodGuys.tCells[id] = this.dormantTCells[id]
     })
   })
+
+  this.socket.on('deletedInfectedCell', globalId => {
+    if (this.badGuys.infectedCells[globalId]) this.badGuys.infectedCells[globalId].destroy()
+    delete this.badGuys.infectedCells[globalId]
+    delete this.clientInfectedCells[globalId]
+  })
 }
 
 export function makeInfectedCell({positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, globalId, health}) {
@@ -68,7 +74,7 @@ export function spawnInfectedCell(x, y) {
     velocityX: 0, velocityY: 0, 
     angle: 0, angularVelocity: randomAngularVelocity,
     randomDirection: {x: 0, y: 0}, globalId,
-    health: 200
+    health: 40
   }
   const cell = makeInfectedCell.call(this, cellData)
   this.clientInfectedCells[globalId] = cell
@@ -76,8 +82,8 @@ export function spawnInfectedCell(x, y) {
 }
 
 export function killInfectedCell(globalId) {
-  this.epithelialCells[globalId].destroy()
-  if (this.clientInfectedCells[globalId]) delete this.clientInfectedCells[globalId]
+  if (this.badGuys.infectedCells[globalId]) this.badGuys.infectedCells[globalId].destroy()
+  delete this.clientInfectedCells[globalId]
   delete this.badGuys.infectedCells[globalId]
   // this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)
   this.socket.emit('deleteInfectedCell', globalId)

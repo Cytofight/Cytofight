@@ -92,7 +92,7 @@ export function epithelialCells(amount) {
   })
 
   this.socket.on('deletedEpithelialCell', globalId => {
-    this.epithelialCells[globalId].destroy()
+    if (this.epithelialCells[globalId]) this.epithelialCells[globalId].destroy()
     delete this.epithelialCells[globalId]
     delete this.badGuys.epithelialCells[globalId]
   })
