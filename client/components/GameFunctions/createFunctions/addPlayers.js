@@ -10,14 +10,15 @@ import {
   epithelialCells,
   epithelialCellCollision,
   tCells,
-  mastCells
+  mastCells,
+  infectedCells
 } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
 const numberOfEpithelialCells = 40
 const numberOfTCells = 15
-const numberOfMastCells = 4
+const numberOfMastCells = 2
 
 //Initialize the players in the game
 //change name of function to init()
@@ -28,7 +29,8 @@ export function players() {
   this.otherPlayers = {}
   this.badGuys = {
     players: {},
-    epithelialCells: {}
+    epithelialCells: {},
+    infectedCells: {}
   }
   this.goodGuys = {
     players: {},
@@ -83,6 +85,8 @@ export function players() {
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
+  infectedCells.call(this)
+  console.log(this.badGuys.infectedCells)
 
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)

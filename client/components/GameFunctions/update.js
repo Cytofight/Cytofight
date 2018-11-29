@@ -7,19 +7,25 @@ import {
   changeShipColorDebug,
   updateSecretColor
 } from './util'
-import { killEpithelialCell, damageEpithelialCell } from './createFunctions/epithelialCells';
+import { killEpithelialCell, damageEpithelialCell } from './createFunctions/epithelialCells'
+import { killInfectedCell, damageInfectedCell, makeInfectedCell, spawnInfectedCell } from './createFunctions/npcInfectedCell'
 
-const throttledUpdateForce = throttle(updateForce, 1800)
+let temp = 0
+const throttledConsoleLog = throttle(console.log, 2000)
+const throttledUpdateTCellForce = throttle(updateForce, 1800)
+const throttledUpdateInfectedCellForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
-  mastCellLimiter = 0
+  mastCellLimiter = 0,
+  infectedCellLimiter = 1
 
 export function update(time) {
 
   // const boundFire = throttledFire.bind(this)
 
   if (this.ship) {
+    throttledConsoleLog(this.badGuys.infectedCells)
     // display name over your
     this.ship.nameText.x = this.ship.body.position.x - 125
     this.ship.nameText.y = this.ship.body.position.y - 50
@@ -29,34 +35,40 @@ export function update(time) {
         x: -0.005,
         y: 0
       })
-      limitSpeed(this.ship, 8)
     }
     if (this.cursors.right.isDown || this.keyRight.isDown) {
       this.ship.applyForce({
         x: 0.005,
         y: 0
       })
-      limitSpeed(this.ship, 8)
     }
     if (this.cursors.up.isDown || this.keyUp.isDown) {
       this.ship.applyForce({
         x: 0,
         y: -0.005
       })
-      limitSpeed(this.ship, 8)
     }
     if (this.cursors.down.isDown || this.keyDown.isDown) {
       this.ship.applyForce({
         x: 0,
         y: 0.005
       })
-      limitSpeed(this.ship, 8)
     }
     if ((this.input.activePointer.isDown || this.keyFire.isDown) && this.ship.tintBottomLeft === 16760833) {
       throttledFire.call(this)
       
     }
     if (this.keyDebug.isDown) {
+      // const cellData = {positionX: randomPositionX, positionY: randomPositionY, 
+      //   velocityX: randomVelocityX, velocityY: randomVelocityY, 
+      //   angle: 0, angularVelocity: randomAngularVelocity,
+      //   randomDirection: {x: 0, y: 0}, globalId: i}
+      // makeInfectedCell.call(this, {x: this.ship.body.position.x, y: this.ship.body.position.y, globalId: temp, health: 100} )
+      // console.log(this.badGuys.infectedCells[temp])
+      // temp++
+      // this.socket.emit('newInfectedCell', this.badGuys.infectedCells[temp])
+      // console.log(this.clientInfectedCells)
+      spawnInfectedCell.call(this, this.ship.body.position.x, this.ship.body.position.y)
     }
     if (this.keyCreateCell.isDown) {
       this.socket.emit('requestNewTCells', [{
@@ -79,7 +91,7 @@ export function update(time) {
     //   throttledChangeShipColorDebug.call(this, 0xd60000)
     // }
     const nameText = this.ship.nameText
-    limitSpeed(this.ship, 10)
+    limitSpeed(this.ship, 6.5)
     const {
       angle,
       angularVelocity,
@@ -108,6 +120,7 @@ export function update(time) {
     }
 
     this.ship.previous = {
+      position,
       velocity,
       angularVelocity
     }
@@ -117,12 +130,12 @@ export function update(time) {
   tCellLimiter = (tCellLimiter + 1) % 3
   if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter) {
 
-    throttledUpdateForce.call(this, this.clientDormantTCells)
+    throttledUpdateTCellForce.call(this, this.clientDormantTCells)
     const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
       cell.applyForce(cell.randomDirection)
-      limitSpeed(cell, 4)
+      limitSpeed(cell, 3)
       if (this.clientDormantTCells[id]) {
         cellData[id] = {
           positionX: cell.body.position.x,
@@ -132,18 +145,19 @@ export function update(time) {
           angle: cell.body.angle,
           angularVelocity: cell.body.angularVelocity,
           randomDirection: cell.randomDirection,
-          globalId: cell.globalId
+          globalId: cell.globalId,
         }
-        if (cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
+        if (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
       }
     }
     this.socket.emit('changedTCells', cellData)
   }
 
-  mastCellLimiter = (mastCellLimiter + 1) % 7
+  mastCellLimiter = (mastCellLimiter + 1) % 4
   if (this.ownsMastCells && this.mastCells && Object.keys(this.mastCells).length && !mastCellLimiter) {
     const cellData = {}
     for (let id in this.mastCells) {
+      limitSpeed(this.mastCells[id], 7)
       const cell = this.mastCells[id]
       cellData[id] = {
         positionX: cell.body.position.x,
@@ -157,12 +171,40 @@ export function update(time) {
     this.socket.emit('updateMastCells', cellData)
   }
 
+  infectedCellLimiter = (infectedCellLimiter + 1) % 3
+  if (this.clientInfectedCells && Object.keys(this.clientInfectedCells).length && !infectedCellLimiter) {
+    throttledUpdateInfectedCellForce.call(this, this.clientInfectedCells)
+    const cellData = {}
+    for (let id in this.badGuys.infectedCells) {
+      const cell = this.badGuys.infectedCells[id]
+      throttledConsoleLog(cell)
+      cell.applyForce(cell.randomDirection)
+      limitSpeed(cell, 3)
+      if (this.clientInfectedCells[id]) {
+        cellData[id] = {
+          positionX: cell.body.position.x,
+          positionY: cell.body.position.y,
+          velocityX: cell.body.velocity.x,
+          velocityY: cell.body.velocity.y,
+          angle: cell.body.angle,
+          angularVelocity: cell.body.angularVelocity,
+          randomDirection: cell.randomDirection,
+          globalId: cell.globalId
+        }
+      }
+    }
+    this.socket.emit('changedInfectedCells', cellData)
+  }
+
   this.antibodies.getChildren().forEach(antibody => {
     for (let id in this.badGuys.epithelialCells) {
-      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], killEpithelialCell)
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], 'epithelialCell', killEpithelialCell)
     }
     for (let id in this.badGuys.players) {
-      badGuyCollision.call(this, antibody, this.badGuys.players[id], () => console.log('beep'))
+      badGuyCollision.call(this, antibody, this.badGuys.players[id], 'player', () => console.log('beep'))
+    }
+    for (let id in this.badGuys.infectedCells) {
+      badGuyCollision.call(this, antibody, this.badGuys.infectedCells[id], 'infectedCell', () => console.log('beep'))
     }
   })
 
@@ -187,6 +229,7 @@ export function update(time) {
           if (currCell.infectedness >= 180) {
             currCell.setTint(0xd60000)
             this.badGuys.epithelialCells[cellId] = currCell
+            // currCell.spawnCell = setInterval(createBadGuy, 60000)
             this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
             currCell.infectionText.destroy()
           }
@@ -205,16 +248,17 @@ export function update(time) {
   if (this.ship) this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450);
 }
 
-function badGuyCollision(antibody, badGuy, killFunction) {
+function badGuyCollision(antibody, badGuy, type, killFunction) {
   overlapCollision.call(this, {
     x: antibody.x,
     y: antibody.y
   }, badGuy, () => {
   if (this.secretColor.found || updateSecretColor.call(this, antibody.color)) {
       const newHealth = badGuy.health - antibody.damage
-      damageEpithelialCell.call(this, newHealth, badGuy)
+      if (type === 'player')
+      if (type === 'epithelialCell') damageEpithelialCell.call(this, newHealth, badGuy)
+      if (type === 'infectedCell') damageInfectedCell.call(this, newHealth, badGuy)
       antibody.destroy()
-      this.socket.emit('changedEpithelialCell', badGuy.globalId, {health: badGuy.health})
     }
   })
 }

@@ -4,10 +4,12 @@ import { scoreAndStars } from './lifeStars';
 import { epithelialCells, makeEpithelialCell, epithelialCellCollision } from './epithelialCells'
 import { tCells, makeTCell } from './tCells'
 import { mastCells, makeMastCell, activate } from './mastCells'
+import {infectedCells} from './npcInfectedCell'
 
 export { 
   players, keyboardControls, scoreAndStars,
   epithelialCells, makeEpithelialCell, epithelialCellCollision,
   tCells, makeTCell,
-  mastCells, makeMastCell, activate
+  mastCells, makeMastCell, activate,
+  infectedCells
 }
