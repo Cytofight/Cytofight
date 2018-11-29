@@ -50,8 +50,7 @@ const villains = [
     category: 'villain',
     blurb:
       "Something doesn't need to be big to cause big problems. This little monster is influenza c, a virus. Viruses work by 'hijacking' your cells and turning them into zombies that make more viruses--scary! If too many of these little guys invade your system, they make you feel all the symptoms you know as the flu, which could give you a fever, upset stomach, chills, and a nasty cough. Get your flu shot!",
-    img:
-      'https://www.21stcentech.com/wp-content/uploads/2012/02/influenza-virus.jpg'
+    img: 'https://i.imgur.com/6jUEmcp.png'
   }
 ]
 
