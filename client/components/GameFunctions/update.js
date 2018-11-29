@@ -175,6 +175,8 @@ export function update(time) {
     const cellData = {}
     for (let i = 0; i < this.redBloodCells.length; i++) {
       const cell = this.redBloodCells[i]
+      cell.applyForce(cell.randomDirection)
+      limitSpeed(cell, 6)
       cellData[i] = {
         positionX: cell.body.position.x,
         positionY: cell.body.position.y,
