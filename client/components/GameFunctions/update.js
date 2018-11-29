@@ -12,6 +12,7 @@ import {
   damageEpithelialCell,
   resetCells
 } from './createFunctions/epithelialCells'
+import {damageBadPlayer, killBadPlayer} from './createFunctions/addPlayers'
 
 const throttledUpdateForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
@@ -165,9 +166,14 @@ export function update(time) {
   }
 
   redBloodCellsLimiter = (redBloodCellsLimiter + 1) % 3
-  if (this.ownsRedBloodCells && this.redBloodCells && this.redBloodCells.length && !redBloodCellsLimiter) {
+  if (
+    this.ownsRedBloodCells &&
+    this.redBloodCells &&
+    this.redBloodCells.length &&
+    !redBloodCellsLimiter
+  ) {
     const cellData = {}
-    for (let i = 0;  i < this.redBloodCells.length; i++) {
+    for (let i = 0; i < this.redBloodCells.length; i++) {
       const cell = this.redBloodCells[i]
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 6)
@@ -197,12 +203,7 @@ export function update(time) {
       impact.call(this, antibody, this.dormantTCells[id])
     }
     for (let id in this.badGuys.epithelialCells) {
-      badGuyCollision.call(
-        this,
-        antibody,
-        this.badGuys.epithelialCells[id],
-        killEpithelialCell
-      )
+      badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id])
     }
     for (let id in this.badGuys.players) {
       badGuyCollision.call(this, antibody, this.badGuys.players[id], () =>
