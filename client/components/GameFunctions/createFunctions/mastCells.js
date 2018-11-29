@@ -1,4 +1,8 @@
-import { worldSize, defaultCellParams, setCellParams } from '../util'
+import {
+  worldSize,
+  defaultCellParams,
+  setCellParams
+} from '../util'
 
 export function mastCells(amount) {
   this.socket.on('mastCell', cells => {
@@ -11,7 +15,14 @@ export function mastCells(amount) {
         const velocityX = Math.floor(Math.random() * 12 - 6)
         const velocityY = Math.floor(Math.random() * 12 - 6)
         const angularVelocity = Math.random() * 0.3 - 0.15
-        cellData[i] = {positionX, positionY, velocityX, velocityY, angularVelocity, globalId: i}
+        cellData[i] = {
+          positionX,
+          positionY,
+          velocityX,
+          velocityY,
+          angularVelocity,
+          globalId: i
+        }
         this.mastCells[i] = makeMastCell.call(this, cellData[i])
       }
       this.socket.emit('newMastCells', cellData)
@@ -21,6 +32,17 @@ export function mastCells(amount) {
       }
     }
     this.ownsMastCells = true
+    this.clientMastCells = {}
+  })
+
+  // Mid-game generation of any new Mast cells
+  this.socket.on('addMastCells', (newCells, ownerId) => {
+    for (let id in newCells) {
+      const newCell = makeMastCell.call(this, newCells[id])
+      this.mastCells[id] = newCell
+      // If the server decides that you should be responsible for the new cell(s)
+      if (ownerId === this.socket.id) this.clientDormantTCells[id] = newCell
+    }
   })
 
   this.socket.on('updateMastCellsClient', cells => {
@@ -50,19 +72,25 @@ export function makeMastCell(cellDatum) {
     }
     return false
   }
-  
+
   const histamines = this.add.particles('histamines')
   const secretor = histamines.createEmitter({
-    x: 1, y: 1,
+    x: 1,
+    y: 1,
     speed: Math.floor(Math.random() * 150) + 150,
-    scale: {start: 1, end: 0},
+    scale: {
+      start: 1,
+      end: 0
+    },
     blendMode: 'ADD',
     deathZone: {
       type: 'onEnter',
-      source: { contains }
+      source: {
+        contains
+      }
     }
   })
-  
+
   const mastCell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'mastCell')
   mastCell.setCircle(mastCell.width / 2, defaultCellParams)
   setCellParams(mastCell, cellDatum)

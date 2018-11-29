@@ -1,82 +1,13 @@
-export const worldSize = {x: 2000, y: 2000}
+import { limitSpeed, updateForce, limitNumber, throttle } from './speed'
+import { fire } from './fireAntibodies'
+
+export const worldSize = {x: 3000, y: 3000}
 export const colorNumber = 64
 
 export const defaultCellParams = {
   restitution: 1,
   friction: 0,
   frictionAir: 0
-}
-
-
-
-export function limitSpeed(obj, maxSpeed) {
-  const velX = obj.body.velocity.x
-  const velY = obj.body.velocity.y
-  const velXMultiplier = (velX < 0 ? -1 : 1 ) * maxSpeed
-  const velYMultiplier = (velY < 0 ? -1 : 1 ) * maxSpeed
-
-  if (Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2)) > maxSpeed) {
-    const angle = Math.abs(Math.atan(velY / velX))
-    const newX = Math.cos(angle)
-    const newY = Math.sin(angle)
-    obj.setVelocity(newX * velXMultiplier, newY * velYMultiplier)
-  }
-}
-
-export function throttle(func, milliseconds) {
-  let time = Date.now() - milliseconds;
-  return function(...args){
-    if(Date.now() - time >= milliseconds){
-      let res = func.apply(this, args)
-      time = Date.now()
-      return res
-    }
-  }
-}
-
-export function fire (prevInfo) {
-  let firingInfo
-  if (!prevInfo) {
-    let randomDamage = Math.floor(Math.random() * 10) + 10
-    let randomColor = Math.floor(Math.random() * 16777215)
-    if (this.secretColor.found) {
-      randomColor = this.secretColor.value
-    }
-    firingInfo = {
-      x: this.ship.body.position.x,
-      y: this.ship.body.position.y,
-      angle: this.ship.body.angle,
-      globalId: this.socket.id,
-      type: 'ship',
-      color: randomColor,
-      damage: randomDamage
-    }
-  } else {
-    firingInfo = prevInfo
-  }
-  let antibody = this.antibodies.get();
-  if(antibody) {
-    antibody.setTint(firingInfo.color)
-    antibody.fire(firingInfo);
-    if (!prevInfo) this.socket.emit('firedAntibody', firingInfo)
-  }
-}
-
-export function updateForce(cellsObj) {
-  for (let key in cellsObj) {
-    if (key === 0) console.log(cellsObj[key])
-    const randomX = Math.random() * 0.002 - 0.001
-    const randomY = Math.random() * 0.002 - 0.001
-    cellsObj[key].randomDirection = {x: randomX, y: randomY}
-  }
-}
-
-export function limitNumber(num, lowerLimit, higherLimit) {
-  if (lowerLimit > higherLimit) [lowerLimit, higherLimit] = [higherLimit, lowerLimit]
-  
-  if (num < lowerLimit) return lowerLimit
-  if (num > higherLimit) return higherLimit
-  return num
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {
@@ -125,3 +56,5 @@ export function updateSecretColor(color) {
   }
   return false
 }
+
+export { limitSpeed, updateForce, limitNumber, throttle, fire }

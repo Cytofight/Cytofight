@@ -9,11 +9,12 @@ module.exports = io => {
   let dormantTCells = {}
   let mastCells = {}
   let infectedCells = {}
+  let redBloodCells = []
   let secretColor = {}
   let star = {
     x: Math.floor(Math.random() * 900) + 50,
     y: Math.floor(Math.random() * 900) + 50
-  };
+  }
   let scores = {
     blue: 0,
     red: 0
@@ -26,7 +27,7 @@ module.exports = io => {
       angle: 0,
       position: {
         x: Math.floor(Math.random() * 900) + 50,
-        y: Math.floor(Math.random() * 900) + 50,
+        y: Math.floor(Math.random() * 900) + 50
       },
       velocity: {
         x: 0,
@@ -34,19 +35,24 @@ module.exports = io => {
       },
       angularVelocity: 0,
       playerId: socket.id,
-      team: (Math.floor(Math.random() * 2) === 0) ? 'red' : 'blue',
+      team: Math.floor(Math.random() * 2) === 0 ? 'red' : 'blue',
       clientDormantTCells: {},
       clientInfectedCells: {},
       clientSpawningCells: {},
+      clientMastCells: {},
       nameText: ''
     }
-    
+
     // send the players object to the new player
     socket.emit('currentPlayers', players)
     // send the star object to the new player
     socket.emit('starLocation', star)
     // send the epithelial cells to the new players
     socket.emit('epithelialCell', Object.values(epithelialCells))
+    // send the red blood cells
+    socket.emit('redBloodCells', redBloodCells)
+    // send the red blood cells to the new players, transfer ownership
+    socket.broadcast.emit('disownRedBloodCells')
     // send the dormant T-cells to the new players
     socket.emit('dormantTCell', dormantTCells)
     // send the mast cells to the new players, transfer ownership
@@ -76,11 +82,18 @@ module.exports = io => {
       // passing on of "ownerships" (but only if there are any more players to begin with)
       if (Object.keys(players).length > 0) {
         // Pass "their" T cells onto the player with the lowest number
-        io.to(`${findLowestCellPlayerId(players)}`).emit('passDormantTCells', passingCellIds)
-        const randomPlayerId = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)]
+        io
+          .to(`${findLowestCellPlayerId(players)}`)
+          .emit('passDormantTCells', passingCellIds)
+        const randomPlayerId = Object.keys(players)[
+          Math.floor(Math.random() * Object.keys(players).length)
+        ]
         io.to(`${randomPlayerId}`).emit('passMastCells')
         io.to(`${randomPlayerId}`).emit('passInfectedCells', passingInfectedIds)
         io.to(`${randomPlayerId}`).emit('passSpawningRedEpithelialCells', passingSpawnIds)
+        io
+          .to(`${findLowestCellPlayerId(players)}`)
+          .emit('passRedBloodCells', passingCellIds)
       }
       // remove this player from our players object
       // emit a message to all players to remove this player
@@ -90,39 +103,66 @@ module.exports = io => {
         dormantTCells = {}
         mastCells = {}
         infectedCells = {}
+        redBloodCells = []
         secretColor = {}
       }
     })
 
+    socket.on('deletePlayer', function(playerId) {
+      io.emit('deleteOtherPlayer', playerId)
+    })
+
     // when a player moves, update the player data
-    socket.on('playerMovement', function ({ angle, position, velocity, angularVelocity, nameText }) {
+    socket.on('playerMovement', function({
+      angle,
+      position,
+      velocity,
+      angularVelocity,
+      nameText
+    }) {
       if (players[socket.id]) {
-      players[socket.id].angle = angle
-      players[socket.id].position = position
-      players[socket.id].velocity = velocity
-      players[socket.id].angularVelocity = angularVelocity
-      players[socket.id].nameText = nameText
-      // players[socket.id].rotation = movementData.rotation
-      // emit a message to all players about the player that moved
-      socket.broadcast.emit('playerMoved', players[socket.id])
+        players[socket.id].angle = angle
+        players[socket.id].position = position
+        players[socket.id].velocity = velocity
+        players[socket.id].angularVelocity = angularVelocity
+        players[socket.id].nameText = nameText
+        // players[socket.id].rotation = movementData.rotation
+        // emit a message to all players about the player that moved
+        socket.broadcast.emit('playerMoved', players[socket.id])
       }
     })
 
-    socket.on('starCollected', function () {
+    socket.on('starCollected', function() {
       if (players[socket.id].team === 'red') {
-        // scores.red += 10
+        //  switch(randomNumber){
+        //   //increase player HP by +50
+        //   case 1:
+        //   players[socket.id].health += 50
+        //  }
       } else {
-        // scores.blue += 10
+        let randomNumber = Math.ceil(Math.random() * 2)
+        switch (randomNumber) {
+          case 1:
+            spawnTCells(socket)
+            break
+          case 2:
+            spawnMastCell(socket)
+            break
+        }
       }
+
       star.x = Math.floor(Math.random() * 900) + 50
       star.y = Math.floor(Math.random() * 900) + 50
       // broadcast star collection to all players
       io.emit('starDestroy')
       // sets a delay before new stars spawn
-      setTimeout(() => io.emit('starLocation', star), Math.floor(Math.random() * 30000) + 30000)
+      setTimeout(
+        () => io.emit('starLocation', star),
+        Math.floor(Math.random() * 30000) + 30000
+      )
     })
 
-    socket.on('newEpithelialCells', (newCells) => {
+    socket.on('newEpithelialCells', newCells => {
       Object.assign(epithelialCells, newCells)
       scores.blue = Object.keys(newCells).length
     })
@@ -166,21 +206,32 @@ module.exports = io => {
       socket.broadcast.emit('addDormantTCells', newCells)
     })
 
-    socket.on('requestNewTCells', cellData => { //CELLDATA RECEIVED IS AN ARRAY BECAUSE IT HAS NO IDS YET
+    socket.on('requestNewTCells', cellData => {
+      //CELLDATA RECEIVED IS AN ARRAY BECAUSE IT HAS NO IDS YET
       const lowestCellPlayerId = findLowestCellPlayerId(players)
       if (lowestCellPlayerId === null) return
       // The next available globalId, determined by the server to ensure consistency
       let nextId = Math.max(...Object.keys(dormantTCells)) + 1
       const cellDataObj = cellData.reduce((obj, currCell) => {
         // Please humor my code golf here, I'm bored; assigns currCell to nextId, and nextId to currCell's globalId
-        return {...obj, [nextId]: {...currCell, globalId: nextId++}}
+        return {
+          ...obj,
+          [nextId]: {
+            ...currCell,
+            globalId: nextId++
+          }
+        }
       }, {})
       Object.assign(dormantTCells, cellDataObj)
-      Object.assign(players[lowestCellPlayerId].clientDormantTCells, cellDataObj)
+      Object.assign(
+        players[lowestCellPlayerId].clientDormantTCells,
+        cellDataObj
+      )
       io.emit('addDormantTCells', cellDataObj, lowestCellPlayerId)
     })
 
-    socket.on('changedTCells', cellData => { //NOW AN OBJECT
+    socket.on('changedTCells', cellData => {
+      //NOW AN OBJECT
       // Object.assign doesn't work right for some reason?
       for (let id in cellData) {
         dormantTCells[id] = cellData[id]
@@ -190,6 +241,8 @@ module.exports = io => {
 
     socket.on('newMastCells', newCells => {
       Object.assign(mastCells, newCells)
+      Object.assign(players[socket.id].clientMastCells, newCells)
+      socket.broadcast.emit('addMastCells', newCells)
     })
 
     socket.on('updateMastCells', cellData => {
@@ -199,7 +252,18 @@ module.exports = io => {
       socket.broadcast.emit('updateMastCellsClient', cellData)
     })
 
-    socket.on('firedAntibody', (firingInfo) => {
+    socket.on('newRedBloodCells', newCells => {
+      Object.assign(redBloodCells, newCells)
+    })
+
+    socket.on('updateRedBloodCells', cellData => {
+      for (let id in cellData) {
+        redBloodCells[id] = cellData[id]
+      }
+      socket.broadcast.emit('updateRedBloodCellsClient', cellData)
+    })
+
+    socket.on('firedAntibody', firingInfo => {
       // fire.call(this, x, y, angle)
       if (firingInfo.type === 'tCell') {
         dormantTCells[firingInfo.id].angle = firingInfo.angle
@@ -217,12 +281,61 @@ module.exports = io => {
       socket.broadcast.emit('new-channel', channel)
     })
   })
+
+  function spawnTCells(socket) {
+    let randomNumber = Math.ceil(Math.random() * 3)
+    while (randomNumber) {
+      io.emit('addDormantTCells', [
+        {
+          positionX: players[socket.id].position.x,
+          positionY: players[socket.id].position.y,
+          velocityX: 0,
+          velocityY: 0,
+          angle: 0,
+          angularVelocity: 1,
+          randomDirection: {
+            x: 0,
+            y: 0
+          }
+        }
+      ])
+      randomNumber--
+    }
+  }
+
+  function spawnMastCell(socket) {
+    const velocityX = Math.floor(Math.random() * 12 - 6)
+    const velocityY = Math.floor(Math.random() * 12 - 6)
+    io.emit('addMastCells', [
+      {
+        positionX: players[socket.id].position.x,
+        positionY: players[socket.id].position.y,
+        velocityX: velocityX,
+        velocityY: velocityY,
+        angle: 0,
+        angularVelocity: 1,
+        randomDirection: {
+          x: 0,
+          y: 0
+        }
+      }
+    ])
+  }
 }
 
 function findLowestCellPlayerId(players) {
-  return Object.keys(players).reduce((currLowestPlayer, id) => {
-    const currAmount = Object.keys(players[id].clientDormantTCells).length
-    if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount) return {id, amount: currAmount}
-    else return currLowestPlayer
-  }, {id: null}).id
+  return Object.keys(players).reduce(
+    (currLowestPlayer, id) => {
+      const currAmount = Object.keys(players[id].clientDormantTCells).length
+      if (!currLowestPlayer.id || currLowestPlayer.amount > currAmount)
+        return {
+          id,
+          amount: currAmount
+        }
+      else return currLowestPlayer
+    },
+    {
+      id: null
+    }
+  ).id
 }

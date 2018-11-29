@@ -11,14 +11,16 @@ import {
   epithelialCellCollision,
   tCells,
   mastCells,
-  infectedCells
+  infectedCells,
+  redBloodCells
 } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
 const numberOfEpithelialCells = 40
 const numberOfTCells = 15
-const numberOfMastCells = 2
+const numberOfMastCells = 4
+const numberOfRedBloodCells = 50
 
 //Initialize the players in the game
 //change name of function to init()
@@ -40,7 +42,7 @@ export function players() {
     value: null,
     found: false
   }
-  this.socket.on('currentPlayers', (players) => {
+  this.socket.on('currentPlayers', players => {
     for (let id in players) {
       if (id === this.socket.id) {
         addPlayer.call(this, players[id])
@@ -58,27 +60,24 @@ export function players() {
     if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
     else delete this.goodGuys.players[playerId]
   })
-  this.socket.on('playerMoved', ({
-    playerId,
-    angle,
-    position,
-    velocity,
-    angularVelocity,
-    nameText
-  }) => {
-    const currPlayer = this.otherPlayers[playerId]
-    if (currPlayer) {
-      currPlayer.setPosition(position.x, position.y)
-        .setVelocity(velocity.x, velocity.y)
+  this.socket.on(
+    'playerMoved',
+    ({playerId, angle, position, velocity, angularVelocity, nameText}) => {
+      const currPlayer = this.otherPlayers[playerId]
+      if (currPlayer) {
+        currPlayer
+          .setPosition(position.x, position.y)
+          .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
         currPlayer.nameText.x = nameText.x
         currPlayer.nameText.y = nameText.y
-      currPlayer.body.angle = angle
+        currPlayer.body.angle = angle
+      }
     }
-  })
+  )
 
-  this.socket.on('secretColor', (color) => {
+  this.socket.on('secretColor', color => {
     this.secretColor = color
   })
 
@@ -87,7 +86,9 @@ export function players() {
   mastCells.call(this, numberOfMastCells)
   infectedCells.call(this)
   console.log(this.badGuys.infectedCells)
-
+  redBloodCells.call(this, numberOfRedBloodCells)
+  console.log('red blood cells done')
+  //create events related to antibodies being fired from B cells
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
     if (firingInfo.type === 'tCell') {
@@ -95,6 +96,11 @@ export function players() {
     } else if (firingInfo.type === 'player') {
       this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
     }
+  })
+  console.log('after first socket event in player')
+  this.socket.on('deleteOtherPlayer', playerId => {
+    this.badGuys.players[playerId].destroy()
+    delete this.badGuys.players[playerId]
   })
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
@@ -110,6 +116,7 @@ const shipParams = {
 }
 
 function addPlayer(playerInfo) {
+  console.log('adding player')
   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
@@ -118,32 +125,38 @@ function addPlayer(playerInfo) {
     label: 'me',
     ...shipParams
   })
-  
+
   // Create a player name on top of the ship based on socketId
-  this.ship.nameText = this.add.text(this.ship.body.position.x - 125, this.ship.body.position.y - 50 , `${playerInfo.playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+  this.ship.nameText = this.add.text(
+    this.ship.body.position.x - 125,
+    this.ship.body.position.y - 50,
+    `${playerInfo.playerId}`,
+    {fontSize: '20px', fill: '#01c0ff'}
+  )
 
   this.cameras.main.startFollow(this.ship) //******* */
   if (playerInfo.team === 'blue') {
-    this.ship.setTint(0xd60000)
-    this.badGuys.players[this.socket.id] = this.ship
-  } else {
     this.ship.setTint(0x01c0ff)
     this.goodGuys.players[this.socket.id] = this.ship
+  } else {
+    this.ship.setTint(0xd60000)
+    this.ship.health = 200
+    this.badGuys.players[this.socket.id] = this.ship
   }
 
   this.input.on(
     'pointermove',
     function(pointer) {
-      // VIEWPORT: 800x, 600y
+      // VIEWPORT: innerWidthx, innerHeighty
       const adjustedPointerX = limitNumber(
-        pointer.x + this.ship.x - 400,
+        pointer.x + this.ship.x - window.innerWidth/2,
         pointer.x,
-        pointer.x + worldSize.x - 800
+        pointer.x + worldSize.x - window.innerWidth
       )
       const adjustedPointerY = limitNumber(
-        pointer.y + this.ship.y - 300,
+        pointer.y + this.ship.y - window.innerHeight/2,
         pointer.y,
-        pointer.y + worldSize.y - 600
+        pointer.y + worldSize.y - window.innerHeight
       )
       var angle =
         -Math.atan2(
@@ -156,20 +169,40 @@ function addPlayer(playerInfo) {
     },
     this
   )
+  console.log('done with player func')
 }
 
 function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5)
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
-  if (team === 'blue') {
+  if (team === 'red') {
     otherPlayer.setTint(0xd60000)
+    otherPlayer.health = 200
     this.badGuys.players[playerId] = otherPlayer
   } else {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
-  otherPlayer.nameText = this.add.text(position.x - 125, position.y - 50 , `${playerId}`, { fontSize: '20px', fill: '#01c0ff' })
+  otherPlayer.nameText = this.add.text(
+    position.x - 125,
+    position.y - 50,
+    `${playerId}`,
+    {fontSize: '20px', fill: '#01c0ff'}
+  )
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
+}
+
+export function damageBadPlayer(newHealth, cell) {
+  cell.health = newHealth
+  console.log(newHealth)
+  if (cell.health <= 0) killBadPlayer.call(this, cell.playerId)
+}
+
+export function killBadPlayer(playerId) {
+  this.badGuys.players[playerId].destroy()
+  delete this.badGuys.players[playerId]
+  delete this.otherPlayers[playerId]
+  this.socket.emit('deletePlayer', playerId)
 }

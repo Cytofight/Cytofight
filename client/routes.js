@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {withRouter, Route, Switch} from 'react-router-dom'
 import PropTypes from 'prop-types'
 import {Login, Signup, UserHome, Game, Heroes, Villains} from './components'
-import { Main } from './components/GameChat'
+import {Main} from './components/GameChat'
 import {me} from './store'
 
 /**
@@ -33,7 +33,7 @@ class Routes extends Component {
           </Switch>
         )}
         {/* Displays our Login component as a fallback */}
-        <Route component={Login} />
+        <Route component={Game} />
       </Switch>
     )
   }
