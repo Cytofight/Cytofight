@@ -168,8 +168,8 @@ export function damageEpithelialCell(newHealth, cell) {
     volume: 0.5
   })
   cell.setTint(0xFFFF33)
-  damagedSound.play()
   setTimeout(() => cell.setTint(0xd60000), 100)
+  damagedSound.play()
   cell.health = newHealth
   if (cell.health <= 0) killEpithelialCell.call(this, cell.globalId)
 }
