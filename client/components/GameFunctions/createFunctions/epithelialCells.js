@@ -149,6 +149,10 @@ export function epithelialCellCollision(bodyA, bodyB) {
 }
 
 export function killEpithelialCell(globalId) {
+  const destroyedSound = this.sound.add('smallexplosion', {
+    volume: 0.5
+  })
+  destroyedSound.play()
   this.epithelialCells[globalId].destroy()
   delete this.epithelialCells[globalId]
   delete this.badGuys.epithelialCells[globalId]
