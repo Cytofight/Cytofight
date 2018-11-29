@@ -175,7 +175,6 @@ export function update(time) {
     const cellData = {}
     for (let i = 0; i < this.redBloodCells.length; i++) {
       const cell = this.redBloodCells[i]
-      cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 6)
       cellData[i] = {
         positionX: cell.body.position.x,
@@ -190,16 +189,16 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
-    for(let id in this.epithelialCells){
+    for (let id in this.epithelialCells) {
       impact.call(this, antibody, this.epithelialCells[id])
     }
-    for(let id in this.mastCells){
+    for (let id in this.mastCells) {
       impact.call(this, antibody, this.mastCells[id])
     }
-    for(let id in this.redBloodCells){
+    for (let id in this.redBloodCells) {
       impact.call(this, antibody, this.redBloodCells[id])
     }
-    for(let id in this.dormantTCells){
+    for (let id in this.dormantTCells) {
       impact.call(this, antibody, this.dormantTCells[id])
     }
     for (let id in this.badGuys.epithelialCells) {
@@ -263,7 +262,7 @@ export function update(time) {
                 this.scene.start('Winner')
                 resetCells.call(this)
               } else if (this.goodGuys.players[this.socket.id]) {
-                this.scene.start('Loser')
+                this.scene.start('GoodLoser')
                 resetCells.call(this)
               }
             }
@@ -295,7 +294,7 @@ function impact(antibody, cell) {
     },
     cell,
     () => {
-      antibody.destroy()     
+      antibody.destroy()
     }
   )
 }
@@ -315,7 +314,11 @@ function badGuyCollision(antibody, badGuy, killFunction) {
         updateSecretColor.call(this, antibody.color)
       ) {
         const newHealth = badGuy.health - antibody.damage
-        damageEpithelialCell.call(this, newHealth, badGuy)
+        if (badGuy.globalId) {
+          damageEpithelialCell.call(this, newHealth, badGuy)
+        } else if (badGuy.playerId) {
+          damageBadPlayer.call(this, newHealth, badGuy)
+        }
       }
     }
   )

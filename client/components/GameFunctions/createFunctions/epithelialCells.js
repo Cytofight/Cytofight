@@ -74,7 +74,7 @@ export function epithelialCells(amount) {
         this.scene.start('Winner')
       } else if (this.goodGuys.players[this.socket.id]) {
         resetCells.call(this)
-        this.scene.start('Loser')
+        this.scene.start('GoodLoser')
       }
   })
 
@@ -167,7 +167,7 @@ export function damageEpithelialCell(newHealth, cell) {
   const damagedSound = this.sound.add('hitCell', {
     volume: 0.5
   })
-  cell.setTint(0xFFFF33)
+  cell.setTint(0xffff33)
   setTimeout(() => cell.setTint(0xd60000), 100)
   damagedSound.play()
   cell.health = newHealth
