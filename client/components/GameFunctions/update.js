@@ -184,6 +184,18 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
+    for(let id in this.epithelialCells){
+      impact.call(this, antibody, this.epithelialCells[id])
+    }
+    for(let id in this.mastCells){
+      impact.call(this, antibody, this.mastCells[id])
+    }
+    for(let id in this.redBloodCells){
+      impact.call(this, antibody, this.redBloodCells[id])
+    }
+    for(let id in this.dormantTCells){
+      impact.call(this, antibody, this.dormantTCells[id])
+    }
     for (let id in this.badGuys.epithelialCells) {
       badGuyCollision.call(
         this,
@@ -273,6 +285,20 @@ export function update(time) {
     this.minimap.scrollY = Phaser.Math.Clamp(this.ship.y - 200, 450, 1450)
 }
 
+function impact(antibody, cell) {
+  overlapCollision.call(
+    this,
+    {
+      x: antibody.x,
+      y: antibody.y
+    },
+    cell,
+    () => {
+      antibody.destroy()     
+    }
+  )
+}
+
 function badGuyCollision(antibody, badGuy, killFunction) {
   overlapCollision.call(
     this,
@@ -282,13 +308,13 @@ function badGuyCollision(antibody, badGuy, killFunction) {
     },
     badGuy,
     () => {
+      antibody.destroy()
       if (
         this.secretColor.found ||
         updateSecretColor.call(this, antibody.color)
       ) {
         const newHealth = badGuy.health - antibody.damage
         damageEpithelialCell.call(this, newHealth, badGuy)
-        antibody.destroy()
       }
     }
   )

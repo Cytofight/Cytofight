@@ -48,7 +48,7 @@ export function create() {
   })
   keyboardControls.call(this)
 
-  console.log(this.cameras)
+  console.log(this)
   this.blueScoreText = this.add
     .text(16, 16, '', {fontSize: '16px', fill: '#01c0ff'})
     .setDepth(1)
