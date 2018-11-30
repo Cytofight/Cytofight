@@ -93,13 +93,15 @@ export function epithelialCells(amount) {
 
   this.socket.on('hugeBoi', () => {
     const hugeBoi = this.matter.add.image(1000, 1000, 'epithelialCell')
-      .setScale(12)
-    hugeBoi.setRectangle(hugeBoi.width / 2, hugeboi.height / 2, defaultCellParams)
+      .setScale(15)
+    hugeBoi.setRectangle(hugeBoi.width / 2, hugeBoi.height / 2, defaultCellParams)
       .setTint(0xd60000)
       hugeBoi.spawn = setInterval(() => {
         spawnInfectedCell.call(this, hugeBoi.body.position.x, hugeBoi.body.position.y)
-      }, 500)
+      }, 250)
     hugeBoi.health = 5000
+    this.epithelialCells[9999] = hugeBoi
+    this.badGuys.epithelialCells = hugeBoi
   })
 
   this.socket.on('deletedEpithelialCell', globalId => {

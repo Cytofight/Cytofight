@@ -263,6 +263,7 @@ export function update(time) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
         if (
+          currCell && 
           currCell.infectionRange.contains(
             this.ship.body.position.x,
             this.ship.body.position.y

@@ -85,8 +85,8 @@ export function players() {
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
   infectedCells.call(this)
-  console.log(this.badGuys.infectedCells)
   redBloodCells.call(this, numberOfRedBloodCells)
+
   //create events related to antibodies being fired from B cells
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
@@ -96,7 +96,7 @@ export function players() {
       this.otherPlayers[firingInfo.id].body.angle = firingInfo.angle
     }
   })
-  console.log('after first socket event in player')
+
   this.socket.on('deleteOtherPlayer', playerId => {
     if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
     delete this.badGuys.players[playerId]
@@ -125,7 +125,6 @@ const shipParams = {
 }
 
 function addPlayer(playerInfo) {
-  console.log('adding player')
   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
@@ -178,7 +177,6 @@ function addPlayer(playerInfo) {
     },
     this
   )
-  console.log('done with player func')
 }
 
 function addOtherPlayers({position, team, playerId}) {
