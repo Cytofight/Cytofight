@@ -19,12 +19,13 @@ let temp = 0
 const throttledConsoleLog = throttle(console.log, 2000)
 const throttledUpdateTCellForce = throttle(updateForce, 1800)
 const throttledUpdateInfectedCellForce = throttle(updateForce, 1800)
-const throttledFire = throttle(fire, 200)
+const throttledFire = throttle(fire, 150)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0,
   infectedCellLimiter = 1,
-  redBloodCellsLimiter = 0
+  redBloodCellsLimiter = 0,
+  soundLimiter = 0
 
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
@@ -255,10 +256,15 @@ export function update(time) {
       badGuyCollision.call(this, antibody, this.badGuys.infectedCells[id], damageInfectedCell)
     }
   })
+  
+  soundLimiter = (soundLimiter + 1) % 13
 
   window.hack = 'securitronAndCone'
 
   if (this.badGuys.players[this.socket.id]) {
+    const infectionSound = this.sound.add('infectionUnderWay', {
+      volume: 0.9
+    })
     for (let cellId in this.epithelialCells) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
@@ -267,8 +273,11 @@ export function update(time) {
           currCell.infectionRange.contains(
             this.ship.body.position.x,
             this.ship.body.position.y
-          )
-        ) {
+            )
+            ) {
+          if(!soundLimiter){
+            infectionSound.play()
+          }
           currCell.infectedness++
           currCell.infectionText.setText(
             `${Math.ceil(currCell.infectedness / 1.8)}%`

@@ -112,8 +112,8 @@ export function epithelialCells(amount) {
 }
 
 export function makeEpithelialCell({x, y, tint, globalId, health}) {
-  const cell = this.matter.add.image(x, y, 'epithelialCell').setScale(1.2)
-  cell.setRectangle(cell.width / 2, cell.height - 20, {
+  const cell = this.matter.add.image(x, y, 'epithelialCell').setScale(1.8)
+  cell.setRectangle(cell.width + 5, cell.height + 30, {
     isStatic: true,
     ...defaultCellParams
   })
@@ -121,7 +121,7 @@ export function makeEpithelialCell({x, y, tint, globalId, health}) {
     cell.setTint(tint)
     this.badGuys.epithelialCells[globalId] = cell
   }
-  cell.infectionRange = new Phaser.Geom.Circle(x, y, 100)
+  cell.infectionRange = new Phaser.Geom.Circle(x, y, 140)
   cell.infectedness = 0
   cell.infectionText = this.add
     .text(x - 13, y, '', {fontSize: '14px', fill: '#ffffff'})
@@ -153,8 +153,8 @@ export function epithelialCellCollision(bodyA, bodyB) {
     console.log('done!')
     this.epithelialCells[matchingCellId].setTint(0xd60000)
     this.epithelialCells[matchingCellId].spawn = setInterval(() => {
-      spawnInfectedCell(this.epithelialCells[matchingCellId].body.position.x, this.epithelialCells[matchingCellId].body.position.y), 10000
-    })
+      spawnInfectedCell(this.epithelialCells[matchingCellId].body.position.x, this.epithelialCells[matchingCellId].body.position.y)}, 10000
+    )
     this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
     this.blueScoreText.setText('Healthy Epithelial Cells: ' + (Object.keys(this.epithelialCells).length - Object.keys(this.badGuys.epithelialCells).length))
     this.redScoreText.setText('Infected Epithelial Cells: ' + Object.keys(this.badGuys.epithelialCells).length)
