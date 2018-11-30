@@ -11,15 +11,16 @@ import {
   epithelialCellCollision,
   tCells,
   mastCells,
+  infectedCells,
   redBloodCells
 } from './index'
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 40
+const numberOfEpithelialCells = 30
 const numberOfTCells = 15
 const numberOfMastCells = 4
-const numberOfRedBloodCells = 50
+const numberOfRedBloodCells = 30
 
 //Initialize the players in the game
 //change name of function to init()
@@ -30,7 +31,8 @@ export function players() {
   this.otherPlayers = {}
   this.badGuys = {
     players: {},
-    epithelialCells: {}
+    epithelialCells: {},
+    infectedCells: {}
   }
   this.goodGuys = {
     players: {},
@@ -53,10 +55,13 @@ export function players() {
     addOtherPlayers.call(this, playerInfo)
   })
   this.socket.on('disconnect', playerId => {
-    this.otherPlayers[playerId].destroy()
+    if (this.otherPlayers[playerId]) {
+      this.otherPlayers[playerId].nameText.destroy()
+      this.otherPlayers[playerId].destroy()
+    }
     delete this.otherPlayers[playerId]
-    if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
-    else delete this.goodGuys.players[playerId]
+    delete this.badGuys.players[playerId]
+    delete this.goodGuys.players[playerId]
   })
   this.socket.on(
     'playerMoved',
@@ -82,6 +87,7 @@ export function players() {
   epithelialCells.call(this, numberOfEpithelialCells)
   tCells.call(this, numberOfTCells)
   mastCells.call(this, numberOfMastCells)
+  infectedCells.call(this)
   redBloodCells.call(this, numberOfRedBloodCells)
 
   //create events related to antibodies being fired from B cells
@@ -95,7 +101,7 @@ export function players() {
   })
 
   this.socket.on('deleteOtherPlayer', playerId => {
-    this.badGuys.players[playerId].destroy()
+    if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
     delete this.badGuys.players[playerId]
     //if this is you, display dead page. if game is over, winner or loser page
     if (!Object.keys(this.badGuys.players).length) {
@@ -206,7 +212,7 @@ export function damageBadPlayer(newHealth, cell) {
 
 export function killBadPlayer(playerId) {
   console.log('Bad player killed!')
-  this.badGuys.players[playerId].destroy()
+  if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
   delete this.badGuys.players[playerId]
   console.log('Bad guys left:', Object.keys(this.badGuys.players).length)
   delete this.otherPlayers[playerId]

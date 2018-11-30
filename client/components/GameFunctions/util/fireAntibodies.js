@@ -1,8 +1,8 @@
 // Fire antibodies function for memory B cells (main character for good guys)
 export function fire(prevInfo) {
-  const fireSound = this.sound.add('shoot', {
-    volume: 0.5
-  })
+  // const fireSound = this.sound.add('shoot', {
+  //   volume: 0.5
+  // })
   let firingInfo
   if (!prevInfo) {
     let randomDamage = Math.floor(Math.random() * 10) + 10
@@ -26,7 +26,7 @@ export function fire(prevInfo) {
   if (antibody) {
     antibody.setTint(firingInfo.color)
     antibody.fire(firingInfo)
-    fireSound.play()
+    this.fireSound.play()
     if (!prevInfo) this.socket.emit('firedAntibody', firingInfo)
   }
 }
