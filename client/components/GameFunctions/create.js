@@ -36,8 +36,9 @@ export function create() {
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
-    .add(0, window.innerHeight - 100, 150, 100)
+    .add(0, 0, window.innerWidth / 8, window.innerHeight / 8)
     .setZoom(0.1)
+    .setAlpha(0.8)
     .setName('mini')
   this.minimap.scrollX = worldSize.x
   this.minimap.scrollY = worldSize.y
@@ -72,7 +73,6 @@ export function create() {
     })
     .setDepth(1)
     .setScrollFactor(0)
-    .setShadow(3, 3, 'black', 3, true, true)
     .setStroke('yellow', 4)
 
   scoreAndStars.call(this)
