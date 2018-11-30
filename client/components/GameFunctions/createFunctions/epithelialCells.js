@@ -94,7 +94,7 @@ export function epithelialCells(amount) {
   this.socket.on('hugeBoi', () => {
     const hugeBoi = this.matter.add.image(1000, 1000, 'epithelialCell')
       .setScale(12)
-    hugeBoi.setRectangle(500, 500, defaultCellParams)
+    hugeBoi.setRectangle(hugeBoi.width / 2, hugeboi.height / 2, defaultCellParams)
       .setTint(0xd60000)
       hugeBoi.spawn = setInterval(() => {
         spawnInfectedCell.call(this, hugeBoi.body.position.x, hugeBoi.body.position.y)
