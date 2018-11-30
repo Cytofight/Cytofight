@@ -19,12 +19,13 @@ let temp = 0
 const throttledConsoleLog = throttle(console.log, 2000)
 const throttledUpdateTCellForce = throttle(updateForce, 1800)
 const throttledUpdateInfectedCellForce = throttle(updateForce, 1800)
-const throttledFire = throttle(fire, 200)
+const throttledFire = throttle(fire, 150)
 const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0,
   infectedCellLimiter = 1,
-  redBloodCellsLimiter = 0
+  redBloodCellsLimiter = 0,
+  soundLimiter = 0
 
 export function update(time) {
   // const boundFire = throttledFire.bind(this)

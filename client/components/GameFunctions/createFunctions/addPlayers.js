@@ -133,7 +133,7 @@ function addPlayer(playerInfo) {
   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
-  this.ship.setScale(0.5)
+  this.ship.setScale(0.7)
   this.ship.setCircle(this.ship.width / 2, {
     label: 'me',
     ...shipParams
