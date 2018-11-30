@@ -58,9 +58,10 @@ export function tCells(amount) {
 
 export function makeTCell(cellDatum) {
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
-  cell.setCircle(cell.width / 2, defaultCellParams)
+  cell.setCircle(cell.width / 2, {label: 'tCell', ...defaultCellParams})
   setCellParams(cell, cellDatum)
-  cell.followRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 150)
+  cell.followRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 300)
+  cell.damageRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 220)
   return cell
 }
 
@@ -72,9 +73,11 @@ export function followBadGuy(tCell, badGuyPosition) {
         // ) *
         // 180 /
         // Math.PI
-        Phaser.Math.Angle(tCell.body.position.x, tCell.body.position.y, badGuyPosition.x, badGuyPosition.y)
-  const accel = 0.001
-  const y = accel(Math.sin(angle))
-  const x = Math.sqrt(Math.pow(accel, 2) - Math.pow(y, 2))
+        Phaser.Math.Angle.BetweenPoints(tCell.body.position, badGuyPosition)
+  const accel = 0.005
+  const angleSign = angle < 0 ? -1 : 1
+  const y = accel * Math.sin(angle)
+  // const x = Math.sqrt(Math.pow(accel, 2) - Math.pow(y, 2))
+  const x = accel * Math.cos(angle)
   tCell.randomDirection = {x, y}
 }

@@ -36,7 +36,7 @@ export function infectedCells(amount) {
   this.socket.on('changedInfectedCellsClient', cellData => {
     const ids = Object.keys(cellData)
     ids.forEach(id => {
-      setCellParams(this.badGuys.infectedCells[id], cellData[id])
+      if (this.badGuys.infectedCells[id]) setCellParams(this.badGuys.infectedCells[id], cellData[id])
       // if (cellData[id].tint) this.goodGuys.tCells[id] = this.dormantTCells[id]
     })
   })
@@ -49,7 +49,7 @@ export function infectedCells(amount) {
 }
 
 export function makeInfectedCell({positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, globalId, health}) {
-  const cell = this.matter.add.image(positionX, positionY, 'ship')
+  const cell = this.matter.add.image(positionX, positionY, 'ship', null, {label: 'infectedCell'})
   cell.setCircle(cell.width / 3, defaultCellParams)
   cell.setScale(0.5)
   cell.setTint(0xd60000)

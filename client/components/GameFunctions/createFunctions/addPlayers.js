@@ -185,7 +185,7 @@ function addPlayer(playerInfo) {
 function addOtherPlayers({position, team, playerId}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
   otherPlayer.setScale(0.5)
-  otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
+  otherPlayer.setCircle(otherPlayer.width / 2, {label: 'player', ...shipParams})
   if (team === 'red') {
     otherPlayer.setTint(0xd60000)
     otherPlayer.health = 400

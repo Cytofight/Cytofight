@@ -51,6 +51,7 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
+  this.socket.emit('securitronAndCone')
 
   console.log(this)
   this.blueScoreText = this.add
@@ -71,4 +72,16 @@ export function create() {
     .setStroke('yellow', 4)
 
   scoreAndStars.call(this)
+
+  // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+  //   if (bodyA.label === 'tCell' || bodyB.label === 'tCell') console.log(bodyA.label, bodyB.label, bodyA, bodyB)
+  //   if (bodyA.label === 'me' || bodyB.label === 'me') console.log(bodyA.label, bodyB.label, bodyA, bodyB)
+  //   if ( bodyA.label = 'tCell' && (bodyB.label === 'me' || bodyB.label === 'player' || bodyB.label === 'infectedCell')) {
+  //     // delegateDamage.call(this, bodyA, bodyB)
+  //     console.log('bad guys is A', bodyA)
+  //   } else if (bodyB.label = 'tCell' && (bodyA.label === 'me' || bodyA.label === 'player' || bodyA.label === 'infectedCell')) {
+  //     // delegateDamage.call(this, bodyB, bodyA)
+  //     console.log('bad guy is B', bodyB)
+  //   }
+  // })
 }

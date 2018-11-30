@@ -302,7 +302,7 @@ module.exports = io => {
             y: 0
           }
         }
-      ])
+      ], findLowestCellPlayerId(players))
       randomNumber--
     }
   }
