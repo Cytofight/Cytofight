@@ -16,11 +16,13 @@ export function limitSpeed(obj, maxSpeed) {
 
 export function updateForce(cellsObj) {
   for (let key in cellsObj) {
-    const randomX = Math.random() * 0.002 - 0.001
-    const randomY = Math.random() * 0.002 - 0.001
-    cellsObj[key].randomDirection = {
-      x: randomX,
-      y: randomY
+    if (!cellsObj[key].following) {
+      const randomX = Math.random() * 0.002 - 0.001
+      const randomY = Math.random() * 0.002 - 0.001
+      cellsObj[key].randomDirection = {
+        x: randomX,
+        y: randomY
+      }
     }
   }
 }

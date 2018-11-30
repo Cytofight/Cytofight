@@ -41,7 +41,7 @@ export class Antibody extends Phaser.GameObjects.Image {
   constructor(scene) {
     super(scene)
     Phaser.GameObjects.Image.call(this, scene, 0, 0, 'antibody')
-    this.speed = Phaser.Math.GetSpeed(1000, 1)
+    this.speed = Phaser.Math.GetSpeed(1250, 1)
     this.velocity = new Phaser.Geom.Point(0, 0)
     this.setScale(0.15)
   }
@@ -52,9 +52,9 @@ export class Antibody extends Phaser.GameObjects.Image {
       .setVisible(true)
     this.velocity.setTo(0, -this.speed)
     this.color = color
-    this.damage = damage || Math.fldsoor(Math.random() * 10) + 10
+    this.damage = damage || Math.floor(Math.random() * 10) + 10
     Phaser.Math.Rotate(this.velocity, angle)
-    setTimeout(() => this.destroy(), 700)
+    setTimeout(() => this.destroy(), 600)
   }
 
   update(time, delta) {

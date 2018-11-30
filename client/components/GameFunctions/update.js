@@ -14,13 +14,14 @@ import {
 } from './createFunctions/epithelialCells'
 import {damageBadPlayer, killBadPlayer} from './createFunctions/addPlayers'
 import { killInfectedCell, damageInfectedCell, makeInfectedCell, spawnInfectedCell } from './createFunctions/npcInfectedCell'
+import { followBadGuy } from './createFunctions/tCells';
 
-let temp = 0
+// let temp = 0
 const throttledConsoleLog = throttle(console.log, 2000)
 const throttledUpdateTCellForce = throttle(updateForce, 1800)
 const throttledUpdateInfectedCellForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 200)
-const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
+// const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0,
   infectedCellLimiter = 1,
@@ -138,11 +139,11 @@ export function update(time) {
 
   tCellLimiter = (tCellLimiter + 1) % 3
   if (this.clientDormantTCells && Object.keys(this.clientDormantTCells).length && !tCellLimiter) {
-
     throttledUpdateTCellForce.call(this, this.clientDormantTCells)
     const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
+      if (cell.following) followBadGuy(cell, cell.following.body.position)
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 3)
       if (this.clientDormantTCells[id]) {
@@ -157,6 +158,18 @@ export function update(time) {
           globalId: cell.globalId,
         }
         if (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
+        if (currCell.following) {
+          const cellPosition = currCell.body.position
+          const enemyPosition = currCell.following.body.position
+          const distance = Math.sqrt(Math.pow(cellPosition.x - enemyPosition.x, 2) + Math.pow(cellPosition.y - enemyPosition.y, 2))
+          if (distance > currCell.followRadius.width) delete currCell.following
+        }
+        for (let id of this.badGuys.players) {
+          const badPlayer = this.badGuys.players[id]
+          if (currCell.followRadius.contains(badPlayer.body.position.x, badPlayer.body.position.y) && !currCell.following) {
+            currCell.following = badPlayer
+          }
+        }
       }
     }
     this.socket.emit('changedTCells', cellData)
@@ -271,16 +284,16 @@ export function update(time) {
         ) {
           currCell.infectedness++
           currCell.infectionText.setText(
-            `${Math.ceil(currCell.infectedness / 1.8)}%`
+            `${Math.ceil(currCell.infectedness / 1.5)}%`
           )
           switch (currCell.infectedness) {
             case 1:
               currCell.tintTopLeft = 0xd60000
               break
-            case 60:
+            case 50:
               currCell.tintTopRight = 0xd60000
               break
-            case 120:
+            case 100:
               currCell.tintBottomLeft = 0xd60000
               break
           }

@@ -169,7 +169,7 @@ function addPlayer(playerInfo) {
         pointer.y,
         pointer.y + worldSize.y - window.innerHeight
       )
-      var angle =
+      const angle =
         -Math.atan2(
           adjustedPointerX - this.ship.x,
           adjustedPointerY - this.ship.y
