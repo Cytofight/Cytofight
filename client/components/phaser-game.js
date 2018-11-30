@@ -7,7 +7,7 @@ import Winner from './GameFunctions/winner'
 import GoodLoser from './GameFunctions/goodloser'
 import BadLoser from './GameFunctions/badloser'
 import Dead from './GameFunctions/dead'
-import {worldSize, limitNumber} from './GameFunctions/util'
+import {worldSize} from './GameFunctions/util'
 
 let audioContext
 try {
@@ -19,8 +19,8 @@ try {
 const config = {
   type: Phaser.AUTO,
   parent: 'container',
-  width: limitNumber(window.innerWidth, 200, worldSize.x),
-  height: limitNumber(window.innerHeight, 400, worldSize.y),
+  width: window.innerWidth,
+  height: window.innerHeight,
   autoResize: true,
   physics: {
     default: 'matter',
