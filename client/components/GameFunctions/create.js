@@ -34,11 +34,12 @@ export function create() {
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
-    .add(0, window.innerHeight - 100, 150, 100)
+    .add(window.innerWidth - 165, window.innerHeight - 100, 150, 100)
     .setZoom(0.1)
     .setName('mini')
-  this.minimap.scrollX = worldSize.x
-  this.minimap.scrollY = worldSize.y
+  this.minimap.setBackgroundColor(0x002244)
+  this.minimap.scrollX = 2000
+  this.minimap.scrollY = 2000
 
   // PUT IN A SETUP FUNC
   this.matter.world.setBounds(0, 0, worldSize.x, worldSize.y)
@@ -53,24 +54,21 @@ export function create() {
 
   console.log(this)
   this.blueScoreText = this.add
-    .text(window.innerWidth - 480, 16, '', {
-      fontSize: '24px',
-      fontStyle: 'bold',
-      fill: 'blue'
-    })
+    .text(16, 16, '', {fontSize: '16px', fill: '#01c0ff'})
     .setDepth(1)
     .setScrollFactor(0)
-    .setStroke('yellow', 2)
+    .setShadow(3, 3, 'black', 3, true, true)
+    .setStroke('yellow', 4)
 
   this.redScoreText = this.add
-    .text(window.innerWidth - 480, 48, '', {
-      fontSize: '24px',
-      fontStyle: 'bold',
+    .text(window.innerWidth - 300, 16, '', {
+      fontSize: '16px',
       fill: '#d60000'
     })
     .setDepth(1)
     .setScrollFactor(0)
-    .setStroke('yellow', 2)
+    .setShadow(3, 3, 'black', 3, true, true)
+    .setStroke('yellow', 4)
 
   scoreAndStars.call(this)
 }
