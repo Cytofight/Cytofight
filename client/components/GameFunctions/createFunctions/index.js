@@ -4,6 +4,7 @@ import { scoreAndStars } from './lifeStars';
 import { epithelialCells, makeEpithelialCell, epithelialCellCollision } from './epithelialCells'
 import { tCells, makeTCell } from './tCells'
 import { mastCells, makeMastCell, activate } from './mastCells'
+import {infectedCells, spawnInfectedCell} from './npcInfectedCell'
 import { redBloodCells } from './redBloodCells'
 
 export { 
@@ -11,5 +12,6 @@ export {
   epithelialCells, makeEpithelialCell, epithelialCellCollision,
   redBloodCells,
   tCells, makeTCell,
-  mastCells, makeMastCell, activate
+  mastCells, makeMastCell, activate,
+  infectedCells, spawnInfectedCell
 }

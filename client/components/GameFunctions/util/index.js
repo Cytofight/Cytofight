@@ -16,15 +16,16 @@ export function overlapCollision(coords, largeBody, callback, ...args) {
   }
 }
 
-export function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId }) {
+export function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId, health }) {
   cell.setPosition(positionX, positionY)
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
   cell.setAngularVelocity(angularVelocity)
-  if(tint && tint !== cell.tintBottomLeft) {
+  if(tint) {
     cell.setTint(tint)
   }
   if (randomDirection) cell.randomDirection = randomDirection
+  if (health) cell.health = health
   cell.globalId = globalId
 }
 
