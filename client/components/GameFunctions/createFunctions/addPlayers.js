@@ -22,6 +22,8 @@ const numberOfTCells = 15
 const numberOfMastCells = 4
 const numberOfRedBloodCells = 30
 
+const randomName = ['Fritter', 'Fizband', 'JollyGreenDwarf', 'MeatShield', 'Come\'on?', 'Buckethead', 'Captain Wasteland', 'American Eagle', 'Moo Soup', 'Blue Whale', 'Jasper', 'Xanthos', 'Achilles', 'Axios', 'Socket.io O.o', 'FullStack Academy of Cells', 'iPhone 17', 'Bill Gates', 'Steve Jhobs', 'Scarf', 'Magic Schoolbus', 'PressEnter', 'Task Manager', 'Double O Sleven', 'Thorny Chair', 'AlienWare', 'Am I sick?', 'Tom Deck', 'Securitron', 'Brad.', 'Stephen', 'Geoff', 'Geohn', 'Cytophyter', 'Sticky', 'Stretchy', 'Goehb', 'Jeb', 'BinarySearchLeaph', 'PressCtrlArtDel?', 'Huh', 'DeadlySell', 'Brooclin', 'Cytation', 'IBM Wahtson', 'Samsung Jalaxi', 'HunterCiller', 'React.gs', 'Siteophage', 'Sore eye', 'Rusty nail', 'Krisper-Kas009', 'Princess Phytocyte', 'NoSQL', 'Pickles', 'Rover', 'Gigg1es', 'Buster', 'Marvin', 'Slacker', 'Cyt.io', 'Walla-Walla', 'Stumpy', 'Weasle', 'Sausey', 'Drangus', 'Draco Malfoy', 'Fancy', 'Bogz', 'Harry Beard', 'Fizzbuzz', 'Wizz', 'FooBar', 'Bellerophon', 'Memnon', 'Mancy', 'Echidna', 'Chrysaor']
+
 //Initialize the players in the game
 //change name of function to init()
 //must STILL call with this
@@ -131,17 +133,19 @@ function addPlayer(playerInfo) {
   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
   this.ship = this.matter.add.image(randomX, randomY, 'ship')
-  this.ship.setScale(0.5)
+  this.ship.setScale(0.7)
   this.ship.setCircle(this.ship.width / 2, {
     label: 'me',
     ...shipParams
   })
 
-  // Create a player name on top of the ship based on socketId
+  // Create a random player name on top of the ship
+  const randomId = Math.floor(Math.random() * randomName.length)
+  const name = randomName[randomId]
   this.ship.nameText = this.add.text(
-    this.ship.body.position.x - 125,
+    this.ship.body.position.x - (name.length * 50),
     this.ship.body.position.y - 50,
-    `${playerInfo.playerId}`,
+    `${name}`,
     {fontSize: '20px', fill: '#01c0ff'}
   )
 
