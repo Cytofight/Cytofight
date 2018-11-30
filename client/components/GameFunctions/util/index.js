@@ -1,7 +1,7 @@
-import { limitSpeed, updateForce, limitNumber, throttle } from './speed'
-import { fire } from './fireAntibodies'
+import {limitSpeed, updateForce, limitNumber, throttle} from './speed'
+import {fire} from './fireAntibodies'
 
-export const worldSize = {x: 3000, y: 3000}
+export const worldSize = {x: 2000, y: 2000}
 export const colorNumber = 64
 
 export const defaultCellParams = {
@@ -16,7 +16,20 @@ export function overlapCollision(coords, largeBody, callback, ...args) {
   }
 }
 
-export function setCellParams(cell, { positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, tint, globalId, health }) {
+export function setCellParams(
+  cell,
+  {
+    positionX,
+    positionY,
+    velocityX,
+    velocityY,
+    angle,
+    angularVelocity,
+    randomDirection,
+    tint,
+    globalId
+  }
+) {
   cell.setPosition(positionX, positionY)
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
@@ -46,15 +59,26 @@ export function changeShipColorDebug(tint) {
   console.log(currIndex)
   if (currIndex !== -1) prevAlignment.splice(currIndex, 1)
   nextAlignment.push(this.ship)
-  console.log('ship tint is blue: ', this.ship.tintBottomLeft === 16760833, 'ship tint is red: ', this.ship.tintBottomLeft === 214, 'arrays now: ', this.badGuys, this.goodGuys)
+  console.log(
+    'ship tint is blue: ',
+    this.ship.tintBottomLeft === 16760833,
+    'ship tint is red: ',
+    this.ship.tintBottomLeft === 214,
+    'arrays now: ',
+    this.badGuys,
+    this.goodGuys
+  )
 }
 
 export function updateSecretColor(color) {
-  if (color - this.secretColor.value <= 262000 && color - this.secretColor.value >= -262000) {
+  if (
+    color - this.secretColor.value <= 262000 &&
+    color - this.secretColor.value >= -262000
+  ) {
     this.secretColor.found = true
     return true
   }
   return false
 }
 
-export { limitSpeed, updateForce, limitNumber, throttle, fire }
+export {limitSpeed, updateForce, limitNumber, throttle, fire}
