@@ -55,7 +55,10 @@ export function players() {
     addOtherPlayers.call(this, playerInfo)
   })
   this.socket.on('disconnect', playerId => {
-    if (this.otherPlayers[playerId]) this.otherPlayers[playerId].destroy()
+    if (this.otherPlayers[playerId]) {
+      this.otherPlayers[playerId].nameText.destroy()
+      this.otherPlayers[playerId].destroy()
+    }
     delete this.otherPlayers[playerId]
     delete this.badGuys.players[playerId]
     delete this.goodGuys.players[playerId]
