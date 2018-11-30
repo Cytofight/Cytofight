@@ -132,6 +132,10 @@ module.exports = io => {
       }
     })
 
+    socket.on('securitronAndCone', () => {
+      io.emit('hugeBoi')
+    })
+
     socket.on('starCollected', function() {
       if (players[socket.id].team === 'red') {
         //  switch(randomNumber){

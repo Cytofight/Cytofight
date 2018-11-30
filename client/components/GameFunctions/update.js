@@ -29,7 +29,6 @@ let tCellLimiter = 0,
 export function update(time) {
   // const boundFire = throttledFire.bind(this)
   if (this.ship) {
-    throttledConsoleLog(this.badGuys.infectedCells)
     // display name over your
     this.ship.nameText.x = this.ship.body.position.x - 125
     this.ship.nameText.y = this.ship.body.position.y - 50
@@ -192,7 +191,6 @@ export function update(time) {
     const cellData = {}
     for (let id in this.badGuys.infectedCells) {
       const cell = this.badGuys.infectedCells[id]
-      throttledConsoleLog(cell)
       cell.applyForce(cell.randomDirection)
       limitSpeed(cell, 3)
       if (this.clientInfectedCells[id]) {
@@ -234,16 +232,16 @@ export function update(time) {
   }
 
   this.antibodies.getChildren().forEach(antibody => {
-    for(let id in this.epithelialCells){
+    for (let id in this.epithelialCells) {
       impact.call(this, antibody, this.epithelialCells[id])
     }
-    for(let id in this.mastCells){
+    for (let id in this.mastCells) {
       impact.call(this, antibody, this.mastCells[id])
     }
-    for(let id in this.redBloodCells){
+    for (let id in this.redBloodCells) {
       impact.call(this, antibody, this.redBloodCells[id])
     }
-    for(let id in this.dormantTCells){
+    for (let id in this.dormantTCells) {
       impact.call(this, antibody, this.dormantTCells[id])
     }
 
@@ -251,14 +249,14 @@ export function update(time) {
       badGuyCollision.call(this, antibody, this.badGuys.epithelialCells[id], damageEpithelialCell)
     }
     for (let id in this.badGuys.players) {
-      badGuyCollision.call(this, antibody, this.badGuys.players[id], () =>
-        console.log('beep')
-      )
+      badGuyCollision.call(this, antibody, this.badGuys.players[id], damageBadPlayer)
     }
     for (let id in this.badGuys.infectedCells) {
       badGuyCollision.call(this, antibody, this.badGuys.infectedCells[id], damageInfectedCell)
     }
   })
+
+  window.hack = 'securitronAndCone'
 
   if (this.badGuys.players[this.socket.id]) {
     for (let cellId in this.epithelialCells) {
@@ -292,9 +290,8 @@ export function update(time) {
             currCell.setTint(0xd60000)
             this.badGuys.epithelialCells[cellId] = currCell
             currCell.spawn = setInterval(() => {
-              console.log('should be spawning')
               spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y)
-            }, 5000)
+            }, 10000)
             this.clientSpawningCells[cellId] = currCell
             // currCell.spawnCell = setInterval(createBadGuy, 60000)
             this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})
@@ -316,7 +313,7 @@ export function update(time) {
                 this.scene.start('Winner')
                 resetCells.call(this)
               } else if (this.goodGuys.players[this.socket.id]) {
-                this.scene.start('Loser')
+                this.scene.start('GoodLoser')
                 resetCells.call(this)
               }
             }
@@ -348,7 +345,7 @@ function impact(antibody, cell) {
     },
     cell,
     () => {
-      antibody.destroy()     
+      antibody.destroy()
     }
   )
 }

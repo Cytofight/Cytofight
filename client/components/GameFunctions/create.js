@@ -28,6 +28,8 @@ export function create() {
   // Create canvas background image
   this.add.image(worldSize.x / 2, worldSize.y / 2, 'redback').setScale(2.9)
 
+  this.destroyedSound = this.sound.add('smallexplosion', {volume: 0.5})
+
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
     .add(window.innerWidth - 165, window.innerHeight - 100, 150, 100)

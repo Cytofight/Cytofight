@@ -17,10 +17,10 @@ import {
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 40
+const numberOfEpithelialCells = 30
 const numberOfTCells = 15
 const numberOfMastCells = 4
-const numberOfRedBloodCells = 50
+const numberOfRedBloodCells = 30
 
 //Initialize the players in the game
 //change name of function to init()
@@ -55,10 +55,10 @@ export function players() {
     addOtherPlayers.call(this, playerInfo)
   })
   this.socket.on('disconnect', playerId => {
-    this.otherPlayers[playerId].destroy()
+    if (this.otherPlayers[playerId]) this.otherPlayers[playerId].destroy()
     delete this.otherPlayers[playerId]
-    if (this.badGuys.players[playerId]) delete this.badGuys.players[playerId]
-    else delete this.goodGuys.players[playerId]
+    delete this.badGuys.players[playerId]
+    delete this.goodGuys.players[playerId]
   })
   this.socket.on(
     'playerMoved',
@@ -87,7 +87,6 @@ export function players() {
   infectedCells.call(this)
   console.log(this.badGuys.infectedCells)
   redBloodCells.call(this, numberOfRedBloodCells)
-  console.log('red blood cells done')
   //create events related to antibodies being fired from B cells
   this.socket.on('otherFiredAntibody', firingInfo => {
     throttledFire.call(this, firingInfo)
@@ -99,8 +98,18 @@ export function players() {
   })
   console.log('after first socket event in player')
   this.socket.on('deleteOtherPlayer', playerId => {
-    this.badGuys.players[playerId].destroy()
+    if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
     delete this.badGuys.players[playerId]
+    //if this is you, display dead page. if game is over, winner or loser page
+    if (!Object.keys(this.badGuys.players).length) {
+      if (Object.keys(this.goodGuys.players).includes(this.socket.id)) {
+        this.scene.start('Winner')
+      } else {
+        this.scene.start('BadLoser')
+      }
+    } else if (playerId === this.socket.Id) {
+      this.scene.start('Dead')
+    }
   })
 
   this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
@@ -140,7 +149,7 @@ function addPlayer(playerInfo) {
     this.goodGuys.players[this.socket.id] = this.ship
   } else {
     this.ship.setTint(0xd60000)
-    this.ship.health = 200
+    this.ship.health = 400
     this.badGuys.players[this.socket.id] = this.ship
   }
 
@@ -149,12 +158,12 @@ function addPlayer(playerInfo) {
     function(pointer) {
       // VIEWPORT: innerWidthx, innerHeighty
       const adjustedPointerX = limitNumber(
-        pointer.x + this.ship.x - window.innerWidth/2,
+        pointer.x + this.ship.x - window.innerWidth / 2,
         pointer.x,
         pointer.x + worldSize.x - window.innerWidth
       )
       const adjustedPointerY = limitNumber(
-        pointer.y + this.ship.y - window.innerHeight/2,
+        pointer.y + this.ship.y - window.innerHeight / 2,
         pointer.y,
         pointer.y + worldSize.y - window.innerHeight
       )
@@ -178,7 +187,7 @@ function addOtherPlayers({position, team, playerId}) {
   otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
   if (team === 'red') {
     otherPlayer.setTint(0xd60000)
-    otherPlayer.health = 200
+    otherPlayer.health = 400
     this.badGuys.players[playerId] = otherPlayer
   } else {
     otherPlayer.setTint(0x01c0ff)
@@ -201,8 +210,14 @@ export function damageBadPlayer(newHealth, cell) {
 }
 
 export function killBadPlayer(playerId) {
-  this.badGuys.players[playerId].destroy()
+  console.log('Bad player killed!')
+  if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
   delete this.badGuys.players[playerId]
+  console.log('Bad guys left:', Object.keys(this.badGuys.players).length)
   delete this.otherPlayers[playerId]
   this.socket.emit('deletePlayer', playerId)
+  if (!Object.keys(this.badGuys.players).length) {
+    this.scene.start('Winner')
+    this.resetCells()
+  }
 }

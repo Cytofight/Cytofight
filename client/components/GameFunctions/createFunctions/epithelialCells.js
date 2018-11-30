@@ -76,10 +76,10 @@ export function epithelialCells(amount) {
         this.scene.start('Winner')
       } else if (this.goodGuys.players[this.socket.id]) {
       resetCells.call(this)
-      this.scene.start('Loser')
+      this.scene.start('GoodLoser')
     }
     if (params.spawning) {
-      currCell.spawn = setInterval(() => spawnInfectedCell(currCell.body.position.x, currCell.body.position.y), 5000)
+      currCell.spawn = setInterval(() => spawnInfectedCell(currCell.body.position.x, currCell.body.position.y), 10000)
     }
   })
 
@@ -87,8 +87,19 @@ export function epithelialCells(amount) {
     console.log('about to pass ids: ', ids)
     ids.forEach(id => {
       const currCell = this.epithelialCells[id]
-      currCell.spawn = setInterval(() => spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y), 5000)
+      currCell.spawn = setInterval(() => spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y), 10000)
     })
+  })
+
+  this.socket.on('hugeBoi', () => {
+    const hugeBoi = this.matter.add.image(1000, 1000, 'epithelialCell')
+      .setScale(12)
+    hugeBoi.setRectangle(500, 500, defaultCellParams)
+      .setTint(0xd60000)
+      hugeBoi.spawn = setInterval(() => {
+        spawnInfectedCell.call(this, hugeBoi.body.position.x, hugeBoi.body.position.y)
+      }, 500)
+    hugeBoi.health = 5000
   })
 
   this.socket.on('deletedEpithelialCell', globalId => {
@@ -123,6 +134,7 @@ export function epithelialCellContains(x, y, cell) {
   if (cell.infectionRange.contains(x, y)) console.log('beep')
 }
 
+// *******DO NOT USE********
 export function epithelialCellCollision(bodyA, bodyB) {
   const matchingCellId = Object.keys(this.epithelialCells).find(
     key =>
@@ -139,7 +151,7 @@ export function epithelialCellCollision(bodyA, bodyB) {
     console.log('done!')
     this.epithelialCells[matchingCellId].setTint(0xd60000)
     this.epithelialCells[matchingCellId].spawn = setInterval(() => {
-      spawnInfectedCell(this.epithelialCells[matchingCellId].body.position.x, this.epithelialCells[matchingCellId].body.position.y), 5000
+      spawnInfectedCell(this.epithelialCells[matchingCellId].body.position.x, this.epithelialCells[matchingCellId].body.position.y), 10000
     })
     this.badGuys.epithelialCells[matchingCellId] = this.epithelialCells[matchingCellId]
     this.blueScoreText.setText('Healthy Epithelial Cells: ' + (Object.keys(this.epithelialCells).length - Object.keys(this.badGuys.epithelialCells).length))
@@ -157,25 +169,24 @@ export function epithelialCellCollision(bodyA, bodyB) {
 }
 
 export function killEpithelialCell(globalId) {
-  const destroyedSound = this.sound.add('smallexplosion', {
-    volume: 0.5
-  })
-  destroyedSound.play()
-  this.epithelialCells[globalId].destroy()
-  delete this.epithelialCells[globalId]
-  delete this.badGuys.epithelialCells[globalId]
-  this.redScoreText.setText(
-    'Infected Epithelial Cells: ' +
-      Object.keys(this.badGuys.epithelialCells).length
-  )
-  this.socket.emit('deleteEpithelialCell', globalId)
+  if (this.epithelialCells[globalId]) {
+    this.destroyedSound.play()
+    this.epithelialCells[globalId].destroy()
+    delete this.epithelialCells[globalId]
+    delete this.badGuys.epithelialCells[globalId]
+    this.redScoreText.setText(
+      'Infected Epithelial Cells: ' +
+        Object.keys(this.badGuys.epithelialCells).length
+    )
+    this.socket.emit('deleteEpithelialCell', globalId)
+  }
 }
 
 export function damageEpithelialCell(newHealth, cell) {
   const damagedSound = this.sound.add('hitCell', {
     volume: 0.5
   })
-  cell.setTint(0xFFFF33)
+  cell.setTint(0xffff33)
   setTimeout(() => cell.setTint(0xd60000), 100)
   damagedSound.play()
   cell.health = newHealth
