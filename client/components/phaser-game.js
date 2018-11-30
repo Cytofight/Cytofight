@@ -4,7 +4,9 @@ import React, {Component} from 'react'
 import startMenu from './GameFunctions/startMenu'
 import gamePlay from './GameFunctions/index'
 import Winner from './GameFunctions/winner'
-import Loser from './GameFunctions/loser'
+import GoodLoser from './GameFunctions/goodloser'
+import BadLoser from './GameFunctions/badloser'
+import Dead from './GameFunctions/dead'
 import {worldSize, limitNumber} from './GameFunctions/util'
 
 let audioContext
@@ -29,7 +31,7 @@ const config = {
       }
     }
   },
-  scene: [startMenu, gamePlay, Winner, Loser],
+  scene: [startMenu, gamePlay, Winner, GoodLoser, BadLoser, Dead],
   audio: {
     context: audioContext
   }

@@ -34,10 +34,11 @@ export function setCellParams(
   cell.setVelocity(velocityX, velocityY)
   // cell.setAngle(angle) // blocks spin transmission for some reason
   cell.setAngularVelocity(angularVelocity)
-  if (tint && tint !== cell.tintBottomLeft) {
+  if(tint) {
     cell.setTint(tint)
   }
   if (randomDirection) cell.randomDirection = randomDirection
+  if (health) cell.health = health
   cell.globalId = globalId
 }
 
