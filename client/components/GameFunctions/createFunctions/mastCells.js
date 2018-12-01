@@ -79,7 +79,7 @@ export function makeMastCell(cellDatum) {
     y: 1,
     speed: Math.floor(Math.random() * 150) + 150,
     scale: {
-      start: 1,
+      start: 0.1,
       end: 0
     },
     blendMode: 'ADD',
