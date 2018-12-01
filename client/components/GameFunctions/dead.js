@@ -6,12 +6,29 @@ export default class Dead extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('click', 'assets/PNG/play.png')
+    this.load.script(
+      'webfont',
+      'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
+    )
   }
 
   create() {
-    console.log('text test')
-    this.add.image(200, 200, 'play').setScale(0.25)
-    this.add.text(200, 200, 'You died!').setFontSize(64)
+    const add = this.add
+    const deadText = ['You DIED!']
+
+    WebFont.load({
+      google: {
+        families: ['Nosifer']
+      },
+      active: function() {
+        add
+          .text(window.innerWidth / 2, window.innerHeight / 2, deadText, {
+            fontFamily: 'Nosifer',
+            fontSize: 112,
+            color: 'red'
+          })
+          .setOrigin(0.5)
+      }
+    })
   }
 }
