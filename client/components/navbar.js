@@ -59,8 +59,13 @@ class Navbar extends React.Component {
     )
 
     return (
-      <div position="fixed">
-        <Button onClick={this.toggleDrawer('left', true)}>...</Button>
+      <div>
+        <Button
+          style={{position: 'fixed'}}
+          onClick={this.toggleDrawer('left', true)}
+        >
+          ...
+        </Button>
         <Drawer
           open={this.state.left}
           onClose={this.toggleDrawer('left', false)}
