@@ -9,6 +9,9 @@ import List from '@material-ui/core/List'
 import Drawer from '@material-ui/core/Drawer'
 import ListItem from '@material-ui/core/ListItem'
 
+// would like to integrate in future versions as a single info button rather than ellipsis
+// import { Info } from '@material-ui/icons'
+
 const styles = {
   list: {
     width: 250
