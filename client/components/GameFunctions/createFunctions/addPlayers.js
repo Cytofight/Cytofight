@@ -3,12 +3,11 @@ import {
   fire,
   limitNumber,
   worldSize,
-  defaultCellParams,
-  setCellParams
+  resetCells,
+  randomName
 } from '../util'
 import {
   epithelialCells,
-  epithelialCellCollision,
   tCells,
   mastCells,
   infectedCells,
@@ -17,12 +16,10 @@ import {
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 30
-const numberOfTCells = 15
-const numberOfMastCells = 4
-const numberOfRedBloodCells = 30
-
-const randomName = ['Fritter', 'Fizband', 'JollyGreenDwarf', 'MeatShield', 'Come\'on?', 'Buckethead', 'Captain Wasteland', 'American Eagle', 'Moo Soup', 'Blue Whale', 'Jasper', 'Xanthos', 'Achilles', 'Axios', 'Socket.io O.o', 'FullStack Academy of Cells', 'iPhone 17', 'Bill Gates', 'Steve Jhobs', 'Scarf', 'Magic Schoolbus', 'PressEnter', 'Task Manager', 'Double O Sleven', 'Thorny Chair', 'AlienWare', 'Am I sick?', 'Tom Deck', 'Securitron', 'Brad.', 'Stephen', 'Geoff', 'Geohn', 'Cytophyter', 'Sticky', 'Stretchy', 'Goehb', 'Jeb', 'BinarySearchLeaph', 'PressCtrlArtDel?', 'Huh', 'DeadlySell', 'Brooclin', 'Cytation', 'IBM Wahtson', 'Samsung Jalaxi', 'HunterCiller', 'React.gs', 'Siteophage', 'Sore eye', 'Rusty nail', 'Krisper-Kas009', 'Princess Phytocyte', 'NoSQL', 'Pickles', 'Rover', 'Gigg1es', 'Buster', 'Marvin', 'Slacker', 'Cyt.io', 'Walla-Walla', 'Stumpy', 'Weasle', 'Sausey', 'Drangus', 'Draco Malfoy', 'Fancy', 'Bogz', 'Harry Beard', 'Fizzbuzz', 'Wizz', 'FooBar', 'Bellerophon', 'Memnon', 'Mancy', 'Echidna', 'Chrysaor']
+const numberOfEpithelialCells = 15
+const numberOfTCells = 6
+const numberOfMastCells = 1
+const numberOfRedBloodCells = 15
 
 //Initialize the players in the game
 //change name of function to init()
@@ -67,7 +64,7 @@ export function players() {
   })
   this.socket.on(
     'playerMoved',
-    ({playerId, angle, position, velocity, angularVelocity, nameText}) => {
+    ({playerId, angle, position, velocity}) => {
       const currPlayer = this.otherPlayers[playerId]
       if (currPlayer) {
         currPlayer
@@ -75,8 +72,8 @@ export function players() {
           .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
-        currPlayer.nameText.x = nameText.x
-        currPlayer.nameText.y = nameText.y
+        currPlayer.nameText.x = position.x - (currPlayer.name.length * 5.85)
+        currPlayer.nameText.y = position.y - 48
         currPlayer.body.angle = angle
       }
     }
@@ -103,7 +100,10 @@ export function players() {
   })
 
   this.socket.on('deleteOtherPlayer', playerId => {
-    if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
+    if (this.badGuys.players[playerId]) {
+      this.badGuys.players[playerId].nameText.destroy()
+      this.badGuys.players[playerId].destroy()
+    }
     delete this.badGuys.players[playerId]
     //if this is you, display dead page. if game is over, winner or loser page
     if (!Object.keys(this.badGuys.players).length) {
@@ -138,14 +138,16 @@ function addPlayer(playerInfo) {
     label: 'me',
     ...shipParams
   })
+  this.ship.playerId = playerInfo.playerId
 
   // Create a random player name on top of the ship
-  const randomId = Math.floor(Math.random() * randomName.length)
-  const name = randomName[randomId]
+  // const randomId = Math.floor(Math.random() * randomName.length)
+  // const name = randomName[randomId]
+  this.ship.name = playerInfo.name
   this.ship.nameText = this.add.text(
-    this.ship.body.position.x - (name.length * 50),
-    this.ship.body.position.y - 50,
-    `${name}`,
+    this.ship.body.position.x - (this.ship.name.length * 5.85),
+    this.ship.body.position.y - 48,
+    `${this.ship.name}`,
     {fontSize: '20px', fill: '#01c0ff'}
   )
 
@@ -173,7 +175,7 @@ function addPlayer(playerInfo) {
         pointer.y,
         pointer.y + worldSize.y - window.innerHeight
       )
-      var angle =
+      const angle =
         -Math.atan2(
           adjustedPointerX - this.ship.x,
           adjustedPointerY - this.ship.y
@@ -186,10 +188,12 @@ function addPlayer(playerInfo) {
   )
 }
 
-function addOtherPlayers({position, team, playerId}) {
+function addOtherPlayers({position, team, playerId, name}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
-  otherPlayer.setScale(0.5)
-  otherPlayer.setCircle(otherPlayer.width / 2, shipParams)
+  otherPlayer.setScale(0.7)
+  otherPlayer.setCircle(otherPlayer.width / 2, {label: 'player', ...shipParams})
+  otherPlayer.playerId = playerId
+  this.otherPlayers[playerId] = otherPlayer
   if (team === 'red') {
     otherPlayer.setTint(0xd60000)
     otherPlayer.health = 400
@@ -198,31 +202,36 @@ function addOtherPlayers({position, team, playerId}) {
     otherPlayer.setTint(0x01c0ff)
     this.goodGuys.players[playerId] = otherPlayer
   }
+  otherPlayer.name = name
   otherPlayer.nameText = this.add.text(
-    position.x - 125,
-    position.y - 50,
-    `${playerId}`,
+    position.x - (name.length * 5.85),
+    position.y - 48,
+    `${name}`,
     {fontSize: '20px', fill: '#01c0ff'}
   )
-  otherPlayer.playerId = playerId
-  this.otherPlayers[playerId] = otherPlayer
 }
 
 export function damageBadPlayer(newHealth, cell) {
+  cell.setTint(0xffff33)
+  setTimeout(() => cell.setTint(0xd60000), 100)
   cell.health = newHealth
-  console.log(newHealth)
+  console.log('cell health: ', cell.health)
   if (cell.health <= 0) killBadPlayer.call(this, cell.playerId)
 }
 
 export function killBadPlayer(playerId) {
+  let isBadTeam;
   console.log('Bad player killed!')
-  if (this.badGuys.players[playerId]) this.badGuys.players[playerId].destroy()
+  if (this.badGuys.players[playerId]) {
+    isBadTeam = true
+    this.badGuys.players[playerId].destroy()
+  }
   delete this.badGuys.players[playerId]
   console.log('Bad guys left:', Object.keys(this.badGuys.players).length)
   delete this.otherPlayers[playerId]
   this.socket.emit('deletePlayer', playerId)
   if (!Object.keys(this.badGuys.players).length) {
-    this.scene.start('Winner')
-    this.resetCells()
+    isBadTeam ? this.scene.start('BadLoser') : this.scene.start('Winner')
+    resetCells.call(this)
   }
 }

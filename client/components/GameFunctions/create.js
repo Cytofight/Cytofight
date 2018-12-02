@@ -33,6 +33,7 @@ export function create() {
   this.destroyedSound = this.sound.add('smallexplosion', {volume: 0.5})
   this.fireSound = this.sound.add('shoot', {volume: 0.5})
   this.damagedSound = this.sound.add('hitCell', {volume: 0.5})
+  this.infectionSound = this.sound.add('infectionUnderWay', {volume: 0.9})
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras
@@ -53,6 +54,7 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
+  // this.socket.emit('securitronAndCone')
 
   console.log(this)
   this.blueScoreText = this.add
@@ -76,4 +78,16 @@ export function create() {
     .setStroke('yellow', 4)
 
   scoreAndStars.call(this)
+
+  // this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+  //   if (bodyA.label === 'tCell' || bodyB.label === 'tCell') console.log(bodyA.label, bodyB.label, bodyA, bodyB)
+  //   if (bodyA.label === 'me' || bodyB.label === 'me') console.log(bodyA.label, bodyB.label, bodyA, bodyB)
+  //   if ( bodyA.label = 'tCell' && (bodyB.label === 'me' || bodyB.label === 'player' || bodyB.label === 'infectedCell')) {
+  //     // delegateDamage.call(this, bodyA, bodyB)
+  //     console.log('bad guys is A', bodyA)
+  //   } else if (bodyB.label = 'tCell' && (bodyA.label === 'me' || bodyA.label === 'player' || bodyA.label === 'infectedCell')) {
+  //     // delegateDamage.call(this, bodyB, bodyA)
+  //     console.log('bad guy is B', bodyB)
+  //   }
+  // })
 }

@@ -52,7 +52,7 @@ export function infectedCells(amount) {
 
 export function makeInfectedCell({positionX, positionY, velocityX, velocityY, angle, angularVelocity, randomDirection, globalId, health}) {
   const cell = this.matter.add.image(positionX, positionY, 'virus')
-  cell.setCircle(cell.width / 3, defaultCellParams)
+  cell.setCircle(cell.width / 3, {label: 'infectedCell', ...defaultCellParams})
   cell.setScale(0.1)
   cell.setTint(0xd60000)
   // cell.angle = angle
@@ -60,7 +60,7 @@ export function makeInfectedCell({positionX, positionY, velocityX, velocityY, an
   cell.setAngularVelocity(angularVelocity)
   cell.randomDirection = randomDirection || {x: 0, y: 0}
   cell.globalId = globalId
-  cell.health = health || 200
+  cell.health = health || 25
   this.badGuys.infectedCells[globalId] = cell
   return cell
 }
@@ -76,7 +76,7 @@ export function spawnInfectedCell(x, y) {
     velocityX: 0, velocityY: 0, 
     angle: 0, angularVelocity: randomAngularVelocity,
     randomDirection: {x: 0, y: 0}, globalId,
-    health: 40
+    health: 25
   }
   const cell = makeInfectedCell.call(this, cellData)
   this.clientInfectedCells[globalId] = cell

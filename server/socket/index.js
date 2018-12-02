@@ -1,7 +1,15 @@
 // const Message = require('./db/models/GameChat/message')
 // const Channel = require('./db/models/GameChat/channel')
 // const { fire } = require('../util')
-
+const randomName = ['Fritter', 'Fizband', 'JollyGreenDwarf', 'MeatShield', 'Come\'on?', 'Buckethead', 'Captain Wasteland', 'American Eagle', 'Moo Soup', 'Blue Whale', 
+  'Jasper', 'Xanthos', 'Achilles', 'Axios', 'Socket.io O.o', 'FullStack Academy of Cells', 'iPhone 17', 'Bill Gates', 'Steve Jhobs', 'Scarf', 'Magic Schoolbus', 'PressEnter', 
+  'Task Manager', 'Double O Sleven', 'Thorny Chair', 'AlienWare', 'Am I sick?', 'Tom Deck', 'Securitron', 'Brad.', 'Stephen', 'Geoff', 'Geohn', 'Cytophyter', 'Sticky', 'Stretchy', 
+  'Goehb', 'Jeb', 'BinarySearchLeaph', 'PressCtrlArtDel?', 'Huh', 'DeadlySell', 'Brooclin', 'Cytation', 'IBM Wahtson', 'Samsung Jalaxi', 'HunterCiller', 'React.gs', 'Siteophage', 
+  'Sore Eye', 'Rusty Nail', 'Krisper-Kas009', 'Princess Phytocyte', 'NoSQL', 'Pickles', 'Rover', 'Gigg1es', 'Buster', 'Marvin', 'Slacker', 'Cyt.io', 'Walla-Walla', 'Stumpy', 
+  'Weasle', 'Sausey', 'Drangus', 'Draco Malfoy', 'Fancy', 'Bogz', 'Harry Beard', 'Fizzbuzz', 'Wizz', 'FooBar', 'Bellerophon', 'Memnon', 'Mancy', 'Echidna', 'Chrysaor', 'Cuobp', 
+  'Stupiditon', 'Blubhby', 'Mustiy', 'Robobert', 'Dotp', 'Idiotway Stupidton', 'Tucker Carlson', 'Wedgewood Swepston III', 'Comte. DeQuincey Stallworth Bakersfield, Esq. PhD', 
+  'Bick', 'Claude Luciani', 'Abet Cup', 'One Man', 'Infahht', 'A Plastic Bag', 'where am me', 'Armand K. Armand', 'Lemon Squeezie', 'Pototo', 'i love uoue']
+  
 module.exports = io => {
   let players = {}
   // CELL STORAGE NOW OBJECTS, LIKE PLAYER STORAGE
@@ -40,7 +48,7 @@ module.exports = io => {
       clientInfectedCells: {},
       clientSpawningCells: {},
       clientMastCells: {},
-      nameText: ''
+      name: randomName[Math.floor(Math.random() * randomName.length)]
     }
 
     // send the players object to the new player
@@ -58,8 +66,8 @@ module.exports = io => {
     // send the mast cells to the new players, transfer ownership
     socket.broadcast.emit('disownMastCells')
     // send how many epithelial cells are in the game and how many have been infected
-    socket.emit('epithelialCount', scores)
     socket.emit('mastCell', mastCells)
+    socket.emit('epithelialCount', scores)
     socket.emit('infectedCells', infectedCells)
     // set the secret color if the player is first to join
     if (Object.keys(players).length <= 1) {
@@ -117,15 +125,13 @@ module.exports = io => {
       angle,
       position,
       velocity,
-      angularVelocity,
-      nameText
+      angularVelocity
     }) {
       if (players[socket.id]) {
         players[socket.id].angle = angle
         players[socket.id].position = position
         players[socket.id].velocity = velocity
         players[socket.id].angularVelocity = angularVelocity
-        players[socket.id].nameText = nameText
         // players[socket.id].rotation = movementData.rotation
         // emit a message to all players about the player that moved
         socket.broadcast.emit('playerMoved', players[socket.id])
@@ -302,7 +308,7 @@ module.exports = io => {
             y: 0
           }
         }
-      ])
+      ], findLowestCellPlayerId(players))
       randomNumber--
     }
   }
