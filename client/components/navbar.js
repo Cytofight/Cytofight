@@ -3,11 +3,14 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import {logout} from '../store'
-import {withStyles, CssBaseline, Toolbar} from '@material-ui/core'
+import {withStyles} from '@material-ui/core'
 import Button from '@material-ui/core/Button'
 import List from '@material-ui/core/List'
 import Drawer from '@material-ui/core/Drawer'
 import ListItem from '@material-ui/core/ListItem'
+
+// would like to integrate in future versions as a single info button rather than ellipsis
+// import { Info } from '@material-ui/icons'
 
 const styles = {
   list: {
@@ -59,8 +62,13 @@ class Navbar extends React.Component {
     )
 
     return (
-      <div position="fixed">
-        <Button onClick={this.toggleDrawer('left', true)}>MENU</Button>
+      <div>
+        <Button
+          style={{position: 'fixed'}}
+          onClick={this.toggleDrawer('left', true)}
+        >
+          ...
+        </Button>
         <Drawer
           open={this.state.left}
           onClose={this.toggleDrawer('left', false)}

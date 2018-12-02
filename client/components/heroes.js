@@ -2,28 +2,31 @@ import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {getHeroesThunk} from '../store/characterReducer'
 import Spritesheet from 'react-responsive-spritesheet'
-import heroImg from '../animation-data/hero-image-configs'
+import Grid from '@material-ui/core/Grid'
+import Card from '@material-ui/core/Card'
 
 const divStyle = [
   {
-    height: '345px',
+    height: '340px',
     width: '300px'
   },
   {
-    height: '345px',
+    height: '340px',
     width: '300px'
   },
   {
-    height: '345px',
+    height: '340px',
     width: '300px'
   },
   {
-    height: '345px',
+    height: '340px',
     width: '300px'
   },
   {
-    height: '150px',
-    width: '150px'
+    height: '180px',
+    width: '180px',
+    paddingTop: '80px',
+    paddingBottom: '80px'
   }
 ]
 
@@ -43,13 +46,13 @@ const heroImgs = [
   {
     //Killer T
     height: 292,
-    width: 305,
+    width: 301,
     fps: 40
   },
   {
     //B-cell
     height: 250,
-    width: 301,
+    width: 305,
     fps: 40
   },
   {
@@ -66,38 +69,60 @@ class Heroes extends Component {
   }
   render() {
     return (
-      <div id="heroPage">
+      <Grid container justify="center">
         <h1>The Heroes</h1>
-        {this.props.heroes.length &&
-          this.props.heroes.map(hero => {
-            return (
-              <div key={hero.id} className="hero">
-                <h3>{hero.name}</h3>
-                <div
-                  className="spritesheet-container"
-                  style={divStyle[hero.id - 1]}
-                >
-                  <Spritesheet
-                    image={hero.img}
-                    widthFrame={heroImgs[hero.id - 1].width}
-                    heightFrame={heroImgs[hero.id - 1].height}
-                    steps={64}
-                    fps={heroImgs[hero.id - 1].fps}
-                    autoplay={false}
-                    loop={true}
-                    onMouseEnter={spritesheet => {
-                      spritesheet.play()
-                    }}
-                    onMouseLeave={spritesheet => {
-                      spritesheet.pause()
-                    }}
-                  />
+        <Grid
+          container
+          direction="row"
+          spacing={24}
+          style={{
+            justifyContent: 'center',
+            alignItems: 'stretch'
+          }}
+        >
+          {this.props.heroes.length &&
+            this.props.heroes.map(hero => {
+              return (
+                <div key={hero.id} className="hero">
+                  <Grid item xs={6}>
+                    <Card
+                      style={{
+                        padding: 20,
+                        width: 300,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <h3>{hero.name}</h3>
+                      <div
+                        className="spritesheet- container"
+                        style={divStyle[hero.id - 1]}
+                      >
+                        <Spritesheet
+                          image={hero.img}
+                          widthFrame={heroImgs[hero.id - 1].width}
+                          heightFrame={heroImgs[hero.id - 1].height}
+                          steps={64}
+                          fps={heroImgs[hero.id - 1].fps}
+                          autoplay={false}
+                          loop={true}
+                          onMouseEnter={spritesheet => {
+                            spritesheet.play()
+                          }}
+                          onMouseLeave={spritesheet => {
+                            spritesheet.pause()
+                          }}
+                        />
+                      </div>
+                      <p>{hero.blurb}</p>
+                    </Card>
+                  </Grid>
                 </div>
-                <p>{hero.blurb}</p>
-              </div>
-            )
-          })}
-      </div>
+              )
+            })}
+        </Grid>
+      </Grid>
     )
   }
 }
@@ -112,6 +137,4 @@ const mapDispatchtoProps = dispatch => {
   }
 }
 
-const connectedHeroes = connect(mapStatetoProps, mapDispatchtoProps)(Heroes)
-
-export default connectedHeroes
+export default connect(mapStatetoProps, mapDispatchtoProps)(Heroes)
