@@ -3,11 +3,20 @@ import { fire } from './fireAntibodies'
 
 export const worldSize = {x: 3000, y: 3000}
 export const colorNumber = 64
+export const randomName = ['Fritter', 'Fizband', 'JollyGreenDwarf', 'MeatShield', 'Come\'on?', 'Buckethead', 'Captain Wasteland', 'American Eagle', 'Moo Soup', 'Blue Whale', 'Jasper', 'Xanthos', 'Achilles', 'Axios', 'Socket.io O.o', 'FullStack Academy of Cells', 'iPhone 17', 'Bill Gates', 'Steve Jhobs', 'Scarf', 'Magic Schoolbus', 'PressEnter', 'Task Manager', 'Double O Sleven', 'Thorny Chair', 'AlienWare', 'Am I sick?', 'Tom Deck', 'Securitron', 'Brad.', 'Stephen', 'Geoff', 'Geohn', 'Cytophyter', 'Sticky', 'Stretchy', 'Goehb', 'Jeb', 'BinarySearchLeaph', 'PressCtrlArtDel?', 'Huh', 'DeadlySell', 'Brooclin', 'Cytation', 'IBM Wahtson', 'Samsung Jalaxi', 'HunterCiller', 'React.gs', 'Siteophage', 'Sore eye', 'Rusty nail', 'Krisper-Kas009', 'Princess Phytocyte', 'NoSQL', 'Pickles', 'Rover', 'Gigg1es', 'Buster', 'Marvin', 'Slacker', 'Cyt.io', 'Walla-Walla', 'Stumpy', 'Weasle', 'Sausey', 'Drangus', 'Draco Malfoy', 'Fancy', 'Bogz', 'Harry Beard', 'Fizzbuzz', 'Wizz', 'FooBar', 'Bellerophon', 'Memnon', 'Mancy', 'Echidna', 'Chrysaor']
 
 export const defaultCellParams = {
   restitution: 1,
   friction: 0,
   frictionAir: 0
+}
+
+export function resetCells() {
+  this.badGuys = {}
+  this.goodGuys = {}
+  this.dormantTCells = {}
+  this.mastCells = {}
+  this.infectedCells = {}
 }
 
 export function overlapCollision(coords, largeBody, callback, ...args) {

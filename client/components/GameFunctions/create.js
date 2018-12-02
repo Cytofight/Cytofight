@@ -33,6 +33,7 @@ export function create() {
   this.destroyedSound = this.sound.add('smallexplosion', {volume: 0.5})
   this.fireSound = this.sound.add('shoot', {volume: 0.5})
   this.damagedSound = this.sound.add('hitCell', {volume: 0.5})
+  this.infectionSound = this.sound.add('infectionUnderWay', {volume: 0.9})
 
   //  The miniCam is 400px wide, so can display the whole world at a zoom of 0.2
   this.minimap = this.cameras

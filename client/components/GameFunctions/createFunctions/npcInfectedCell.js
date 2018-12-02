@@ -60,7 +60,7 @@ export function makeInfectedCell({positionX, positionY, velocityX, velocityY, an
   cell.setAngularVelocity(angularVelocity)
   cell.randomDirection = randomDirection || {x: 0, y: 0}
   cell.globalId = globalId
-  cell.health = health || 200
+  cell.health = health || 25
   this.badGuys.infectedCells[globalId] = cell
   return cell
 }
@@ -76,7 +76,7 @@ export function spawnInfectedCell(x, y) {
     velocityX: 0, velocityY: 0, 
     angle: 0, angularVelocity: randomAngularVelocity,
     randomDirection: {x: 0, y: 0}, globalId,
-    health: 40
+    health: 25
   }
   const cell = makeInfectedCell.call(this, cellData)
   this.clientInfectedCells[globalId] = cell

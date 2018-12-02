@@ -5,12 +5,12 @@ import {
   updateForce,
   overlapCollision,
   changeShipColorDebug,
-  updateSecretColor
+  updateSecretColor,
+  resetCells
 } from './util'
 import {
   killEpithelialCell,
-  damageEpithelialCell,
-  resetCells
+  damageEpithelialCell
 } from './createFunctions/epithelialCells'
 import { damageBadPlayer, killBadPlayer } from './createFunctions/addPlayers'
 import { killInfectedCell, damageInfectedCell, makeInfectedCell, spawnInfectedCell } from './createFunctions/npcInfectedCell'
@@ -21,12 +21,11 @@ const throttledConsoleLog = throttle(console.log, 2000)
 const throttledUpdateTCellForce = throttle(updateForce, 1800)
 const throttledUpdateInfectedCellForce = throttle(updateForce, 1800)
 const throttledFire = throttle(fire, 150)
-const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
+// const throttledChangeShipColorDebug = throttle(changeShipColorDebug, 500)
 let tCellLimiter = 0,
   mastCellLimiter = 0,
   infectedCellLimiter = 1,
   redBloodCellsLimiter = 0,
-  tCellDamageLimiter = 0,
   soundLimiter = 0
 
 export function update(time) {
@@ -145,9 +144,10 @@ export function update(time) {
     const cellData = {}
     for (let id in this.dormantTCells) {
       const cell = this.dormantTCells[id]
+      if (cell.following && !cell.following.body) cell.following = null
       if (cell.following) followBadGuy(cell, cell.following.body.position)
       cell.applyForce(cell.randomDirection)
-      limitSpeed(cell, 3)
+      limitSpeed(cell, 2.5)
       if (this.clientDormantTCells[id]) {
         cellData[id] = {
           positionX: cell.body.position.x,
@@ -159,42 +159,71 @@ export function update(time) {
           randomDirection: cell.randomDirection,
           globalId: cell.globalId,
         }
-        if (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
+        // if (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) cellData[id].tint = 0x01c0ff
         if (cell.following) {
           // console.log('following')
           const cellPosition = cell.body.position
           const enemyPosition = cell.following.body.position
           const distance = Math.sqrt(Math.pow(cellPosition.x - enemyPosition.x, 2) + Math.pow(cellPosition.y - enemyPosition.y, 2))
-          if (distance > cell.followRadius.width) {
+          // if (distance > cell.followRadius.radius * 2 + 150) {
+          //   cell.following = null
+          //   // cell.damageLimiter = 0
+          //   console.log('out of range, stopped following')
+          // } else {
+          //   // console.log('bad guy health: ', cell.following.health, 'damageLimiter: ', !!(cell.damageLimiter && cell.damageRadius.contains(cell.following.body.position.x, cell.following.body.position.y)))
+          //   if (cell.damageRadius.contains(cell.following.body.position.x, cell.following.body.position.y)) {
+          //     if (this.badGuys.infectedCells[cell.following.globalId] === cell.following) {
+          //       damageInfectedCell.call(this, cell.following.health - 1, cell.following)
+          //       // console.log('damaged infected cell!', cell.following.health)
+          //     }
+          //     else {
+          //       damageBadPlayer.call(this, cell.following.health - 1, cell.following)
+          //       // console.log('damaged player!', cell.following.health)
+          //     }
+          //   }
+          //   cell.damageLimiter = (cell.damageLimiter + 1) % 20
+          //   // console.log(cell.damageLimiter, cell.following)
+          // }
+          // console.log(distance < 200 && !cell.damageLimiter)
+          if (distance > 310) {
             cell.following = null
-          } else {
-            if (!tCellDamageLimiter) {
-              console.log('damage before: ', cell.following.health, cell.following)
-              if (this.badGuys.infectedCells[cell.following.globalId] === cell.following) damageInfectedCell(1, cell.following)
-              else if (this.badGuys.players[cell.following.playerId] || this.badGuys.players[this.socket.id]) {
-                console.log('player!')
-                damageBadPlayer(cell.following.health - 1, cell.following)
-              }
-              console.log('damage after: ', cell.following.health)
+            console.log('out of range, stopped following, distance version')
+          } else if (distance < 100 && !cell.damageLimiter) {
+            const damageFunction = this.badGuys.infectedCells[cell.following.globalId] === cell.following ? damageInfectedCell : damageBadPlayer
+            damageFunction.call(this, cell.following.health - 1, cell.following)
+            console.log('damaged something, distance version; remaining health: ', cell.following.health)
+          }
+          cell.damageLimiter = (cell.damageLimiter + 1) % 7
+        } else if (cell.activated) {
+          for (let id in this.badGuys.players) {
+            const badPlayer = this.badGuys.players[id]
+            // if (cell.followRadius.contains(badPlayer.body.position.x, badPlayer.body.position.y) && 
+            // cell.activated && !cell.following) {
+            //   cell.following = badPlayer
+            //   console.log('start follow player', cell.damageLimiter)
+            // }
+            const cellPosition = cell.body.position
+            const enemyPosition = badPlayer.body.position
+            const distance = Math.sqrt(Math.pow(cellPosition.x - enemyPosition.x, 2) + Math.pow(cellPosition.y - enemyPosition.y, 2))
+            if (distance < 250) {
+              cell.following = badPlayer
+              console.log('start follow player, distance version')
             }
-            tCellDamageLimiter = (tCellDamageLimiter + 1) % 20
           }
-        }
-        for (let id in this.badGuys.players) {
-          const badPlayer = this.badGuys.players[id]
-          if (cell.followRadius.contains(badPlayer.body.position.x, badPlayer.body.position.y) && 
-          (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) && 
-          !cell.following) {
-            console.log('start follow')
-            cell.following = badPlayer
-          }
-        }
-        for (let id in this.badGuys.infectedCells) {
-          const badCell = this.badGuys.infectedCells[id]
-          if (cell.followRadius.contains(badCell.body.position.x, badCell.body.position.y) && 
-          (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) && 
-          !cell.following) {
-            cell.following = badCell
+          for (let id in this.badGuys.infectedCells) {
+            const badCell = this.badGuys.infectedCells[id]
+            // if (cell.followRadius.contains(badCell.body.position.x, badCell.body.position.y) && 
+            // cell.activated && !cell.following) {
+            //   cell.following = badCell
+            //   console.log('start follow bad cell')
+            // }
+            const cellPosition = cell.body.position
+            const enemyPosition = badCell.body.position
+            const distance = Math.sqrt(Math.pow(cellPosition.x - enemyPosition.x, 2) + Math.pow(cellPosition.y - enemyPosition.y, 2))
+            if (distance < 250) {
+              cell.following = badCell
+              console.log('start follow bad cell, distance version')
+            }
           }
         }
       }
@@ -301,9 +330,6 @@ export function update(time) {
   window.hack = 'securitronAndCone'
 
   if (this.badGuys.players[this.socket.id]) {
-    const infectionSound = this.sound.add('infectionUnderWay', {
-      volume: 0.9
-    })
     for (let cellId in this.epithelialCells) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
@@ -315,7 +341,7 @@ export function update(time) {
             )
             ) {
           if(!soundLimiter){
-            infectionSound.play()
+            this.infectionSound.play()
           }
           currCell.infectedness++
           currCell.infectionText.setText(
@@ -340,7 +366,7 @@ export function update(time) {
             this.badGuys.epithelialCells[cellId] = currCell
             currCell.spawn = setInterval(() => {
               spawnInfectedCell.call(this, currCell.body.position.x, currCell.body.position.y)
-            }, 10000)
+            }, 20000)
             this.clientSpawningCells[cellId] = currCell
             // currCell.spawnCell = setInterval(createBadGuy, 60000)
             this.socket.emit('changedEpithelialCell', cellId, {tint: 0xd60000})

@@ -60,8 +60,12 @@ export function makeTCell(cellDatum) {
   const cell = this.matter.add.image(cellDatum.positionX, cellDatum.positionY, 'dormantTCell')
   cell.setCircle(cell.width / 2, {label: 'tCell', ...defaultCellParams})
   setCellParams(cell, cellDatum)
-  cell.followRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 300)
-  cell.damageRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 180)
+  // cell.followRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 300)
+  // // cell.followRadius.setTint(0x860000)
+  // cell.damageRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 200)
+  // // cell.damageRadius.startFollow(cell)
+  cell.damageLimiter = 0
+  // console.log(cell.followRadius)
   return cell
 }
 

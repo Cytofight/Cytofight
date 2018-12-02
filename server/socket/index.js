@@ -1,6 +1,7 @@
 // const Message = require('./db/models/GameChat/message')
 // const Channel = require('./db/models/GameChat/channel')
 // const { fire } = require('../util')
+const randomName = ['Fritter', 'Fizband', 'JollyGreenDwarf', 'MeatShield', 'Come\'on?', 'Buckethead', 'Captain Wasteland', 'American Eagle', 'Moo Soup', 'Blue Whale', 'Jasper', 'Xanthos', 'Achilles', 'Axios', 'Socket.io O.o', 'FullStack Academy of Cells', 'iPhone 17', 'Bill Gates', 'Steve Jhobs', 'Scarf', 'Magic Schoolbus', 'PressEnter', 'Task Manager', 'Double O Sleven', 'Thorny Chair', 'AlienWare', 'Am I sick?', 'Tom Deck', 'Securitron', 'Brad.', 'Stephen', 'Geoff', 'Geohn', 'Cytophyter', 'Sticky', 'Stretchy', 'Goehb', 'Jeb', 'BinarySearchLeaph', 'PressCtrlArtDel?', 'Huh', 'DeadlySell', 'Brooclin', 'Cytation', 'IBM Wahtson', 'Samsung Jalaxi', 'HunterCiller', 'React.gs', 'Siteophage', 'Sore eye', 'Rusty nail', 'Krisper-Kas009', 'Princess Phytocyte', 'NoSQL', 'Pickles', 'Rover', 'Gigg1es', 'Buster', 'Marvin', 'Slacker', 'Cyt.io', 'Walla-Walla', 'Stumpy', 'Weasle', 'Sausey', 'Drangus', 'Draco Malfoy', 'Fancy', 'Bogz', 'Harry Beard', 'Fizzbuzz', 'Wizz', 'FooBar', 'Bellerophon', 'Memnon', 'Mancy', 'Echidna', 'Chrysaor']
 
 module.exports = io => {
   let players = {}
@@ -40,7 +41,7 @@ module.exports = io => {
       clientInfectedCells: {},
       clientSpawningCells: {},
       clientMastCells: {},
-      nameText: ''
+      name: randomName[Math.floor(Math.random() * randomName.length)]
     }
 
     // send the players object to the new player

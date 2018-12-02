@@ -1,12 +1,5 @@
-import {worldSize, defaultCellParams} from '../util'
+import {worldSize, defaultCellParams, resetCells} from '../util'
 import {spawnInfectedCell} from './index'
-
-export function resetCells() {
-  this.badGuys = {}
-  this.goodGuys = {}
-  this.dormantTCells = {}
-  this.mastCells = {}
-}
 
 export function epithelialCells(amount) {
   this.socket.on('epithelialCell', cells => {
