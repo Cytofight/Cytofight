@@ -3,14 +3,11 @@ import {
   fire,
   limitNumber,
   worldSize,
-  defaultCellParams,
   resetCells,
-  setCellParams,
   randomName
 } from '../util'
 import {
   epithelialCells,
-  epithelialCellCollision,
   tCells,
   mastCells,
   infectedCells,
@@ -19,10 +16,10 @@ import {
 const throttledFire = throttle(fire, 200)
 //Change name of file to init; this file will initialize all unites associated with the game that utilizes sockets
 
-const numberOfEpithelialCells = 30
-const numberOfTCells = 15
-const numberOfMastCells = 4
-const numberOfRedBloodCells = 30
+const numberOfEpithelialCells = 15
+const numberOfTCells = 6
+const numberOfMastCells = 1
+const numberOfRedBloodCells = 15
 
 //Initialize the players in the game
 //change name of function to init()
@@ -67,7 +64,7 @@ export function players() {
   })
   this.socket.on(
     'playerMoved',
-    ({playerId, angle, position, velocity, angularVelocity, nameText}) => {
+    ({playerId, angle, position, velocity}) => {
       const currPlayer = this.otherPlayers[playerId]
       if (currPlayer) {
         currPlayer
@@ -75,8 +72,8 @@ export function players() {
           .setVelocity(velocity.x, velocity.y)
         // .setAngularVelocity(angularVelocity)
         // .setAngle(angle)
-        currPlayer.nameText.x = nameText.x
-        currPlayer.nameText.y = nameText.y
+        currPlayer.nameText.x = position.x - (currPlayer.name.length * 5.85)
+        currPlayer.nameText.y = position.y - 48
         currPlayer.body.angle = angle
       }
     }
@@ -148,8 +145,8 @@ function addPlayer(playerInfo) {
   // const name = randomName[randomId]
   this.ship.name = playerInfo.name
   this.ship.nameText = this.add.text(
-    this.ship.body.position.x - (name.length * 50),
-    this.ship.body.position.y - 50,
+    this.ship.body.position.x - (this.ship.name.length * 5.85),
+    this.ship.body.position.y - 48,
     `${this.ship.name}`,
     {fontSize: '20px', fill: '#01c0ff'}
   )
@@ -193,7 +190,7 @@ function addPlayer(playerInfo) {
 
 function addOtherPlayers({position, team, playerId, name}) {
   const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
-  otherPlayer.setScale(0.5)
+  otherPlayer.setScale(0.7)
   otherPlayer.setCircle(otherPlayer.width / 2, {label: 'player', ...shipParams})
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
@@ -207,8 +204,8 @@ function addOtherPlayers({position, team, playerId, name}) {
   }
   otherPlayer.name = name
   otherPlayer.nameText = this.add.text(
-    position.x - 125,
-    position.y - 50,
+    position.x - (name.length * 5.85),
+    position.y - 48,
     `${name}`,
     {fontSize: '20px', fill: '#01c0ff'}
   )

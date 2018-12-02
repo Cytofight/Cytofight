@@ -32,8 +32,8 @@ export function update(time) {
   // const boundFire = throttledFire.bind(this)
   if (this.ship) {
     // display name over your
-    this.ship.nameText.x = this.ship.body.position.x - 125
-    this.ship.nameText.y = this.ship.body.position.y - 50
+    this.ship.nameText.x = this.ship.body.position.x - (this.ship.name.length * 5.85)
+    this.ship.nameText.y = this.ship.body.position.y - 48
 
     if (this.cursors.left.isDown || this.keyLeft.isDown) {
       this.ship.applyForce({
@@ -102,7 +102,9 @@ export function update(time) {
     // if (this.keyRed.isDown) {
     //   throttledChangeShipColorDebug.call(this, 0xd60000)
     // }
-    const nameText = this.ship.nameText
+    // const nameText = this.ship.nameText
+    // nameText.x = this.ship.body.position.x + (this.ship.name.length * 5)
+    // nameText.y = this.ship.body.position.y - 40
     limitSpeed(this.ship, 8)
     const {
       angle,
@@ -111,7 +113,8 @@ export function update(time) {
       position
     } = this.ship.body
     const {
-      previous
+      previous,
+      nameText
     } = this.ship
     if (
       previous &&
