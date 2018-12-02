@@ -6,12 +6,29 @@ export default class Winner extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('click', 'assets/PNG/play.png')
+    this.load.script(
+      'webfont',
+      'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js'
+    )
   }
 
   create() {
-    console.log('text test')
-    this.add.image(200, 200, 'play').setScale(0.25)
-    this.add.text(200, 200, 'You WON!').setFontSize(64)
+    const add = this.add
+    const winnerText = ['You WON!']
+
+    WebFont.load({
+      google: {
+        families: ['Alegreya SC']
+      },
+      active: function() {
+        add
+          .text(window.innerWidth / 2, window.innerHeight / 2, winnerText, {
+            fontFamily: 'Alegreya SC',
+            fontSize: 112,
+            color: 'gold'
+          })
+          .setOrigin(0.5)
+      }
+    })
   }
 }
