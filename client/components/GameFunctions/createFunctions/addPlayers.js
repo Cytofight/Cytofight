@@ -130,14 +130,24 @@ const shipParams = {
 }
 
 function addPlayer(playerInfo) {
+  console.log("playerInfo: ", playerInfo)
   const randomX = Math.floor(Math.random() * (worldSize.x - 100)) + 50
   const randomY = Math.floor(Math.random() * (worldSize.y - 100)) + 50
-  this.ship = this.matter.add.image(randomX, randomY, 'ship')
-  this.ship.setScale(0.7)
-  this.ship.setCircle(this.ship.width / 2, {
-    label: 'me',
-    ...shipParams
-  })
+  if(playerInfo.team === 'blue'){
+    this.ship = this.matter.add.image(randomX, randomY, 'ship')
+    this.ship.setScale(0.7)
+    this.ship.setCircle(this.ship.width / 2, {
+      label: 'me',
+      ...shipParams
+    })
+  } else {
+    this.ship = this.matter.add.image(randomX, randomY, 'virus')
+    this.ship.setScale(0.15)
+    this.ship.setCircle(this.ship.width / 15, {
+      label: 'me',
+      ...shipParams
+    })
+  }
   this.ship.playerId = playerInfo.playerId
 
   // Create a random player name on top of the ship
@@ -189,11 +199,21 @@ function addPlayer(playerInfo) {
 }
 
 function addOtherPlayers({position, team, playerId, name}) {
-  const otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
-  otherPlayer.setScale(0.7)
-  otherPlayer.setCircle(otherPlayer.width / 2, {label: 'player', ...shipParams})
+  // Initialize the other player's image
+  let otherPlayer
+  if(team === 'blue'){
+    otherPlayer = this.matter.add.image(position.x, position.y, 'ship')
+    otherPlayer.setScale(0.7)
+    otherPlayer.setCircle(otherPlayer.width / 2, {label: 'player', ...shipParams})
+  } else {
+    otherPlayer = this.matter.add.image(position.x, position.y, 'virus')
+    otherPlayer.setScale(0.15)
+    otherPlayer.setCircle(otherPlayer.width / 15, {label: 'player', ...shipParams})
+  }
   otherPlayer.playerId = playerId
   this.otherPlayers[playerId] = otherPlayer
+
+  // Initialize the other player's tint color, health, and put them on a badGuys or goodGuys object
   if (team === 'red') {
     otherPlayer.setTint(0xd60000)
     otherPlayer.health = 400
