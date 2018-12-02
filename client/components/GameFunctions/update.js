@@ -164,8 +164,8 @@ export function update(time) {
           const cellPosition = cell.body.position
           const enemyPosition = cell.following.body.position
           const distance = Math.sqrt(Math.pow(cellPosition.x - enemyPosition.x, 2) + Math.pow(cellPosition.y - enemyPosition.y, 2))
-          if (distance > cell.followRadius.width + 200) {
-            delete cell.following
+          if (distance > cell.followRadius.width) {
+            cell.following = null
           } else {
             if (!tCellDamageLimiter) {
               console.log('damage before: ', cell.following.health, cell.following)
@@ -186,6 +186,14 @@ export function update(time) {
           !cell.following) {
             console.log('start follow')
             cell.following = badPlayer
+          }
+        }
+        for (let id in this.badGuys.infectedCells) {
+          const badCell = this.badGuys.infectedCells[id]
+          if (cell.followRadius.contains(badCell.body.position.x, badCell.body.position.y) && 
+          (cell.tintBottomLeft === 16760833 || cell.tintBottomLeft === 0x01c0ff) && 
+          !cell.following) {
+            cell.following = badCell
           }
         }
       }
@@ -294,7 +302,7 @@ export function update(time) {
       if (!this.badGuys.epithelialCells[cellId]) {
         const currCell = this.epithelialCells[cellId]
         if (
-          currCell && 
+          currCell && currCell.infectionRange && 
           currCell.infectionRange.contains(
             this.ship.body.position.x,
             this.ship.body.position.y

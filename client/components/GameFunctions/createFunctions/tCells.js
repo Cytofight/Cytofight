@@ -61,7 +61,7 @@ export function makeTCell(cellDatum) {
   cell.setCircle(cell.width / 2, {label: 'tCell', ...defaultCellParams})
   setCellParams(cell, cellDatum)
   cell.followRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 300)
-  cell.damageRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 220)
+  cell.damageRadius = new Phaser.Geom.Circle(cellDatum.positionX, cellDatum.positionY, 180)
   return cell
 }
 

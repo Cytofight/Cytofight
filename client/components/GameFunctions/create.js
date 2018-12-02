@@ -51,7 +51,7 @@ export function create() {
     runChildUpdate: true
   })
   keyboardControls.call(this)
-  this.socket.emit('securitronAndCone')
+  // this.socket.emit('securitronAndCone')
 
   console.log(this)
   this.blueScoreText = this.add
