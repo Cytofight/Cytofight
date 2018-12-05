@@ -16,3 +16,17 @@ Some additional features we'd like to implement include:
 Website: https://cyto-fight.herokuapp.com/
 
 Presentation at Fullstack Academy of Code: https://youtu.be/37uTizBLHDs
+
+#Controls
+
+ - Moving your cell around: WASD or arrow keys
+ - Firing (blue team only): Left mouse click or spacebar
+ - Orienting firing direction (blue team only): Mouse pointer
+
+#Game Objectives (multiplayer only)
+
+Blue Team
+ - Eliminate all red players
+ 
+Red Team
+ - Infect all epithelial cells
